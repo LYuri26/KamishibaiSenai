@@ -1,0 +1,125 @@
+/* ===== ADMINISTRADOR - LISTAGEM ===== */
+
+body {
+  background-color: #e9ecef;
+}
+
+/* Título da página */
+.page-title {
+  font-size: 2rem;
+  color: #1a2b3c;
+  margin-bottom: 30px;
+  position: relative;
+  padding-bottom: 15px;
+}
+.page-title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #007bff, #00c851);
+  border-radius: 2px;
+}
+
+/* Tabela de inspeções */
+.table-wrapper {
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  overflow-x: auto;
+}
+.table {
+  margin-bottom: 0;
+}
+.table thead th {
+  background-color: #0066a1;
+  color: #fff;
+  border-bottom: none;
+  padding: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+.table tbody tr {
+  transition: background-color 0.2s;
+}
+.table tbody tr:hover {
+  background-color: #f1f8ff;
+}
+.table td,
+.table th {
+  vertical-align: middle;
+  padding: 12px;
+}
+.table td {
+  color: #495057;
+}
+
+/* Badge para observações curtas */
+.obs-preview {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #6c757d;
+}
+
+/* Botão de detalhes */
+.btn-detalhes {
+  padding: 5px 15px;
+  font-size: 0.85rem;
+  border-radius: 20px;
+  transition: all 0.3s;
+}
+.btn-detalhes:hover {
+  transform: scale(1.05);
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 1.6rem;
+  }
+  .table thead {
+    display: none;
+  }
+  .table,
+  .table tbody,
+  .table tr,
+  .table td {
+    display: block;
+    width: 100%;
+  }
+  .table tr {
+    margin-bottom: 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 10px;
+    background: #fff;
+  }
+  .table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: none;
+    border-bottom: 1px solid #eee;
+    padding: 10px;
+  }
+  .table td:last-child {
+    border-bottom: none;
+  }
+  .table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #0066a1;
+    width: 40%;
+  }
+  .obs-preview {
+    max-width: none;
+    white-space: normal;
+  }
+}

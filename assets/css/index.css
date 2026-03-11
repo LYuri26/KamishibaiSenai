@@ -1,0 +1,77 @@
+/* ===== PÁGINA INICIAL ===== */
+
+/* Hero section */
+.hero {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  padding: 80px 0;
+  text-align: center;
+  border-radius: 0 0 50px 50px;
+  margin-bottom: 40px;
+}
+.hero h1 {
+  font-size: 3rem;
+  color: #fff;
+  margin-bottom: 20px;
+}
+.hero p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Cards de acesso */
+.acesso-card {
+  background: #fff;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.acesso-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+.acesso-card i {
+  font-size: 3rem;
+  color: #0066a1;
+  margin-bottom: 20px;
+}
+.acesso-card h3 {
+  margin-bottom: 15px;
+  color: #1a2b3c;
+}
+.acesso-card p {
+  color: #6c757d;
+  margin-bottom: 20px;
+}
+.acesso-card .btn {
+  width: 100%;
+  max-width: 200px;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .hero {
+    padding: 50px 0;
+    border-radius: 0 0 30px 30px;
+  }
+  .hero h1 {
+    font-size: 2.2rem;
+  }
+  .hero p {
+    font-size: 1rem;
+  }
+  .acesso-card {
+    margin-bottom: 20px;
+  }
+}

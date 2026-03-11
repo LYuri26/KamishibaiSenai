@@ -1,0 +1,96 @@
+/* ===== ADMINISTRADOR - VISUALIZAÇÃO DETALHADA ===== */
+
+/* Container principal */
+.detalhes-container {
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  margin: 20px 0;
+}
+
+/* Cabeçalho da inspeção */
+.inspecao-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+}
+.inspecao-header h2 {
+  color: #fff;
+  margin-bottom: 5px;
+}
+.inspecao-header .data {
+  opacity: 0.9;
+  font-size: 1rem;
+}
+
+/* Seção de itens avariados */
+.itens-avariados {
+  margin-bottom: 30px;
+}
+.itens-avariados h4 {
+  color: #dc3545;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+.itens-avariados .list-group-item {
+  border-left: 5px solid #dc3545;
+  background-color: #fff8f8;
+  font-weight: 500;
+}
+
+/* Seção de observações */
+.observacoes-section {
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+  border: 1px solid #e9ecef;
+}
+.observacoes-section h4 {
+  color: #17a2b8;
+  margin-bottom: 15px;
+}
+.observacoes-texto {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  white-space: pre-wrap;
+  font-family: "Courier New", monospace;
+  border: 1px solid #ced4da;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Botão voltar */
+.btn-voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 25px;
+  border-radius: 30px;
+  font-weight: 500;
+  margin-top: 20px;
+}
+.btn-voltar i {
+  font-size: 1.2rem;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .detalhes-container {
+    padding: 15px;
+  }
+  .inspecao-header {
+    padding: 15px;
+  }
+  .inspecao-header h2 {
+    font-size: 1.4rem;
+  }
+  .observacoes-texto {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+}
