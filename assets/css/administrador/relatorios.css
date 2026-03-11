@@ -1,0 +1,129 @@
+/* ===== ADMINISTRADOR - RELATÓRIOS CONSOLIDADOS ===== */
+
+body {
+  background: #f1f5f9;
+}
+
+h2 {
+  color: #0f172a;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  position: relative;
+  padding-bottom: 1rem;
+}
+h2::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100px;
+  height: 5px;
+  background: linear-gradient(90deg, #2563eb, #3b82f6);
+  border-radius: 3px;
+}
+
+/* Filtro */
+#filtroData {
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: white;
+  transition: border-color 0.2s;
+}
+#filtroData:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  outline: none;
+}
+#btnFiltrar {
+  background: #2563eb;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+#btnFiltrar:hover {
+  background: #1d4ed8;
+  transform: scale(1.05);
+}
+
+/* Tabela de relatórios */
+#relatoriosContainer {
+  background: #ffffff;
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  border: 1px solid #e9ecef;
+}
+.table {
+  margin-bottom: 0;
+}
+.table th {
+  background: #f8fafc;
+  color: #1e293b;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+  padding: 1rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+.table td {
+  padding: 1rem;
+  vertical-align: middle;
+  border-bottom: 1px solid #e9ecef;
+}
+
+/* Status cores */
+.status-nao_vistoriada {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+.status-vistoriada_inicio_fim {
+  background-color: #dff0e6;
+  color: #0a5c2e;
+}
+.status-vistoriada_inicio_apenas,
+.status-vistoriada_fim_apenas {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .table thead {
+    display: none;
+  }
+  .table,
+  .table tbody,
+  .table tr,
+  .table td {
+    display: block;
+    width: 100%;
+  }
+  .table tr {
+    margin-bottom: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+    padding: 0.5rem;
+  }
+  .table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: none;
+    border-bottom: 1px solid #e9ecef;
+    padding: 0.75rem;
+  }
+  .table td:last-child {
+    border-bottom: none;
+  }
+  .table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #2563eb;
+    width: 40%;
+  }
+}

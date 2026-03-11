@@ -1,13 +1,18 @@
-// Lista de itens na ordem correta
+// Lista de itens na ordem correta (porta, piso, carteiras A1-E8, outros)
 const itens = {
   porta: "Porta de entrada",
   piso: "Piso",
 };
 
-for (let i = 1; i <= 40; i++) {
-  itens[`carteira_${i}`] = `Carteira ${i}`;
+// Adiciona carteiras: fileiras A a E, colunas 1 a 8
+const fileiras = ["A", "B", "C", "D", "E"];
+for (let f of fileiras) {
+  for (let c = 1; c <= 8; c++) {
+    itens[`carteira_${f}${c}`] = `Carteira ${f}${c}`;
+  }
 }
 
+// Outros itens
 const outros = {
   janela: "Janela",
   mesa_professor: "Mesa do professor",
@@ -16,7 +21,6 @@ const outros = {
   televisao: "Televisão",
   quadro: "Quadro",
 };
-
 Object.assign(itens, outros);
 
 let currentQuestion = 0;
@@ -50,7 +54,7 @@ function renderQuestion() {
   html += `</div>`;
   container.innerHTML = html;
 
-  // Adiciona eventos aos radios
+  // Eventos nos radios
   document.querySelectorAll(`input[name="resp_${key}"]`).forEach((radio) => {
     radio.addEventListener("change", (e) => {
       answers[key] = e.target.value;
@@ -76,15 +80,20 @@ function renderQuestion() {
     document.getElementById("nextBtn").classList.remove("d-none");
     document.getElementById("submitBtn").classList.add("d-none");
   }
+
+  // Atualiza barra de progresso
+  const progress = ((currentQuestion + 1) / keys.length) * 100;
+  document.getElementById("progressBar").style.width = progress + "%";
+  document.getElementById("progressBar").textContent =
+    Math.round(progress) + "%";
 }
 
-document.getElementById("prevBtn").addEventListener("click", () => {
-  changeQuestion(-1);
-});
-
-document.getElementById("nextBtn").addEventListener("click", () => {
-  changeQuestion(1);
-});
+document
+  .getElementById("prevBtn")
+  .addEventListener("click", () => changeQuestion(-1));
+document
+  .getElementById("nextBtn")
+  .addEventListener("click", () => changeQuestion(1));
 
 function changeQuestion(direction) {
   const keys = Object.keys(itens);
@@ -127,7 +136,6 @@ document
       }
     }
 
-    // Monta observações consolidadas
     let observacoesFinais = "";
     for (let key of keys) {
       if (answers[key] === "sim") {
@@ -152,9 +160,9 @@ document
         document.getElementById("mensagem").innerHTML =
           '<div class="alert alert-success">Inspeção salva com sucesso!</div>';
         document.getElementById("checklistForm").reset();
-        // Reinicia variáveis
-        answers.length = 0;
-        observations.length = 0;
+        // Reinicia
+        Object.keys(answers).forEach((k) => delete answers[k]);
+        Object.keys(observations).forEach((k) => delete observations[k]);
         currentQuestion = 0;
         renderQuestion();
       } else {
@@ -167,5 +175,4 @@ document
     }
   });
 
-// Inicia
 renderQuestion();

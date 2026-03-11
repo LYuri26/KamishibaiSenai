@@ -1,89 +1,129 @@
 /* ===== ADMINISTRADOR - LISTAGEM ===== */
 
 body {
-  background-color: #e9ecef;
+  background: #f1f5f9;
 }
 
 /* Título da página */
 .page-title {
-  font-size: 2rem;
-  color: #1a2b3c;
-  margin-bottom: 30px;
+  font-size: 2.2rem;
+  color: #0f172a;
+  margin-bottom: 2rem;
+  font-weight: 700;
   position: relative;
-  padding-bottom: 15px;
+  padding-bottom: 1rem;
 }
 .page-title::after {
   content: "";
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 80px;
-  height: 4px;
-  background: linear-gradient(90deg, #007bff, #00c851);
-  border-radius: 2px;
+  width: 100px;
+  height: 5px;
+  background: linear-gradient(90deg, #2563eb, #3b82f6);
+  border-radius: 3px;
 }
 
-/* Tabela de inspeções */
+/* Botão de relatórios */
+.btn-info {
+  background: #0891b2;
+  border: none;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px -1px rgba(8, 145, 178, 0.3);
+}
+.btn-info:hover {
+  background: #0e7490;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 12px -1px rgba(8, 145, 178, 0.4);
+}
+
+/* Container de alertas */
+#alertasContainer .alert {
+  border-radius: 1rem;
+  border: none;
+  padding: 1.25rem;
+  font-weight: 500;
+  box-shadow: 0 4px 8px -2px rgba(0, 0, 0, 0.05);
+}
+#alertasContainer .alert-success {
+  background: #dff0e6;
+  color: #0a5c2e;
+}
+#alertasContainer .alert-warning {
+  background: #fff3cd;
+  color: #856404;
+}
+
+/* Tabela */
 .table-wrapper {
-  background: #fff;
-  border-radius: 15px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+  background: #ffffff;
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  padding: 1.5rem;
   overflow-x: auto;
+  border: 1px solid #e9ecef;
 }
 .table {
   margin-bottom: 0;
 }
 .table thead th {
-  background-color: #0066a1;
-  color: #fff;
-  border-bottom: none;
-  padding: 12px;
-  font-weight: 500;
+  background: #f8fafc;
+  color: #1e293b;
+  font-weight: 600;
   text-transform: uppercase;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   letter-spacing: 0.5px;
+  padding: 1rem;
+  border-bottom: 2px solid #e2e8f0;
 }
 .table tbody tr {
-  transition: background-color 0.2s;
+  transition: background 0.15s;
 }
 .table tbody tr:hover {
-  background-color: #f1f8ff;
-}
-.table td,
-.table th {
-  vertical-align: middle;
-  padding: 12px;
+  background: #f1f5f9;
 }
 .table td {
-  color: #495057;
+  padding: 1rem;
+  vertical-align: middle;
+  color: #334155;
+  border-bottom: 1px solid #e9ecef;
+}
+.table td:first-child {
+  font-weight: 600;
+  color: #0f172a;
 }
 
-/* Badge para observações curtas */
+/* Pré-visualização de observações */
 .obs-preview {
-  max-width: 200px;
+  max-width: 250px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #6c757d;
+  color: #475569;
 }
 
-/* Botão de detalhes */
-.btn-detalhes {
-  padding: 5px 15px;
-  font-size: 0.85rem;
-  border-radius: 20px;
-  transition: all 0.3s;
+/* Botão detalhes */
+.btn-info.btn-sm {
+  background: #2563eb;
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  color: white;
 }
-.btn-detalhes:hover {
+.btn-info.btn-sm:hover {
+  background: #1d4ed8;
   transform: scale(1.05);
 }
 
 /* Responsivo */
 @media (max-width: 768px) {
-  .page-title {
-    font-size: 1.6rem;
-  }
   .table thead {
     display: none;
   }
@@ -95,19 +135,19 @@ body {
     width: 100%;
   }
   .table tr {
-    margin-bottom: 15px;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 10px;
-    background: #fff;
+    margin-bottom: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+    padding: 0.5rem;
+    background: #ffffff;
   }
   .table td {
     display: flex;
     justify-content: space-between;
     align-items: center;
     border: none;
-    border-bottom: 1px solid #eee;
-    padding: 10px;
+    border-bottom: 1px solid #e9ecef;
+    padding: 0.75rem;
   }
   .table td:last-child {
     border-bottom: none;
@@ -115,8 +155,8 @@ body {
   .table td::before {
     content: attr(data-label);
     font-weight: 600;
-    color: #0066a1;
-    width: 40%;
+    color: #2563eb;
+    width: 45%;
   }
   .obs-preview {
     max-width: none;

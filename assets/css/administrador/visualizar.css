@@ -1,96 +1,124 @@
 /* ===== ADMINISTRADOR - VISUALIZAÇÃO DETALHADA ===== */
 
+body {
+  background: #f1f5f9;
+}
+
 /* Container principal */
 .detalhes-container {
-  background: #fff;
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  padding: 30px;
-  margin: 20px 0;
+  background: #ffffff;
+  border-radius: 2rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
+  padding: 2.5rem;
+  margin: 2rem 0;
+  border: 1px solid #e9ecef;
 }
 
 /* Cabeçalho da inspeção */
 .inspecao-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #fff;
-  padding: 25px;
-  border-radius: 12px;
-  margin-bottom: 30px;
+  background: linear-gradient(145deg, #1e3c72 0%, #2a5298 100%);
+  color: white;
+  padding: 2rem;
+  border-radius: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.2);
 }
 .inspecao-header h2 {
-  color: #fff;
-  margin-bottom: 5px;
+  color: white;
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
 }
 .inspecao-header .data {
   opacity: 0.9;
   font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.inspecao-header p {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+}
+.inspecao-header strong {
+  font-weight: 600;
+  color: #ffd966;
 }
 
-/* Seção de itens avariados */
-.itens-avariados {
-  margin-bottom: 30px;
-}
+/* Lista de itens avariados */
 .itens-avariados h4 {
-  color: #dc3545;
-  margin-bottom: 15px;
-  font-weight: 600;
+  color: #b91c1c;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
 }
-.itens-avariados .list-group-item {
-  border-left: 5px solid #dc3545;
-  background-color: #fff8f8;
+.list-group {
+  border-radius: 1rem;
+  overflow: hidden;
+}
+.list-group-item {
+  border: none;
+  border-bottom: 1px solid #e9ecef;
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+}
+.list-group-item-danger {
+  background: #fee2e2;
+  color: #b91c1c;
+  border-left: 6px solid #ef4444;
   font-weight: 500;
 }
+.list-group-item:last-child {
+  border-bottom: none;
+}
 
-/* Seção de observações */
+/* Observações */
 .observacoes-section {
-  background-color: #f8f9fa;
-  border-radius: 12px;
-  padding: 20px;
-  margin-top: 20px;
-  border: 1px solid #e9ecef;
+  margin-top: 2rem;
 }
 .observacoes-section h4 {
-  color: #17a2b8;
-  margin-bottom: 15px;
+  color: #0891b2;
+  font-weight: 700;
+  margin-bottom: 1rem;
 }
-.observacoes-texto {
-  background: #fff;
-  border-radius: 8px;
-  padding: 20px;
+.card {
+  background: #f8fafc;
+  border-radius: 1.25rem;
+  border: 1px solid #e2e8f0;
+  padding: 1.5rem;
   white-space: pre-wrap;
-  font-family: "Courier New", monospace;
-  border: 1px solid #ced4da;
-  max-height: 400px;
-  overflow-y: auto;
+  font-family: "Inter", monospace;
+  line-height: 1.6;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 /* Botão voltar */
 .btn-voltar {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 25px;
-  border-radius: 30px;
-  font-weight: 500;
-  margin-top: 20px;
+  gap: 0.75rem;
+  padding: 0.875rem 2rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  background: #475569;
+  border: none;
+  color: white;
+  transition: all 0.2s;
+  margin-top: 1rem;
 }
-.btn-voltar i {
-  font-size: 1.2rem;
+.btn-voltar:hover {
+  background: #334155;
+  transform: translateX(-4px);
 }
 
 /* Responsivo */
 @media (max-width: 768px) {
   .detalhes-container {
-    padding: 15px;
+    padding: 1.5rem;
   }
   .inspecao-header {
-    padding: 15px;
+    padding: 1.5rem;
   }
   .inspecao-header h2 {
-    font-size: 1.4rem;
-  }
-  .observacoes-texto {
-    padding: 10px;
-    font-size: 0.9rem;
+    font-size: 1.5rem;
   }
 }
