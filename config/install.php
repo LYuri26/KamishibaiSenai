@@ -107,7 +107,5 @@ $sqlUsuarios = "CREATE TABLE IF NOT EXISTS `usuarios` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
 $pdo->exec($sqlUsuarios);
 
-
-
 echo "Banco de dados e tabelas criados com sucesso!";
 ?>

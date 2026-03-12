@@ -4,26 +4,27 @@ const perguntas = {
   carteiras_organizadas:
     "As carteiras estão organizadas em fileiras regulares?",
   carteiras_quantidade: "Há aproximadamente 40 carteiras disponíveis?",
-  carteiras_danificadas: "Todas as carteiras estão em bom estado?",
+  carteiras_danificadas:
+    "Todas as carteiras estão em bom estado? Ou existe alguma avaria?",
   // Televisão
   tv_presente: "A televisão está presente na sala?",
-  tv_integra: "A televisão está aparentemente íntegra?",
+  tv_integra: "A televisão está em bom estado?",
   tv_hdmi: "O cabo HDMI está disponível e conectado?",
   tv_cabos_organizados: "Os cabos estão organizados e sem risco de queda?",
   tv_conectada: "A televisão está conectada à tomada?",
-  tv_cabos_ok: "Todos os cabos estão em bom estado?",
+  tv_cabos_ok: "Todos os cabos necessários estão na sala e em bom estado?",
   // Ar-condicionado
   ar_presentes: "Os dois aparelhos de ar-condicionado estão presentes?",
   ar_controle: "O controle remoto do ar-condicionado está disponível?",
   ar_danos: "Os aparelhos de ar-condicionado estão em bom estado?",
   // Quadro
-  quadro_limpo: "O quadro está limpo e utilizável?",
-  quadro_danos: "O quadro está em bom estado?",
-  quadro_fixo: "O quadro está firmemente fixado na parede?",
+  quadro_limpo: "O quadro está limpo?",
+  quadro_danos: "O quadro está em bom estado (sem riscos ou manchas)?",
+  quadro_fixo: "O quadro está no local correto e firmemente fixado?",
   // Porta e Janelas
   porta_funciona: "A porta abre e fecha normalmente?",
-  janelas_intactas: "As janelas estão intactas?",
-  janelas_vidros: "Todos os vidros estão inteiros?",
+  janelas_intactas: "As janelas estão intactas (sem avarias na estrutura)?",
+  janelas_vidros: "Todos os vidros das janelas estão inteiros?",
   // Tomadas
   tomadas_intactas: "As tomadas aparentes estão intactas?",
   tomadas_fios: "Não há fios expostos?",
@@ -33,6 +34,9 @@ const perguntas = {
   mesa_gavetas: "As gavetas da mesa estão fechadas e funcionais?",
   cadeira_integra: "A cadeira do instrutor está em bom estado?",
 };
+
+// Identificador da sala (obrigatório para o PHP)
+const sala = "104a";
 
 let currentQuestion = 0;
 const answers = {};
@@ -51,7 +55,7 @@ async function carregarDadosUsuario() {
   }
 }
 
-// Preencher nome do instrutor automaticamente
+// Preencher nome do instrutor automaticamente e desabilitar edição
 async function preencherNomeInstrutor() {
   const nomeInput = document.getElementById("nome");
   if (!nomeInput) return;
@@ -60,7 +64,7 @@ async function preencherNomeInstrutor() {
   if (dados && dados.nome) {
     nomeInput.value =
       dados.nome + (dados.sobrenome ? " " + dados.sobrenome : "");
-    nomeInput.disabled = true; // Bloqueia edição (opcional)
+    nomeInput.disabled = true;
   } else {
     nomeInput.disabled = false;
     nomeInput.placeholder = "Digite seu nome completo (não autenticado)";
@@ -198,6 +202,7 @@ document
       nome: document.getElementById("nome").value,
       respostas: answers,
       observacoes: observacoesFinais,
+      sala: sala,
     };
 
     try {
@@ -208,13 +213,7 @@ document
       });
       const result = await response.json();
       if (result.sucesso) {
-        document.getElementById("mensagem").innerHTML =
-          '<div class="alert alert-success">Inspeção salva com sucesso!</div>';
-        document.getElementById("checklistForm").reset();
-        Object.keys(answers).forEach((k) => delete answers[k]);
-        Object.keys(observations).forEach((k) => delete observations[k]);
-        currentQuestion = 0;
-        renderQuestion();
+        window.location.href = "../acessorios/encerramento.html";
       } else {
         document.getElementById("mensagem").innerHTML =
           `<div class="alert alert-danger">Erro: ${result.erro}</div>`;
@@ -225,4 +224,5 @@ document
     }
   });
 
+// Inicialização
 renderQuestion();

@@ -56,6 +56,27 @@ $periodoAtual = getPeriodo($minutosTotais, $periodos);
 $meio = ($periodos[$periodoAtual]['inicio'] + $periodos[$periodoAtual]['fim']) / 2;
 $momento = ($minutosTotais > $meio) ? 'fim' : 'inicio';
 
+// --- VERIFICAÇÃO DE DUPLICIDADE ---
+// Verifica se já existe uma inspeção para este período e momento hoje
+$dataHoje = date('Y-m-d', $agora);
+$inicioPeriodo = $periodos[$periodoAtual]['inicio'];
+$fimPeriodo = $periodos[$periodoAtual]['fim'];
+
+$inicioTimestamp = strtotime($dataHoje) + $inicioPeriodo * 60;
+$fimTimestamp = strtotime($dataHoje) + $fimPeriodo * 60;
+$inicioStr = date('Y-m-d H:i:s', $inicioTimestamp);
+$fimStr = date('Y-m-d H:i:s', $fimTimestamp);
+
+$checkStmt = $pdo->prepare("SELECT COUNT(*) FROM `$sala` WHERE data BETWEEN ? AND ? AND momento = ?");
+$checkStmt->execute([$inicioStr, $fimStr, $momento]);
+$count = $checkStmt->fetchColumn();
+
+if ($count > 0) {
+    echo json_encode(['sucesso' => false, 'erro' => "Já existe uma inspeção de $momento para o período da $periodoAtual hoje."]);
+    exit;
+}
+// --- FIM DA VERIFICAÇÃO ---
+
 // Monta a consulta dinâmica para a sala informada
 $colunas = ['nome', 'data', 'momento', 'observacoes'];
 $placeholders = [':nome', ':data', ':momento', ':observacoes'];
