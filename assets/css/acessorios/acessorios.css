@@ -1,0 +1,51 @@
+/* ===== CABEÇALHO ===== */
+header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+header .container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+header img {
+  object-fit: contain;
+}
+
+header span {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2563eb; /* primary */
+}
+
+/* ===== RODAPÉ ===== */
+footer {
+  border-top: 1px solid #e9ecef;
+  background-color: #ffffff;
+  color: #6c757d;
+  font-size: 0.875rem;
+}
+
+footer p {
+  margin-bottom: 0.25rem;
+}
+
+footer p:last-child {
+  margin-bottom: 0;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 576px) {
+  header .container {
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+  }
+  header span {
+    font-size: 1rem;
+  }
+  footer {
+    font-size: 0.75rem;
+  }
+}

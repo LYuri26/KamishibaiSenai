@@ -16,30 +16,33 @@ async function carregarInspecao() {
       return;
     }
 
-    // Mapeamento de campos para rótulos
+    // Mapeamento de campos para rótulos (baseado nas perguntas)
     const rotulos = {
-      porta: "Porta",
-      piso: "Piso",
+      carteiras_organizadas: "Carteiras organizadas em fileiras regulares?",
+      carteiras_quantidade: "Aproximadamente 40 carteiras disponíveis?",
+      carteiras_danificadas: "Todas as carteiras em bom estado?",
+      tv_presente: "Televisão presente?",
+      tv_integra: "Televisão íntegra?",
+      tv_hdmi: "Cabo HDMI disponível e conectado?",
+      tv_cabos_organizados: "Cabos organizados sem risco?",
+      tv_conectada: "Televisão conectada à tomada?",
+      tv_cabos_ok: "Todos os cabos em bom estado?",
+      ar_presentes: "Dois ar-condicionados presentes?",
+      ar_controle: "Controle remoto disponível?",
+      ar_danos: "Ar-condicionado em bom estado?",
+      quadro_limpo: "Quadro limpo e utilizável?",
+      quadro_danos: "Quadro em bom estado?",
+      quadro_fixo: "Quadro firmemente fixado?",
+      porta_funciona: "Porta abre/fecha normalmente?",
+      janelas_intactas: "Janelas intactas?",
+      janelas_vidros: "Todos os vidros inteiros?",
+      tomadas_intactas: "Tomadas intactas?",
+      tomadas_fios: "Sem fios expostos?",
+      tomadas_adaptadores: "Sem adaptadores improvisados?",
+      mesa_firme: "Mesa do instrutor firme e organizada?",
+      mesa_gavetas: "Gavetas da mesa fechadas e funcionais?",
+      cadeira_integra: "Cadeira do instrutor em bom estado?",
     };
-
-    // Carteiras A1 a E8
-    const fileiras = ["A", "B", "C", "D", "E"];
-    for (let f of fileiras) {
-      for (let c = 1; c <= 8; c++) {
-        rotulos[`carteira_${f}${c}`] = `Carteira ${f}${c}`;
-      }
-    }
-
-    // Outros itens
-    const outros = {
-      janela: "Janela",
-      mesa_professor: "Mesa do professor",
-      cadeira_professor: "Cadeira do professor",
-      ar_condicionado: "Ar condicionado",
-      televisao: "Televisão",
-      quadro: "Quadro",
-    };
-    Object.assign(rotulos, outros);
 
     const momentoTexto =
       data.momento === "inicio" ? "Início da aula" : "Fim da aula";
@@ -53,16 +56,17 @@ async function carregarInspecao() {
             </div>
         `;
 
-    html += '<h4>Itens avariados (Sim)</h4><ul class="list-group">';
-    let temAvariados = false;
+    // Itens com problema (resposta "nao")
+    html += '<h4>Itens com problema (Não)</h4><ul class="list-group">';
+    let temProblemas = false;
     for (const [campo, rotulo] of Object.entries(rotulos)) {
-      if (data[campo] === "sim") {
-        html += `<li class="list-group-item list-group-item-danger">${rotulo} - <strong>Avariado</strong></li>`;
-        temAvariados = true;
+      if (data[campo] === "nao") {
+        html += `<li class="list-group-item list-group-item-danger">${rotulo} - <strong>Não (problema)</strong></li>`;
+        temProblemas = true;
       }
     }
-    if (!temAvariados) {
-      html += '<li class="list-group-item">Nenhum item avariado.</li>';
+    if (!temProblemas) {
+      html += '<li class="list-group-item">Nenhum item com problema.</li>';
     }
     html += "</ul>";
 

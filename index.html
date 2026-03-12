@@ -5,52 +5,78 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kamishibai SENAI - Início</title>
+    <!-- Bootstrap 5 + Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- CSS customizados -->
     <link rel="stylesheet" href="assets/css/geral.css">
+    <link rel="stylesheet" href="assets/css/acessorios/acessorios.css">
     <link rel="stylesheet" href="assets/css/index.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
-<body>
-    <div class="hero">
-        <div class="container">
-            <h1><i class="fas fa-clipboard-check me-2"></i>Kamishibai SENAI</h1>
-            <p>Sistema de inspeção visual para ambientes de aula</p>
-        </div>
-    </div>
+<body class="d-flex flex-column min-vh-100">
+    <!-- Cabeçalho -->
+    <div id="header"></div>
 
-    <div class="container">
-        <div class="row g-4">
-            <div class="col-md-6">
-                <div class="acesso-card">
-                    <i class="fas fa-chalkboard-teacher"></i>
-                    <h3>Ambiente de Aula</h3>
-                    <p>Acesse o checklist para inspecionar a sala 104a no início e fim da aula.</p>
-                    <a href="ambiente/sala104a.html" class="btn btn-primary btn-lg">
-                        <i class="fas fa-arrow-right me-2"></i>Ir para Sala 104a
-                    </a>
+    <main class="flex-grow-1">
+        <!-- Hero Section com Bootstrap -->
+        <section class="hero bg-primary text-white py-5">
+            <div class="container text-center">
+                <h1 class="display-3 fw-bold mb-3">
+                    <i class="bi bi-clipboard-check me-2"></i>Kamishibai SENAI
+                </h1>
+                <p class="lead fs-4 mx-auto" style="max-width: 700px;">
+                    Sistema de inspeção visual para ambientes de aula
+                </p>
+            </div>
+        </section>
+
+        <!-- Cards de acesso -->
+        <div class="container my-5">
+            <div class="row g-4 justify-content-center">
+                <div class="col-md-6 col-lg-5">
+                    <div class="card h-100 border-0 shadow-sm hover-card">
+                        <div class="card-body text-center p-4 p-xl-5">
+                            <div class="icon-circle bg-primary bg-gradient text-white mb-4 mx-auto">
+                                <i class="bi bi-chalkboard fs-1"></i>
+                            </div>
+                            <h3 class="card-title h4 fw-semibold">Ambiente de Aula</h3>
+                            <p class="card-text text-secondary">
+                                Acesse o checklist para inspecionar a sala 104a no início e fim da aula.
+                            </p>
+                            <a href="ambiente/sala104a.html" class="btn btn-primary rounded-pill px-4 py-2 mt-3">
+                                Ir para Sala 104a <i class="bi bi-arrow-right ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-5">
+                    <div class="card h-100 border-0 shadow-sm hover-card">
+                        <div class="card-body text-center p-4 p-xl-5">
+                            <div class="icon-circle bg-secondary bg-gradient text-white mb-4 mx-auto">
+                                <i class="bi bi-person-gear fs-1"></i>
+                            </div>
+                            <h3 class="card-title h4 fw-semibold">Administrador</h3>
+                            <p class="card-text text-secondary">
+                                Visualize todos os relatórios de inspeção realizados.
+                            </p>
+                            <a href="administrador/index.html"
+                                class="btn btn-outline-secondary rounded-pill px-4 py-2 mt-3">
+                                Acessar Painel <i class="bi bi-arrow-right ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="acesso-card">
-                    <i class="fas fa-user-cog"></i>
-                    <h3>Administrador</h3>
-                    <p>Visualize todos os relatórios de inspeção realizados.</p>
-                    <a href="administrador/index.html" class="btn btn-secondary btn-lg">
-                        <i class="fas fa-arrow-right me-2"></i>Acessar Painel
-                    </a>
-                </div>
-            </div>
         </div>
-    </div>
+    </main>
 
-    <footer class="footer mt-5">
-        <div class="container">
-            <p class="text-muted mb-0">&copy; 2025 SENAI - Sistema Kamishibai</p>
-        </div>
-    </footer>
+    <!-- Rodapé -->
+    <div id="footer"></div>
 
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/acessorios/componentes.js"></script>
 </body>
 
 </html>

@@ -1,0 +1,36 @@
+/* Fundo gradiente ocupa toda a tela */
+body {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+/* Container principal ocupa o espaço disponível e centraliza o card */
+.container {
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+/* Card do formulário com tamanho adequado */
+.card {
+  border: none;
+  border-radius: 1.25rem;
+  width: 100%;
+  max-width: 600px; /* Aumentado de 500px para 600px */
+  margin: 0 auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2) !important; /* Sombra mais suave */
+}
+
+/* Espaçamento interno do card */
+.card-body {
+  padding: 2.5rem !important; /* Aumenta o padding interno */
+}
+
+/* Rodapé fixo no final */
+#footer {
+  margin-top: auto;
+}

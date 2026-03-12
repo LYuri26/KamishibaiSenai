@@ -1,0 +1,32 @@
+/* Fundo gradiente */
+body {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.container {
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.card {
+  border: none;
+  border-radius: 1.25rem;
+  width: 100%;
+  max-width: 500px; /* Aumentado de 400px para 500px */
+  margin: 0 auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2) !important;
+}
+
+.card-body {
+  padding: 2.5rem !important;
+}
+
+#footer {
+  margin-top: auto;
+}

@@ -1,27 +1,38 @@
-// Lista de itens na ordem correta (porta, piso, carteiras A1-E8, outros)
-const itens = {
-  porta: "Porta de entrada",
-  piso: "Piso",
+// Lista de perguntas consolidadas (24 itens) - formuladas para que "sim" = ok, "não" = problema
+const perguntas = {
+  // Carteiras
+  carteiras_organizadas:
+    "As carteiras estão organizadas em fileiras regulares?",
+  carteiras_quantidade: "Há aproximadamente 40 carteiras disponíveis?",
+  carteiras_danificadas: "Todas as carteiras estão em bom estado?",
+  // Televisão
+  tv_presente: "A televisão está presente na sala?",
+  tv_integra: "A televisão está aparentemente íntegra?",
+  tv_hdmi: "O cabo HDMI está disponível e conectado?",
+  tv_cabos_organizados: "Os cabos estão organizados e sem risco de queda?",
+  tv_conectada: "A televisão está conectada à tomada?",
+  tv_cabos_ok: "Todos os cabos estão em bom estado?",
+  // Ar-condicionado
+  ar_presentes: "Os dois aparelhos de ar-condicionado estão presentes?",
+  ar_controle: "O controle remoto do ar-condicionado está disponível?",
+  ar_danos: "Os aparelhos de ar-condicionado estão em bom estado?",
+  // Quadro
+  quadro_limpo: "O quadro está limpo e utilizável?",
+  quadro_danos: "O quadro está em bom estado?",
+  quadro_fixo: "O quadro está firmemente fixado na parede?",
+  // Porta e Janelas
+  porta_funciona: "A porta abre e fecha normalmente?",
+  janelas_intactas: "As janelas estão intactas?",
+  janelas_vidros: "Todos os vidros estão inteiros?",
+  // Tomadas
+  tomadas_intactas: "As tomadas aparentes estão intactas?",
+  tomadas_fios: "Não há fios expostos?",
+  tomadas_adaptadores: "Não há adaptadores improvisados nas tomadas?",
+  // Mesa e Cadeira do Instrutor
+  mesa_firme: "A mesa do instrutor está firme e organizada?",
+  mesa_gavetas: "As gavetas da mesa estão fechadas e funcionais?",
+  cadeira_integra: "A cadeira do instrutor está em bom estado?",
 };
-
-// Adiciona carteiras: fileiras A a E, colunas 1 a 8
-const fileiras = ["A", "B", "C", "D", "E"];
-for (let f of fileiras) {
-  for (let c = 1; c <= 8; c++) {
-    itens[`carteira_${f}${c}`] = `Carteira ${f}${c}`;
-  }
-}
-
-// Outros itens
-const outros = {
-  janela: "Janela",
-  mesa_professor: "Mesa do professor",
-  cadeira_professor: "Cadeira do professor",
-  ar_condicionado: "Ar condicionado",
-  televisao: "Televisão",
-  quadro: "Quadro",
-};
-Object.assign(itens, outros);
 
 let currentQuestion = 0;
 const answers = {};
@@ -29,49 +40,56 @@ const observations = {};
 
 function renderQuestion() {
   const container = document.getElementById("questionsContainer");
-  const keys = Object.keys(itens);
+  const keys = Object.keys(perguntas);
   const key = keys[currentQuestion];
-  const label = itens[key];
+  const pergunta = perguntas[key];
 
-  let html = `<div class="card p-4">
-        <h5>${label}</h5>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="resp_${key}" id="${key}_sim" value="sim" ${answers[key] === "sim" ? "checked" : ""}>
-            <label class="form-check-label" for="${key}_sim">Sim (avariado)</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="resp_${key}" id="${key}_nao" value="nao" ${answers[key] === "nao" ? "checked" : ""}>
-            <label class="form-check-label" for="${key}_nao">Não (ok)</label>
-        </div>`;
+  let html = `<div class="question-card">
+        <h5>${pergunta}</h5>
+        <div class="btn-group w-100" role="group">`;
 
-  if (answers[key] === "sim") {
-    html += `<div class="mt-3">
-            <label class="form-label">Observação (descreva o defeito):</label>
-            <textarea class="form-control" id="obs_${key}">${observations[key] || ""}</textarea>
+  // Botão Sim (ok)
+  const simActive =
+    answers[key] === "sim" ? "active btn-primary" : "btn-outline-primary";
+  html += `<button type="button" class="btn ${simActive} btn-lg w-50" data-value="sim" data-key="${key}">Sim (ok)</button>`;
+
+  // Botão Não (problema)
+  const naoActive =
+    answers[key] === "nao" ? "active btn-secondary" : "btn-outline-secondary";
+  html += `<button type="button" class="btn ${naoActive} btn-lg w-50" data-value="nao" data-key="${key}">Não (problema)</button>`;
+
+  html += `</div>`;
+
+  // Se respondeu "não", aparece campo de observação
+  if (answers[key] === "nao") {
+    html += `<div class="observacao-field mt-3">
+            <label class="form-label fw-semibold">Observação (descreva o problema):</label>
+            <textarea class="form-control" id="obs_${key}" rows="2" placeholder="Ex: cadeira quebrada, TV sem cabo...">${observations[key] || ""}</textarea>
         </div>`;
   }
 
   html += `</div>`;
   container.innerHTML = html;
 
-  // Eventos nos radios
-  document.querySelectorAll(`input[name="resp_${key}"]`).forEach((radio) => {
-    radio.addEventListener("change", (e) => {
-      answers[key] = e.target.value;
-      if (e.target.value === "nao") {
+  // Eventos nos botões
+  document.querySelectorAll(`.btn[data-key="${key}"]`).forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const value = e.currentTarget.dataset.value;
+      answers[key] = value;
+      if (value === "sim") {
         delete observations[key];
       }
       renderQuestion();
     });
   });
 
-  if (answers[key] === "sim") {
+  if (answers[key] === "nao") {
     document.getElementById(`obs_${key}`).addEventListener("input", (e) => {
       observations[key] = e.target.value;
     });
   }
 
-  // Atualiza botões
+  // Atualiza botões de navegação
   document.getElementById("prevBtn").disabled = currentQuestion === 0;
   if (currentQuestion === keys.length - 1) {
     document.getElementById("nextBtn").classList.add("d-none");
@@ -96,7 +114,7 @@ document
   .addEventListener("click", () => changeQuestion(1));
 
 function changeQuestion(direction) {
-  const keys = Object.keys(itens);
+  const keys = Object.keys(perguntas);
   const currentKey = keys[currentQuestion];
 
   if (!answers[currentKey]) {
@@ -105,10 +123,10 @@ function changeQuestion(direction) {
   }
 
   if (
-    answers[currentKey] === "sim" &&
+    answers[currentKey] === "nao" &&
     (!observations[currentKey] || observations[currentKey].trim() === "")
   ) {
-    alert("Descreva a avaria no campo de observação.");
+    alert("Descreva o problema no campo de observação.");
     return;
   }
 
@@ -121,25 +139,26 @@ document
   .addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const keys = Object.keys(itens);
+    const keys = Object.keys(perguntas);
     for (let key of keys) {
       if (!answers[key]) {
         alert("Responda todas as perguntas antes de finalizar.");
         return;
       }
       if (
-        answers[key] === "sim" &&
+        answers[key] === "nao" &&
         (!observations[key] || observations[key].trim() === "")
       ) {
-        alert("Preencha a observação para o item com avaria.");
+        alert("Preencha a observação para o item com problema.");
         return;
       }
     }
 
+    // Monta observações finais apenas para os itens com "não"
     let observacoesFinais = "";
     for (let key of keys) {
-      if (answers[key] === "sim") {
-        observacoesFinais += `${itens[key]}: ${observations[key]}\n`;
+      if (answers[key] === "nao") {
+        observacoesFinais += `${perguntas[key]}: ${observations[key]}\n`;
       }
     }
 
@@ -160,7 +179,6 @@ document
         document.getElementById("mensagem").innerHTML =
           '<div class="alert alert-success">Inspeção salva com sucesso!</div>';
         document.getElementById("checklistForm").reset();
-        // Reinicia
         Object.keys(answers).forEach((k) => delete answers[k]);
         Object.keys(observations).forEach((k) => delete observations[k]);
         currentQuestion = 0;

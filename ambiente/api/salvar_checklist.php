@@ -1,4 +1,10 @@
 <?php
+session_start();
+if (!isset($_SESSION['usuario_id'])) {
+    http_response_code(403);
+    echo json_encode(['sucesso' => false, 'erro' => 'Acesso negado. Faça login.']);
+    exit;
+}
 date_default_timezone_set('America/Sao_Paulo');
 header('Content-Type: application/json');
 require_once __DIR__ . '/../../config/database.php';
@@ -70,12 +76,15 @@ try {
     $stmt->execute($valores);
     $idInspecao = $pdo->lastInsertId();
 
-    // Inserir na tabela relatorios (registro individual)
+    // Inserir ou atualizar na tabela relatorios
     $dataAtual = date('Y-m-d', $agora);
     $sala = '104a';
 
     $sql2 = "INSERT INTO relatorios (inspecao_id, sala, data, periodo, momento, observacoes, data_geracao)
-             VALUES (?, ?, ?, ?, ?, ?, NOW())";
+             VALUES (?, ?, ?, ?, ?, ?, NOW())
+             ON DUPLICATE KEY UPDATE
+                 observacoes = VALUES(observacoes),
+                 data_geracao = NOW()";
     $stmt2 = $pdo->prepare($sql2);
     $stmt2->execute([$idInspecao, $sala, $dataAtual, $periodoAtual, $momento, $observacoes]);
 

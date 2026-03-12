@@ -1,76 +1,68 @@
--- Criação do banco (com backticks)
+-- Criação do banco
 CREATE DATABASE IF NOT EXISTS `kamishibai-senai` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 USE `kamishibai-senai`;
 
--- Tabela da sala 104a (com carteiras A1 a E8)
+-- Tabela da sala 104a com perguntas consolidadas (formulação positiva)
 CREATE TABLE IF NOT EXISTS `104a` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     `nome` VARCHAR(100) NOT NULL,
     `data` DATETIME NOT NULL,
     `momento` ENUM('inicio', 'fim') NOT NULL,
-    `porta` ENUM('sim', 'nao') NOT NULL,
-    `piso` ENUM('sim', 'nao') NOT NULL,
-    `carteira_A1` ENUM('sim', 'nao') NOT NULL,
-    `carteira_A2` ENUM('sim', 'nao') NOT NULL,
-    `carteira_A3` ENUM('sim', 'nao') NOT NULL,
-    `carteira_A4` ENUM('sim', 'nao') NOT NULL,
-    `carteira_A5` ENUM('sim', 'nao') NOT NULL,
-    `carteira_A6` ENUM('sim', 'nao') NOT NULL,
-    `carteira_A7` ENUM('sim', 'nao') NOT NULL,
-    `carteira_A8` ENUM('sim', 'nao') NOT NULL,
-    `carteira_B1` ENUM('sim', 'nao') NOT NULL,
-    `carteira_B2` ENUM('sim', 'nao') NOT NULL,
-    `carteira_B3` ENUM('sim', 'nao') NOT NULL,
-    `carteira_B4` ENUM('sim', 'nao') NOT NULL,
-    `carteira_B5` ENUM('sim', 'nao') NOT NULL,
-    `carteira_B6` ENUM('sim', 'nao') NOT NULL,
-    `carteira_B7` ENUM('sim', 'nao') NOT NULL,
-    `carteira_B8` ENUM('sim', 'nao') NOT NULL,
-    `carteira_C1` ENUM('sim', 'nao') NOT NULL,
-    `carteira_C2` ENUM('sim', 'nao') NOT NULL,
-    `carteira_C3` ENUM('sim', 'nao') NOT NULL,
-    `carteira_C4` ENUM('sim', 'nao') NOT NULL,
-    `carteira_C5` ENUM('sim', 'nao') NOT NULL,
-    `carteira_C6` ENUM('sim', 'nao') NOT NULL,
-    `carteira_C7` ENUM('sim', 'nao') NOT NULL,
-    `carteira_C8` ENUM('sim', 'nao') NOT NULL,
-    `carteira_D1` ENUM('sim', 'nao') NOT NULL,
-    `carteira_D2` ENUM('sim', 'nao') NOT NULL,
-    `carteira_D3` ENUM('sim', 'nao') NOT NULL,
-    `carteira_D4` ENUM('sim', 'nao') NOT NULL,
-    `carteira_D5` ENUM('sim', 'nao') NOT NULL,
-    `carteira_D6` ENUM('sim', 'nao') NOT NULL,
-    `carteira_D7` ENUM('sim', 'nao') NOT NULL,
-    `carteira_D8` ENUM('sim', 'nao') NOT NULL,
-    `carteira_E1` ENUM('sim', 'nao') NOT NULL,
-    `carteira_E2` ENUM('sim', 'nao') NOT NULL,
-    `carteira_E3` ENUM('sim', 'nao') NOT NULL,
-    `carteira_E4` ENUM('sim', 'nao') NOT NULL,
-    `carteira_E5` ENUM('sim', 'nao') NOT NULL,
-    `carteira_E6` ENUM('sim', 'nao') NOT NULL,
-    `carteira_E7` ENUM('sim', 'nao') NOT NULL,
-    `carteira_E8` ENUM('sim', 'nao') NOT NULL,
-    `janela` ENUM('sim', 'nao') NOT NULL,
-    `mesa_professor` ENUM('sim', 'nao') NOT NULL,
-    `cadeira_professor` ENUM('sim', 'nao') NOT NULL,
-    `ar_condicionado` ENUM('sim', 'nao') NOT NULL,
-    `televisao` ENUM('sim', 'nao') NOT NULL,
-    `quadro` ENUM('sim', 'nao') NOT NULL,
-    `observacoes` TEXT
+    `observacoes` TEXT,
+    -- Carteiras
+    `carteiras_organizadas` ENUM('sim', 'nao') NOT NULL,
+    `carteiras_quantidade` ENUM('sim', 'nao') NOT NULL,
+    `carteiras_danificadas` ENUM('sim', 'nao') NOT NULL,
+    -- Televisão
+    `tv_presente` ENUM('sim', 'nao') NOT NULL,
+    `tv_integra` ENUM('sim', 'nao') NOT NULL,
+    `tv_hdmi` ENUM('sim', 'nao') NOT NULL,
+    `tv_cabos_organizados` ENUM('sim', 'nao') NOT NULL,
+    `tv_conectada` ENUM('sim', 'nao') NOT NULL,
+    `tv_cabos_ok` ENUM('sim', 'nao') NOT NULL,
+    -- Ar-condicionado
+    `ar_presentes` ENUM('sim', 'nao') NOT NULL,
+    `ar_controle` ENUM('sim', 'nao') NOT NULL,
+    `ar_danos` ENUM('sim', 'nao') NOT NULL,
+    -- Quadro
+    `quadro_limpo` ENUM('sim', 'nao') NOT NULL,
+    `quadro_danos` ENUM('sim', 'nao') NOT NULL,
+    `quadro_fixo` ENUM('sim', 'nao') NOT NULL,
+    -- Porta e Janelas
+    `porta_funciona` ENUM('sim', 'nao') NOT NULL,
+    `janelas_intactas` ENUM('sim', 'nao') NOT NULL,
+    `janelas_vidros` ENUM('sim', 'nao') NOT NULL,
+    -- Tomadas
+    `tomadas_intactas` ENUM('sim', 'nao') NOT NULL,
+    `tomadas_fios` ENUM('sim', 'nao') NOT NULL,
+    `tomadas_adaptadores` ENUM('sim', 'nao') NOT NULL,
+    -- Mesa e Cadeira do Instrutor
+    `mesa_firme` ENUM('sim', 'nao') NOT NULL,
+    `mesa_gavetas` ENUM('sim', 'nao') NOT NULL,
+    `cadeira_integra` ENUM('sim', 'nao') NOT NULL
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
--- Tabela de relatórios consolidados
+-- Tabela de relatórios
 CREATE TABLE IF NOT EXISTS `relatorios` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     `inspecao_id` INT NOT NULL,
-    -- ID da inspeção na tabela da sala
     `sala` VARCHAR(50) NOT NULL,
     `data` DATE NOT NULL,
     `periodo` ENUM('manha', 'tarde', 'noite') NOT NULL,
     `momento` ENUM('inicio', 'fim') NOT NULL,
-    -- início ou fim
     `observacoes` TEXT,
     `data_geracao` DATETIME NOT NULL,
-    UNIQUE KEY `unique_inspecao` (`inspecao_id`, `sala`) -- garante que cada inspeção apareça uma única vez
+    UNIQUE KEY `unique_inspecao` (`inspecao_id`, `sala`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+-- Tabela de usuários
+CREATE TABLE IF NOT EXISTS `usuarios` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `nome` VARCHAR(100) NOT NULL,
+    `sobrenome` VARCHAR(100) NOT NULL,
+    `email` VARCHAR(255) UNIQUE NOT NULL,
+    `cargo` ENUM('instrutor', 'gerencia') NOT NULL,
+    `senha` VARCHAR(255) NOT NULL,
+    `data_criacao` DATETIME NOT NULL
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
