@@ -10,20 +10,30 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['usuario_cargo'] !== 'gerencia'
 }
 
 require_once __DIR__ . '/../../config/database.php';
-header('Content-Type: application/json');
-require_once __DIR__ . '/../../config/database.php';
 
 $id = $_GET['id'] ?? 0;
-if (!$id) {
-    echo json_encode(['erro' => 'ID não fornecido']);
+$sala = $_GET['sala'] ?? '';
+
+if (!$id || !$sala) {
+    echo json_encode(['erro' => 'ID ou sala não fornecidos']);
     exit;
 }
 
-$stmt = $pdo->prepare("SELECT * FROM `104a` WHERE id = ?");
+// Lista branca de salas permitidas
+$salas_permitidas = ['104a', '103d'];
+if (!in_array($sala, $salas_permitidas)) {
+    echo json_encode(['erro' => 'Sala inválida']);
+    exit;
+}
+
+$tabela = "`$sala`";
+$stmt = $pdo->prepare("SELECT * FROM $tabela WHERE id = ?");
 $stmt->execute([$id]);
 $inspecao = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if ($inspecao) {
+    // Adiciona a sala ao resultado para uso no frontend
+    $inspecao['sala'] = $sala;
     echo json_encode($inspecao);
 } else {
     echo json_encode(['erro' => 'Inspeção não encontrada']);

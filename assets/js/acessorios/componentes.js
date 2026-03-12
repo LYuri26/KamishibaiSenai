@@ -12,6 +12,8 @@ async function carregarComponente(url, elementoId) {
 
 // Carregar cabeçalho e rodapé quando a página carregar
 document.addEventListener("DOMContentLoaded", () => {
-  carregarComponente("/acessorios/header.html", "header");
-  carregarComponente("/acessorios/footer.html", "footer");
+  // Usa caminho absoluto com a pasta base do projeto
+  const basePath = "/KamishibaiSenai"; // Ajuste se necessário
+  carregarComponente(basePath + "/acessorios/header.html", "header");
+  carregarComponente(basePath + "/acessorios/footer.html", "footer");
 });
