@@ -20,13 +20,14 @@ $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 if ($usuario && password_verify($senha, $usuario['senha'])) {
     $_SESSION['usuario_id'] = $usuario['id'];
     $_SESSION['usuario_nome'] = $usuario['nome'];
+    $_SESSION['usuario_sobrenome'] = $usuario['sobrenome'];
     $_SESSION['usuario_cargo'] = $usuario['cargo'];
     $_SESSION['usuario_email'] = $usuario['email'];
 
     echo json_encode([
         'sucesso' => true,
         'cargo' => $usuario['cargo'],
-        'nome' => $usuario['nome']
+        'nome' => $usuario['nome'] . ' ' . $usuario['sobrenome']
     ]);
 } else {
     echo json_encode(['sucesso' => false, 'erro' => 'E-mail ou senha inválidos']);

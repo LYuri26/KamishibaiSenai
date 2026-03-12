@@ -38,6 +38,38 @@ let currentQuestion = 0;
 const answers = {};
 const observations = {};
 
+// Função para buscar dados do usuário logado
+async function carregarDadosUsuario() {
+  try {
+    const response = await fetch("../acesso/api/dados_usuario.php");
+    const data = await response.json();
+    if (data.erro) return null;
+    return data;
+  } catch (error) {
+    console.error("Erro ao buscar dados do usuário:", error);
+    return null;
+  }
+}
+
+// Preencher nome do instrutor automaticamente
+async function preencherNomeInstrutor() {
+  const nomeInput = document.getElementById("nome");
+  if (!nomeInput) return;
+
+  const dados = await carregarDadosUsuario();
+  if (dados && dados.nome) {
+    nomeInput.value =
+      dados.nome + (dados.sobrenome ? " " + dados.sobrenome : "");
+    nomeInput.disabled = true; // Bloqueia edição (opcional)
+  } else {
+    nomeInput.disabled = false;
+    nomeInput.placeholder = "Digite seu nome completo (não autenticado)";
+  }
+}
+
+// Chama a função após o carregamento da página
+document.addEventListener("DOMContentLoaded", preencherNomeInstrutor);
+
 function renderQuestion() {
   const container = document.getElementById("questionsContainer");
   const keys = Object.keys(perguntas);
