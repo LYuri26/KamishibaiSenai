@@ -24,9 +24,44 @@ const perguntas = {
   fios_expostos: "Não há fios expostos ou improvisações?",
 };
 
+// Identificador da sala
+const sala = "103d";
+
 let currentQuestion = 0;
 const answers = {};
 const observations = {};
+
+// Função para buscar dados do usuário logado
+async function carregarDadosUsuario() {
+  try {
+    const response = await fetch("../acesso/api/dados_usuario.php");
+    const data = await response.json();
+    if (data.erro) return null;
+    return data;
+  } catch (error) {
+    console.error("Erro ao buscar dados do usuário:", error);
+    return null;
+  }
+}
+
+// Preencher nome do instrutor automaticamente e desabilitar edição
+async function preencherNomeInstrutor() {
+  const nomeInput = document.getElementById("nome");
+  if (!nomeInput) return;
+
+  const dados = await carregarDadosUsuario();
+  if (dados && dados.nome) {
+    nomeInput.value =
+      dados.nome + (dados.sobrenome ? " " + dados.sobrenome : "");
+    nomeInput.disabled = true;
+  } else {
+    nomeInput.disabled = false;
+    nomeInput.placeholder = "Digite seu nome completo (não autenticado)";
+  }
+}
+
+// Inicializa preenchimento do nome
+document.addEventListener("DOMContentLoaded", preencherNomeInstrutor);
 
 function renderQuestion() {
   const container = document.getElementById("questionsContainer");
@@ -149,6 +184,7 @@ document
       nome: document.getElementById("nome").value,
       respostas: answers,
       observacoes: observacoesFinais,
+      sala: sala, // CAMPO ADICIONADO
     };
 
     try {
@@ -159,13 +195,7 @@ document
       });
       const result = await response.json();
       if (result.sucesso) {
-        document.getElementById("mensagem").innerHTML =
-          '<div class="alert alert-success">Inspeção salva com sucesso!</div>';
-        document.getElementById("checklistForm").reset();
-        Object.keys(answers).forEach((k) => delete answers[k]);
-        Object.keys(observations).forEach((k) => delete observations[k]);
-        currentQuestion = 0;
-        renderQuestion();
+        window.location.href = "../acessorios/encerramento.html";
       } else {
         document.getElementById("mensagem").innerHTML =
           `<div class="alert alert-danger">Erro: ${result.erro}</div>`;
@@ -176,4 +206,5 @@ document
     }
   });
 
+// Inicialização
 renderQuestion();

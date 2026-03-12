@@ -34,6 +34,9 @@ const perguntas = {
   cadeira_integra: "A cadeira do instrutor está em bom estado?",
 };
 
+// Identificador da sala (obrigatório para o PHP)
+const sala = "104a";
+
 let currentQuestion = 0;
 const answers = {};
 const observations = {};
@@ -51,7 +54,7 @@ async function carregarDadosUsuario() {
   }
 }
 
-// Preencher nome do instrutor automaticamente
+// Preencher nome do instrutor automaticamente e desabilitar edição
 async function preencherNomeInstrutor() {
   const nomeInput = document.getElementById("nome");
   if (!nomeInput) return;
@@ -60,7 +63,7 @@ async function preencherNomeInstrutor() {
   if (dados && dados.nome) {
     nomeInput.value =
       dados.nome + (dados.sobrenome ? " " + dados.sobrenome : "");
-    nomeInput.disabled = true; // Bloqueia edição (opcional)
+    nomeInput.disabled = true;
   } else {
     nomeInput.disabled = false;
     nomeInput.placeholder = "Digite seu nome completo (não autenticado)";
@@ -198,6 +201,7 @@ document
       nome: document.getElementById("nome").value,
       respostas: answers,
       observacoes: observacoesFinais,
+      sala: sala, // CAMPO ADICIONADO
     };
 
     try {
@@ -208,13 +212,8 @@ document
       });
       const result = await response.json();
       if (result.sucesso) {
-        document.getElementById("mensagem").innerHTML =
-          '<div class="alert alert-success">Inspeção salva com sucesso!</div>';
-        document.getElementById("checklistForm").reset();
-        Object.keys(answers).forEach((k) => delete answers[k]);
-        Object.keys(observations).forEach((k) => delete observations[k]);
-        currentQuestion = 0;
-        renderQuestion();
+        // Redireciona para página de encerramento
+        window.location.href = "../acessorios/encerramento.html";
       } else {
         document.getElementById("mensagem").innerHTML =
           `<div class="alert alert-danger">Erro: ${result.erro}</div>`;
@@ -225,4 +224,5 @@ document
     }
   });
 
+// Inicialização
 renderQuestion();

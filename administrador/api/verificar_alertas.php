@@ -10,8 +10,6 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['usuario_cargo'] !== 'gerencia'
 }
 
 require_once __DIR__ . '/../../config/database.php';
-header('Content-Type: application/json');
-require_once __DIR__ . '/../../config/database.php';
 
 $periodos = [
     'manhã' => ['inicio' => '08:00', 'fim' => '11:30'],
@@ -22,27 +20,32 @@ $periodos = [
 $hoje = date('Y-m-d');
 $agora = time();
 $alertas = [];
-$sala = '104a';
 
-foreach ($periodos as $nomePeriodo => $horarios) {
-    $inicioPeriodo = strtotime("$hoje {$horarios['inicio']}");
-    $fimPeriodo = strtotime("$hoje {$horarios['fim']}");
+// Lista de todas as salas que devem ser monitoradas
+$salas = ['104a', '103d']; // Expanda conforme necessário
 
-    if ($fimPeriodo < $agora) {
-        $inicioStr = date('Y-m-d H:i:s', $inicioPeriodo);
-        $fimStr = date('Y-m-d H:i:s', $fimPeriodo);
+foreach ($salas as $sala) {
+    foreach ($periodos as $nomePeriodo => $horarios) {
+        $inicioPeriodo = strtotime("$hoje {$horarios['inicio']}");
+        $fimPeriodo = strtotime("$hoje {$horarios['fim']}");
 
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM `$sala` WHERE data BETWEEN ? AND ?");
-        $stmt->execute([$inicioStr, $fimStr]);
-        $count = $stmt->fetchColumn();
+        // Apenas períodos já encerrados
+        if ($fimPeriodo < $agora) {
+            $inicioStr = date('Y-m-d H:i:s', $inicioPeriodo);
+            $fimStr = date('Y-m-d H:i:s', $fimPeriodo);
 
-        if ($count == 0) {
-            $alertas[] = [
-                'sala' => $sala,
-                'periodo' => $nomePeriodo,
-                'data' => $hoje,
-                'mensagem' => "Sala $sala não foi inspecionada no período da $nomePeriodo (encerrado às {$horarios['fim']})."
-            ];
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM `$sala` WHERE data BETWEEN ? AND ?");
+            $stmt->execute([$inicioStr, $fimStr]);
+            $count = $stmt->fetchColumn();
+
+            if ($count == 0) {
+                $alertas[] = [
+                    'sala' => $sala,
+                    'periodo' => $nomePeriodo,
+                    'data' => $hoje,
+                    'mensagem' => "Sala $sala não foi inspecionada no período da $nomePeriodo (encerrado às {$horarios['fim']})."
+                ];
+            }
         }
     }
 }
