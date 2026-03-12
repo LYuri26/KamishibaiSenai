@@ -1,0 +1,258 @@
+/* ===== ESTILOS ESPECÍFICOS PARA LABORATÓRIO 103d ===== */
+
+/* Card da pergunta (gerado dinamicamente) */
+.question-card {
+  background-color: #ffffff;
+  border-radius: 1.5rem;
+  padding: 1.5rem 1rem;
+  margin: 1rem 0;
+  border: 1px solid #e9eef2;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  animation: fadeSlide 0.3s ease-out;
+}
+
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.question-card h5 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 1.2rem;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 0.75rem;
+}
+
+/* Botões de escolha (Sim/Não) */
+.btn-group {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.btn-group .btn {
+  font-size: 1.1rem;
+  padding: 0.75rem 0.5rem;
+  border-radius: 2rem !important;
+  border-width: 2px;
+  font-weight: 600;
+  transition: all 0.2s;
+  flex: 1;
+}
+
+.btn-group .btn.active {
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Cores para botões de resposta */
+.btn-group .btn-primary.active {
+  background-color: #10b981; /* verde para ok */
+  border-color: #059669;
+}
+
+.btn-group .btn-secondary.active {
+  background-color: #dc2626; /* vermelho para problema */
+  border-color: #b91c1c;
+}
+
+/* Observação */
+.observacao-field {
+  margin-top: 1.2rem;
+  padding: 1rem;
+  background-color: #fffbeb;
+  border-left: 4px solid #fbbf24;
+  border-radius: 1rem;
+}
+
+.observacao-field label {
+  font-weight: 600;
+  color: #92400e;
+  margin-bottom: 0.5rem;
+  display: block;
+  font-size: 0.95rem;
+}
+
+.observacao-field textarea {
+  width: 100%;
+  padding: 0.875rem;
+  border: 1px solid #fde68a;
+  border-radius: 1rem;
+  background-color: white;
+  resize: vertical;
+  min-height: 100px;
+  font-size: 1rem;
+}
+
+.observacao-field textarea:focus {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+  outline: none;
+}
+
+/* Barra de progresso mais grossa no mobile */
+.progress {
+  height: 1rem !important;
+  border-radius: 2rem;
+  background-color: #f1f5f9;
+}
+
+.progress-bar {
+  background-color: #0d6efd;
+  border-radius: 2rem;
+  transition: width 0.3s ease;
+}
+
+/* Botões de navegação */
+.navigation-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.navigation-buttons button {
+  font-size: 1.1rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 2rem !important;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.navigation-buttons button:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Campo de nome do instrutor */
+#nome {
+  border: 2px solid #e9eef2;
+  transition: all 0.2s;
+}
+
+#nome:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+}
+
+/* Container principal do formulário */
+#checklistForm {
+  background-color: #ffffff;
+  border-radius: 2rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Mensagens de feedback */
+#mensagem {
+  border-radius: 1rem;
+  padding: 0.5rem;
+}
+
+.alert {
+  border-radius: 1rem;
+  border: none;
+  padding: 1rem;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+  .question-card {
+    padding: 1.25rem 0.75rem;
+  }
+
+  .btn-group .btn {
+    font-size: 1rem;
+    padding: 0.7rem 0.25rem;
+  }
+
+  .navigation-buttons {
+    flex-direction: column;
+  }
+
+  .navigation-buttons button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .question-card {
+    padding: 1rem 0.75rem;
+    margin: 0.75rem 0;
+  }
+
+  .question-card h5 {
+    font-size: 1.1rem;
+  }
+
+  .btn-group .btn {
+    font-size: 0.95rem;
+    padding: 0.6rem 0.25rem;
+  }
+
+  .observacao-field {
+    padding: 0.875rem;
+  }
+
+  .observacao-field textarea {
+    min-height: 80px;
+    font-size: 0.95rem;
+  }
+
+  #checklistForm {
+    padding: 1.25rem !important;
+  }
+}
+
+/* Animações adicionais */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.btn-success:not(:disabled):hover {
+  animation: pulse 0.5s ease;
+}
+
+/* Estilo para o botão de logout */
+.btn-outline-danger {
+  border-width: 2px;
+}
+
+.btn-outline-danger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(220, 38, 38, 0.2);
+}
+
+/* Ajustes para dispositivos muito pequenos */
+@media (max-width: 360px) {
+  .question-card {
+    padding: 0.875rem 0.5rem;
+  }
+
+  .btn-group {
+    gap: 0.25rem;
+  }
+
+  .btn-group .btn {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.1rem;
+  }
+
+  .observacao-field label {
+    font-size: 0.85rem;
+  }
+}

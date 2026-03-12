@@ -1,24 +1,27 @@
 <?php
-session_start();
-if (!isset($_SESSION['usuario_id'])) {
-    http_response_code(403);
-    echo json_encode(['sucesso' => false, 'erro' => 'Acesso negado. Faça login.']);
-    exit;
-}
 date_default_timezone_set('America/Sao_Paulo');
 header('Content-Type: application/json');
 require_once __DIR__ . '/../../config/database.php';
 
+// Lista branca de salas permitidas (evita injeção de tabelas)
+$salas_permitidas = ['104a', '103d']; // Adicione aqui novas salas conforme necessário
+
 $input = json_decode(file_get_contents('php://input'), true);
 
-if (!$input || !isset($input['nome'], $input['respostas'], $input['observacoes'])) {
-    echo json_encode(['sucesso' => false, 'erro' => 'Dados incompletos']);
+if (!$input || !isset($input['nome'], $input['respostas'], $input['observacoes'], $input['sala'])) {
+    echo json_encode(['sucesso' => false, 'erro' => 'Dados incompletos (faltam nome, respostas, observacoes ou sala)']);
     exit;
 }
 
 $nome = trim($input['nome']);
 $respostas = $input['respostas'];
 $observacoes = trim($input['observacoes']);
+$sala = trim($input['sala']);
+
+if (!in_array($sala, $salas_permitidas)) {
+    echo json_encode(['sucesso' => false, 'erro' => 'Sala não permitida']);
+    exit;
+}
 
 if (empty($nome) || empty($respostas)) {
     echo json_encode(['sucesso' => false, 'erro' => 'Nome e respostas são obrigatórios']);
@@ -53,7 +56,7 @@ $periodoAtual = getPeriodo($minutosTotais, $periodos);
 $meio = ($periodos[$periodoAtual]['inicio'] + $periodos[$periodoAtual]['fim']) / 2;
 $momento = ($minutosTotais > $meio) ? 'fim' : 'inicio';
 
-// Inserir na tabela 104a
+// Monta a consulta dinâmica para a sala informada
 $colunas = ['nome', 'data', 'momento', 'observacoes'];
 $placeholders = [':nome', ':data', ':momento', ':observacoes'];
 $valores = [
@@ -69,16 +72,17 @@ foreach ($respostas as $item => $resposta) {
     $valores[":$item"] = $resposta;
 }
 
-$sql = "INSERT INTO `104a` (" . implode(', ', $colunas) . ") VALUES (" . implode(', ', $placeholders) . ")";
+// Escapa o nome da tabela com backticks
+$tabela = "`$sala`";
+$sql = "INSERT INTO $tabela (" . implode(', ', $colunas) . ") VALUES (" . implode(', ', $placeholders) . ")";
 $stmt = $pdo->prepare($sql);
 
 try {
     $stmt->execute($valores);
     $idInspecao = $pdo->lastInsertId();
 
-    // Inserir ou atualizar na tabela relatorios
+    // Insere ou atualiza na tabela relatorios
     $dataAtual = date('Y-m-d', $agora);
-    $sala = '104a';
 
     $sql2 = "INSERT INTO relatorios (inspecao_id, sala, data, periodo, momento, observacoes, data_geracao)
              VALUES (?, ?, ?, ?, ?, ?, NOW())

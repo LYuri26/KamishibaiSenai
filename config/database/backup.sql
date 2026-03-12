@@ -43,6 +43,36 @@ CREATE TABLE IF NOT EXISTS `104a` (
     `cadeira_integra` ENUM('sim', 'nao') NOT NULL
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
+-- Tabela do laboratório 103d
+CREATE TABLE IF NOT EXISTS `103d` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `nome` VARCHAR(100) NOT NULL,
+    `data` DATETIME NOT NULL,
+    `momento` ENUM('inicio', 'fim') NOT NULL,
+    `observacoes` TEXT,
+    -- Computadores e periféricos
+    `computadores_ligam` ENUM('sim', 'nao') NOT NULL,
+    `mouses_funcionam` ENUM('sim', 'nao') NOT NULL,
+    `teclados_funcionam` ENUM('sim', 'nao') NOT NULL,
+    `monitores_funcionam` ENUM('sim', 'nao') NOT NULL,
+    `gabinetes_estado` ENUM('sim', 'nao') NOT NULL,
+    `cadeiras_baias` ENUM('sim', 'nao') NOT NULL,
+    -- Ar condicionado
+    `ar_condicionado_funciona` ENUM('sim', 'nao') NOT NULL,
+    -- Quadro
+    `quadro_limpo` ENUM('sim', 'nao') NOT NULL,
+    -- Mesa e cadeira do instrutor
+    `mesa_instrutor` ENUM('sim', 'nao') NOT NULL,
+    `cadeira_instrutor` ENUM('sim', 'nao') NOT NULL,
+    -- Portão
+    `portao_funciona` ENUM('sim', 'nao') NOT NULL,
+    -- Janelas
+    `janelas_intactas` ENUM('sim', 'nao') NOT NULL,
+    -- Tomadas
+    `tomadas_intactas` ENUM('sim', 'nao') NOT NULL,
+    `fios_expostos` ENUM('sim', 'nao') NOT NULL
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
 -- Tabela de relatórios
 CREATE TABLE IF NOT EXISTS `relatorios` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,

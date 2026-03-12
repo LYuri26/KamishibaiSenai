@@ -48,6 +48,39 @@ $colunas = [
 $sql104a = "CREATE TABLE IF NOT EXISTS `104a` (" . implode(', ', $colunas) . ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
 $pdo->exec($sql104a);
 
+// --- Tabela do laboratório 103d ---
+$colunas103d = [
+    'id INT AUTO_INCREMENT PRIMARY KEY',
+    'nome VARCHAR(100) NOT NULL',
+    'data DATETIME NOT NULL',
+    'momento ENUM("inicio","fim") NOT NULL',
+    'observacoes TEXT',
+    // Computadores e periféricos
+    'computadores_ligam ENUM("sim","nao") NOT NULL',
+    'mouses_funcionam ENUM("sim","nao") NOT NULL',
+    'teclados_funcionam ENUM("sim","nao") NOT NULL',
+    'monitores_funcionam ENUM("sim","nao") NOT NULL',
+    'gabinetes_estado ENUM("sim","nao") NOT NULL',
+    'cadeiras_baias ENUM("sim","nao") NOT NULL',
+    // Ar condicionado
+    'ar_condicionado_funciona ENUM("sim","nao") NOT NULL',
+    // Quadro
+    'quadro_limpo ENUM("sim","nao") NOT NULL',
+    // Mesa e cadeira do instrutor
+    'mesa_instrutor ENUM("sim","nao") NOT NULL',
+    'cadeira_instrutor ENUM("sim","nao") NOT NULL',
+    // Portão
+    'portao_funciona ENUM("sim","nao") NOT NULL',
+    // Janelas
+    'janelas_intactas ENUM("sim","nao") NOT NULL',
+    // Tomadas
+    'tomadas_intactas ENUM("sim","nao") NOT NULL',
+    'fios_expostos ENUM("sim","nao") NOT NULL'
+];
+
+$sql103d = "CREATE TABLE IF NOT EXISTS `103d` (" . implode(', ', $colunas103d) . ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+$pdo->exec($sql103d);
+
 // --- Tabela de relatórios ---
 $sqlRelatorios = "CREATE TABLE IF NOT EXISTS `relatorios` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -74,14 +107,7 @@ $sqlUsuarios = "CREATE TABLE IF NOT EXISTS `usuarios` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
 $pdo->exec($sqlUsuarios);
 
-// --- Inserir usuário admin padrão (se não houver nenhum) ---
-$stmt = $pdo->query("SELECT COUNT(*) FROM usuarios");
-if ($stmt->fetchColumn() == 0) {
-    $senhaHash = password_hash('senai123', PASSWORD_DEFAULT);
-    $stmt = $pdo->prepare("INSERT INTO usuarios (nome, sobrenome, email, cargo, senha, data_criacao) VALUES (?, ?, ?, ?, ?, NOW())");
-    $stmt->execute(['Admin', 'Sistema', 'admin@fiemg.com.br', 'gerencia', $senhaHash]);
-    echo "Usuário admin criado (email: admin@fiemg.com.br / senha: senai123)<br>";
-}
+
 
 echo "Banco de dados e tabelas criados com sucesso!";
 ?>
