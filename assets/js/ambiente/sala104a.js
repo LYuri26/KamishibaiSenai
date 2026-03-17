@@ -1,71 +1,58 @@
-// Lista de perguntas consolidadas (24 itens)
+// Lista de perguntas (24 itens)
 const perguntas = {
   carteiras_organizadas:
     "As carteiras estão organizadas em fileiras regulares?",
   carteiras_quantidade: "Há aproximadamente 40 carteiras disponíveis?",
   carteiras_danificadas:
     "Todas as carteiras estão em bom estado? Ou existe alguma avaria?",
-
   tv_presente: "A televisão está presente na sala?",
   tv_integra: "A televisão está em bom estado?",
   tv_hdmi: "O cabo HDMI está disponível e conectado?",
   tv_cabos_organizados: "Os cabos estão organizados e sem risco de queda?",
   tv_conectada: "A televisão está conectada à tomada?",
   tv_cabos_ok: "Todos os cabos necessários estão na sala e em bom estado?",
-
   ar_presentes: "Os dois aparelhos de ar-condicionado estão presentes?",
   ar_controle: "O controle remoto do ar-condicionado está disponível?",
   ar_danos: "Os aparelhos de ar-condicionado estão em bom estado?",
-
   quadro_limpo: "O quadro está limpo?",
   quadro_danos: "O quadro está em bom estado (sem riscos ou manchas)?",
   quadro_fixo: "O quadro está no local correto e firmemente fixado?",
-
   porta_funciona: "A porta abre e fecha normalmente?",
   janelas_intactas: "As janelas estão intactas (sem avarias na estrutura)?",
   janelas_vidros: "Todos os vidros das janelas estão inteiros?",
-
   tomadas_intactas: "As tomadas aparentes estão intactas?",
   tomadas_fios: "Não há fios expostos?",
   tomadas_adaptadores: "Não há adaptadores improvisados nas tomadas?",
-
   mesa_firme: "A mesa do instrutor está firme e organizada?",
   mesa_gavetas: "As gavetas da mesa estão fechadas e funcionais?",
   cadeira_integra: "A cadeira do instrutor está em bom estado?",
 };
 
 const sala = "104a";
-
 let currentQuestion = 0;
 const answers = {};
 const observations = {};
-
 const etapaProcedimento = Object.keys(perguntas).length;
 
-// Buscar dados do usuário
 async function carregarDadosUsuario() {
   try {
     const response = await fetch("../acesso/api/dados_usuario.php");
     const data = await response.json();
-    if (data.erro) return null;
-    return data;
+    return data.erro ? null : data;
   } catch (error) {
     console.error("Erro ao buscar dados do usuário:", error);
     return null;
   }
 }
 
-// Preencher nome automaticamente
 async function preencherNomeInstrutor() {
   const nomeInput = document.getElementById("nome");
   if (!nomeInput) return;
 
   const dados = await carregarDadosUsuario();
-
-  if (dados && dados.nome) {
+  if (dados?.nome) {
     nomeInput.value =
       dados.nome + (dados.sobrenome ? " " + dados.sobrenome : "");
-
     nomeInput.disabled = true;
   } else {
     nomeInput.disabled = false;
@@ -73,139 +60,134 @@ async function preencherNomeInstrutor() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", preencherNomeInstrutor);
+function avancarPergunta() {
+  const keys = Object.keys(perguntas);
+  if (currentQuestion >= keys.length) return;
 
-// Renderização da pergunta
+  const currentKey = keys[currentQuestion];
+  if (!answers[currentKey]) {
+    alert("Por favor, responda a pergunta antes de prosseguir.");
+    return false;
+  }
+
+  if (answers[currentKey] === "nao" && !observations[currentKey]?.trim()) {
+    alert("Descreva o problema no campo de observação.");
+    return false;
+  }
+
+  currentQuestion++;
+  renderQuestion();
+  return true;
+}
+
 function renderQuestion() {
   const container = document.getElementById("questionsContainer");
   const keys = Object.keys(perguntas);
 
-  // Etapa final: procedimento
   if (currentQuestion === etapaProcedimento) {
     container.innerHTML = `
-      <div class="question-card">
-
-        <h5>Procedimento Operacional da Sala</h5>
-
+      <div class="question-card fade-in">
+        <h5>📋 Procedimento Operacional da Sala</h5>
         <p><strong>Orientações conforme manual do aluno.</strong></p>
-
         <hr>
-
-        <h6>Vestimentas e conduta</h6>
+        <h6>👕 Vestimentas e conduta</h6>
         <ul>
           <li>Utilizar vestimenta adequada ao ambiente educacional.</li>
           <li>Manter postura adequada durante as atividades.</li>
           <li>Seguir orientações do instrutor responsável.</li>
         </ul>
-
-        <h6>Uso correto do ambiente</h6>
+        <h6>📚 Uso correto do ambiente</h6>
         <ul>
           <li>Utilizar equipamentos apenas para atividades do curso.</li>
           <li>Não consumir alimentos ou bebidas.</li>
           <li>Não danificar mobiliário ou equipamentos.</li>
         </ul>
-
-        <h6>Segurança e preservação</h6>
+        <h6>🔒 Segurança e preservação</h6>
         <ul>
           <li>Comunicar imediatamente qualquer irregularidade.</li>
           <li>Não manipular instalações elétricas.</li>
         </ul>
-
-        <h6>Encerramento da atividade</h6>
+        <h6>🔚 Encerramento da atividade</h6>
         <ul>
           <li>Organizar carteiras e materiais utilizados.</li>
           <li>Desligar equipamentos utilizados.</li>
           <li>Deixar o ambiente pronto para a próxima turma.</li>
         </ul>
-
       </div>
     `;
-
     document.getElementById("prevBtn").disabled = false;
     document.getElementById("nextBtn").classList.add("d-none");
     document.getElementById("submitBtn").classList.remove("d-none");
-
     document.getElementById("progressBar").style.width = "100%";
     document.getElementById("progressBar").textContent = "100%";
-
     return;
   }
 
   const key = keys[currentQuestion];
   const pergunta = perguntas[key];
+  const temObservacao = answers[key] === "nao";
 
-  let html = `<div class="question-card">
-        <h5>${pergunta}</h5>
-        <div class="btn-group w-100" role="group">`;
+  let html = `
+    <div class="question-card fade-in">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0">${pergunta}</h5>
+        <span class="badge bg-primary rounded-pill">${currentQuestion + 1}/${keys.length}</span>
+      </div>
+      <div class="btn-group w-100" role="group">
+  `;
 
   const simActive =
     answers[key] === "sim" ? "active btn-primary" : "btn-outline-primary";
-
-  html += `<button type="button" class="btn ${simActive} btn-lg w-50"
-           data-value="sim" data-key="${key}">Sim (ok)</button>`;
+  html += `<button type="button" class="btn ${simActive} btn-lg w-50" data-value="sim" data-key="${key}">✅ Sim (ok)</button>`;
 
   const naoActive =
     answers[key] === "nao" ? "active btn-secondary" : "btn-outline-secondary";
-
-  html += `<button type="button" class="btn ${naoActive} btn-lg w-50"
-           data-value="nao" data-key="${key}">Não (problema)</button>`;
-
+  html += `<button type="button" class="btn ${naoActive} btn-lg w-50" data-value="nao" data-key="${key}">❌ Não (problema)</button>`;
   html += `</div>`;
 
-  if (answers[key] === "nao") {
+  if (temObservacao) {
     html += `
       <div class="observacao-field mt-3">
-
-        <label class="form-label fw-semibold">
-          Observação (descreva o problema):
-        </label>
-
-        <textarea class="form-control"
-          id="obs_${key}" rows="2"
-          placeholder="Ex: cadeira quebrada, TV sem cabo...">
-          ${observations[key] || ""}
-        </textarea>
-
+        <label class="form-label fw-semibold">📝 Observação (descreva o problema):</label>
+        <textarea class="form-control" id="obs_${key}" rows="2" placeholder="Ex: cadeira quebrada, TV sem cabo...">${observations[key] || ""}</textarea>
       </div>
     `;
   }
 
   html += `</div>`;
-
   container.innerHTML = html;
 
   document.querySelectorAll(`.btn[data-key="${key}"]`).forEach((btn) => {
     btn.addEventListener("click", (e) => {
-      const value = e.currentTarget.dataset.value;
+      const valor = e.currentTarget.dataset.value;
+      answers[key] = valor;
 
-      answers[key] = value;
-
-      if (value === "sim") delete observations[key];
-
-      renderQuestion();
+      if (valor === "sim") {
+        delete observations[key];
+        renderQuestion();
+        avancarPergunta();
+      } else {
+        renderQuestion();
+      }
     });
   });
 
-  if (answers[key] === "nao") {
+  if (temObservacao) {
     document.getElementById(`obs_${key}`).addEventListener("input", (e) => {
       observations[key] = e.target.value;
     });
   }
 
   document.getElementById("prevBtn").disabled = currentQuestion === 0;
-
   document.getElementById("nextBtn").classList.remove("d-none");
   document.getElementById("submitBtn").classList.add("d-none");
 
   const progress = ((currentQuestion + 1) / (keys.length + 1)) * 100;
-
   document.getElementById("progressBar").style.width = progress + "%";
-
   document.getElementById("progressBar").textContent =
     Math.round(progress) + "%";
 }
 
-// Navegação
 document.getElementById("prevBtn").addEventListener("click", () => {
   if (currentQuestion > 0) {
     currentQuestion--;
@@ -213,44 +195,17 @@ document.getElementById("prevBtn").addEventListener("click", () => {
   }
 });
 
-document
-  .getElementById("nextBtn")
-  .addEventListener("click", () => changeQuestion(1));
+document.getElementById("nextBtn").addEventListener("click", () => {
+  avancarPergunta();
+});
 
-function changeQuestion(direction) {
-  const keys = Object.keys(perguntas);
-
-  const currentKey = keys[currentQuestion];
-
-  if (!answers[currentKey]) {
-    alert("Por favor, responda a pergunta antes de prosseguir.");
-    return;
-  }
-
-  if (
-    answers[currentKey] === "nao" &&
-    (!observations[currentKey] || observations[currentKey].trim() === "")
-  ) {
-    alert("Descreva o problema no campo de observação.");
-    return;
-  }
-
-  currentQuestion += direction;
-
-  renderQuestion();
-}
-
-// Envio
 document
   .getElementById("checklistForm")
   .addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const keys = Object.keys(perguntas);
-
     let observacoesFinais = "";
-
-    for (let key of keys) {
+    for (let key of Object.keys(perguntas)) {
       if (answers[key] === "nao") {
         observacoesFinais += `${perguntas[key]}: ${observations[key]}\n`;
       }
@@ -271,7 +226,6 @@ document
       });
 
       const result = await response.json();
-
       if (result.sucesso) {
         window.location.href = "../acessorios/encerramento.html";
       } else {
@@ -284,5 +238,7 @@ document
     }
   });
 
-// Inicialização
-renderQuestion();
+document.addEventListener("DOMContentLoaded", () => {
+  preencherNomeInstrutor();
+  renderQuestion();
+});

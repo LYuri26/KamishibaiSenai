@@ -1,5 +1,5 @@
 /* ===== CONFIGURAÇÕES GLOBAIS ===== */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
 
 :root {
   --primary: #2563eb;
@@ -9,7 +9,8 @@
   --warning: #f59e0b;
   --danger: #ef4444;
   --light: #f8fafc;
-  --dark: #1e293b;
+  --dark: #0b1e3a;
+  --transition: all 0.2s ease;
 }
 
 body {
@@ -18,56 +19,75 @@ body {
     system-ui,
     -apple-system,
     sans-serif;
-  background-color: var(--light);
+  background: linear-gradient(135deg, #f1f5f9 0%, #ffffff 100%);
   color: var(--dark);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  margin: 0;
 }
 
 main {
   flex: 1;
 }
 
-/* Customizações leves para componentes Bootstrap */
 .btn {
-  font-weight: 500;
-  transition: all 0.2s;
+  font-weight: 600;
+  transition: var(--transition);
+  border-radius: 3rem;
+  padding: 0.6rem 1.5rem;
 }
 
 .btn-primary {
-  background-color: var(--primary);
+  background: var(--primary);
   border-color: var(--primary);
 }
+
 .btn-primary:hover {
-  background-color: var(--primary-dark);
+  background: var(--primary-dark);
   border-color: var(--primary-dark);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px -6px var(--primary);
 }
 
 .card {
   border: none;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  transition: box-shadow 0.2s;
-}
-.card:hover {
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-radius: 2rem;
+  box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.1);
+  transition: var(--transition);
 }
 
-/* Utilitários de espaçamento */
+.card:hover {
+  box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
+}
+
 .section-title {
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.02em;
   margin-bottom: 1.5rem;
+  color: var(--dark);
 }
 
-/* Rodapé fixo */
 .footer {
-  background-color: white;
+  background: white;
   border-top: 1px solid #e2e8f0;
-  padding: 1.5rem 0;
-  margin-top: 3rem;
+  padding: 2rem 0;
+  margin-top: 4rem;
   text-align: center;
   color: var(--secondary);
+  font-weight: 500;
+}
+
+/* Animações globais */
+.fade-in {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

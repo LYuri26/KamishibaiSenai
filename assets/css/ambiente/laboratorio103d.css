@@ -1,20 +1,30 @@
 /* ===== ESTILOS ESPECÍFICOS PARA LABORATÓRIO 103d ===== */
+:root {
+  --primary-light: #e8f0fe;
+  --card-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.15);
+  --transition-default: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-/* Card da pergunta (gerado dinamicamente) */
 .question-card {
-  background-color: #ffffff;
-  border-radius: 1.5rem;
-  padding: 1.5rem 1rem;
-  margin: 1rem 0;
-  border: 1px solid #e9eef2;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-  animation: fadeSlide 0.3s ease-out;
+  background: linear-gradient(145deg, #ffffff, #fafcff);
+  border-radius: 2rem;
+  padding: 2rem 1.5rem;
+  margin: 1.5rem 0;
+  border: none;
+  box-shadow: var(--card-shadow);
+  transition: var(--transition-default);
+  animation: fadeSlide 0.4s ease-out;
+}
+
+.question-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 25px 35px -12px rgba(0, 0, 0, 0.2);
 }
 
 @keyframes fadeSlide {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -23,236 +33,184 @@
 }
 
 .question-card h5 {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #0f172a;
-  margin-bottom: 1.2rem;
-  border-bottom: 1px solid #f1f5f9;
-  padding-bottom: 0.75rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #0b1e3a;
+  line-height: 1.4;
 }
 
-/* Botões de escolha (Sim/Não) */
 .btn-group {
   display: flex;
-  gap: 0.5rem;
-  width: 100%;
+  gap: 0.75rem;
 }
 
 .btn-group .btn {
   font-size: 1.1rem;
-  padding: 0.75rem 0.5rem;
-  border-radius: 2rem !important;
+  padding: 0.9rem 0.5rem;
+  border-radius: 3rem !important;
   border-width: 2px;
   font-weight: 600;
-  transition: all 0.2s;
+  transition: var(--transition-default);
   flex: 1;
+  letter-spacing: 0.3px;
 }
 
 .btn-group .btn.active {
   transform: scale(1.02);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
 }
 
-/* Cores para botões de resposta */
 .btn-group .btn-primary.active {
-  background-color: #10b981; /* verde para ok */
+  background: #10b981;
   border-color: #059669;
 }
 
 .btn-group .btn-secondary.active {
-  background-color: #dc2626; /* vermelho para problema */
-  border-color: #b91c1c;
+  background: #ef4444;
+  border-color: #dc2626;
 }
 
-/* Observação */
 .observacao-field {
-  margin-top: 1.2rem;
-  padding: 1rem;
-  background-color: #fffbeb;
-  border-left: 4px solid #fbbf24;
-  border-radius: 1rem;
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: #fffbeb;
+  border-left: 6px solid #fbbf24;
+  border-radius: 1.5rem;
+  animation: fadeIn 0.3s ease;
 }
 
 .observacao-field label {
-  font-weight: 600;
-  color: #92400e;
-  margin-bottom: 0.5rem;
-  display: block;
-  font-size: 0.95rem;
+  font-weight: 700;
+  color: #b45309;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .observacao-field textarea {
   width: 100%;
-  padding: 0.875rem;
-  border: 1px solid #fde68a;
-  border-radius: 1rem;
-  background-color: white;
+  padding: 1rem;
+  border: 2px solid #fde68a;
+  border-radius: 1.5rem;
+  background: white;
   resize: vertical;
-  min-height: 100px;
+  min-height: 120px;
   font-size: 1rem;
+  transition: var(--transition-default);
 }
 
 .observacao-field textarea:focus {
   border-color: #f59e0b;
-  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2);
   outline: none;
 }
 
-/* Barra de progresso mais grossa no mobile */
 .progress {
-  height: 1rem !important;
-  border-radius: 2rem;
-  background-color: #f1f5f9;
+  height: 1.2rem !important;
+  border-radius: 3rem;
+  background: #e2e8f0;
+  overflow: hidden;
 }
 
 .progress-bar {
-  background-color: #0d6efd;
-  border-radius: 2rem;
-  transition: width 0.3s ease;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  border-radius: 3rem;
+  transition: width 0.4s ease;
+  font-weight: 600;
+  font-size: 0.85rem;
+  line-height: 1.2rem;
 }
 
-/* Botões de navegação */
-.navigation-buttons {
-  display: flex;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.navigation-buttons button {
-  font-size: 1.1rem;
-  padding: 0.75rem 1.5rem;
-  border-radius: 2rem !important;
-  font-weight: 500;
-  transition: all 0.2s;
-}
-
-.navigation-buttons button:not(:disabled):hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* Campo de nome do instrutor */
 #nome {
-  border: 2px solid #e9eef2;
-  transition: all 0.2s;
+  border: 2px solid #e2e8f0;
+  border-radius: 3rem;
+  padding: 1rem 1.5rem;
+  font-size: 1.1rem;
+  transition: var(--transition-default);
 }
 
 #nome:focus {
-  border-color: #0d6efd;
-  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
 }
 
-/* Container principal do formulário */
 #checklistForm {
-  background-color: #ffffff;
-  border-radius: 2rem;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  background: white;
+  border-radius: 2.5rem;
+  box-shadow: 0 25px 40px -15px rgba(0, 0, 0, 0.2);
+  padding: 2rem !important;
 }
 
-/* Mensagens de feedback */
-#mensagem {
-  border-radius: 1rem;
-  padding: 0.5rem;
+.navigation-buttons button {
+  border-radius: 3rem !important;
+  padding: 0.9rem 2rem;
+  font-weight: 600;
+  transition: var(--transition-default);
 }
 
-.alert {
-  border-radius: 1rem;
-  border: none;
-  padding: 1rem;
+.navigation-buttons button:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 20px -10px rgba(0, 0, 0, 0.3);
 }
 
-/* Ajustes responsivos */
+.btn-outline-danger {
+  border-width: 2px;
+  transition: var(--transition-default);
+}
+
+.btn-outline-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px -6px #dc2626;
+}
+
+/* Responsividade */
 @media (max-width: 768px) {
   .question-card {
-    padding: 1.25rem 0.75rem;
+    padding: 1.5rem 1rem;
   }
-
   .btn-group .btn {
     font-size: 1rem;
-    padding: 0.7rem 0.25rem;
+    padding: 0.8rem 0.25rem;
   }
-
   .navigation-buttons {
     flex-direction: column;
+    gap: 0.75rem;
   }
-
   .navigation-buttons button {
     width: 100%;
+  }
+  #checklistForm {
+    padding: 1.5rem !important;
   }
 }
 
 @media (max-width: 480px) {
-  .question-card {
-    padding: 1rem 0.75rem;
-    margin: 0.75rem 0;
-  }
-
   .question-card h5 {
     font-size: 1.1rem;
   }
-
   .btn-group .btn {
     font-size: 0.95rem;
-    padding: 0.6rem 0.25rem;
+    padding: 0.7rem 0.1rem;
   }
-
   .observacao-field {
-    padding: 0.875rem;
+    padding: 1rem;
   }
-
   .observacao-field textarea {
-    min-height: 80px;
+    min-height: 100px;
     font-size: 0.95rem;
   }
-
-  #checklistForm {
-    padding: 1.25rem !important;
+  .progress {
+    height: 1rem !important;
   }
 }
 
-/* Animações adicionais */
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.02);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-.btn-success:not(:disabled):hover {
-  animation: pulse 0.5s ease;
-}
-
-/* Estilo para o botão de logout */
-.btn-outline-danger {
-  border-width: 2px;
-}
-
-.btn-outline-danger:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(220, 38, 38, 0.2);
-}
-
-/* Ajustes para dispositivos muito pequenos */
 @media (max-width: 360px) {
-  .question-card {
-    padding: 0.875rem 0.5rem;
-  }
-
   .btn-group {
-    gap: 0.25rem;
+    flex-direction: column;
+    gap: 0.5rem;
   }
-
   .btn-group .btn {
-    font-size: 0.85rem;
-    padding: 0.5rem 0.1rem;
-  }
-
-  .observacao-field label {
-    font-size: 0.85rem;
+    width: 100% !important;
   }
 }
