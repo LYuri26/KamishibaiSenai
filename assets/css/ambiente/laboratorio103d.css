@@ -214,3 +214,55 @@
     width: 100% !important;
   }
 }
+
+/* ===== MAPA DA SALA ===== */
+.mapa-sala-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.mapa-sala {
+  width: 100%;
+  max-width: 900px;
+  height: auto;
+  border-radius: 1.5rem;
+  box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  object-fit: cover;
+}
+
+/* Hover controlado */
+.mapa-sala:hover {
+  transform: scale(1.01);
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+  .mapa-sala {
+    max-width: 100%;
+    border-radius: 1.2rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .mapa-sala {
+    border-radius: 1rem;
+    box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.2);
+  }
+
+  .mapa-sala-container {
+    margin-bottom: 1rem;
+  }
+}
+
+/* Mobile crítico */
+@media (max-width: 360px) {
+  .mapa-sala {
+    border-radius: 0.8rem;
+  }
+}
