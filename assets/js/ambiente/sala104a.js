@@ -33,6 +33,52 @@ let currentQuestion = 0;
 const answers = {};
 const observations = {};
 const etapaProcedimento = Object.keys(perguntas).length;
+let statusBackendProblema = false;
+
+async function carregarStatusSala() {
+  try {
+    const response = await fetch("../administrador/api/listar_inspecoes.php");
+    const data = await response.json();
+
+    if (!Array.isArray(data)) return;
+
+    const ultimaSala = data.find((item) => item.sala === sala);
+
+    if (
+      ultimaSala &&
+      ultimaSala.observacoes &&
+      ultimaSala.observacoes.trim() !== ""
+    ) {
+      statusBackendProblema = true;
+    } else {
+      statusBackendProblema = false;
+    }
+
+    atualizarStatusLuz();
+  } catch (error) {
+    console.error("Erro ao carregar status da sala:", error);
+  }
+}
+
+// ================= STATUS VISUAL =================
+function atualizarStatusLuz() {
+  const statusEl = document.getElementById("statusLuz");
+  if (!statusEl) return;
+
+  const possuiProblemaAtual = Object.values(answers).includes("nao");
+
+  const problemaFinal = possuiProblemaAtual || statusBackendProblema;
+
+  if (problemaFinal) {
+    statusEl.classList.remove("bg-success");
+    statusEl.classList.add("bg-warning");
+    statusEl.textContent = "Atenção";
+  } else {
+    statusEl.classList.remove("bg-warning");
+    statusEl.classList.add("bg-success");
+    statusEl.textContent = "Conforme";
+  }
+}
 
 async function carregarDadosUsuario() {
   try {
@@ -57,6 +103,24 @@ async function preencherNomeInstrutor() {
   } else {
     nomeInput.disabled = false;
     nomeInput.placeholder = "Digite seu nome completo (não autenticado)";
+  }
+}
+
+// ================= REGISTRO DE RESPOSTA =================
+function registrarResposta(key, valor) {
+  answers[key] = valor;
+
+  if (valor === "sim") {
+    delete observations[key];
+  }
+
+  atualizarStatusLuz();
+
+  if (valor === "sim") {
+    renderQuestion();
+    avancarPergunta();
+  } else {
+    renderQuestion();
   }
 }
 
@@ -118,6 +182,7 @@ function renderQuestion() {
     document.getElementById("prevBtn").disabled = false;
     document.getElementById("nextBtn").classList.add("d-none");
     document.getElementById("submitBtn").classList.remove("d-none");
+    atualizarStatusLuz();
     document.getElementById("progressBar").style.width = "100%";
     document.getElementById("progressBar").textContent = "100%";
     return;
@@ -177,7 +242,7 @@ function renderQuestion() {
       observations[key] = e.target.value;
     });
   }
-
+  atualizarStatusLuz();
   document.getElementById("prevBtn").disabled = currentQuestion === 0;
   document.getElementById("nextBtn").classList.remove("d-none");
   document.getElementById("submitBtn").classList.add("d-none");
@@ -238,7 +303,8 @@ document
     }
   });
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  await carregarStatusSala();
   preencherNomeInstrutor();
   renderQuestion();
 });

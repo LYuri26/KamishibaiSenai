@@ -4,18 +4,28 @@ document.getElementById("formLogin").addEventListener("submit", async (e) => {
   const email = document.getElementById("email").value.trim();
   const senha = document.getElementById("senha").value;
 
-  const dados = { email, senha };
-
   try {
     const response = await fetch("api/login.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(dados),
+      body: JSON.stringify({ email, senha }),
     });
+
     const result = await response.json();
+
     if (result.sucesso) {
       exibirMensagem(`Bem-vindo, ${result.nome}! Redirecionando...`, "success");
-      // Redireciona conforme o cargo
+
+      // Recupera URL salva
+      const redirect = sessionStorage.getItem("redirectAfterLogin");
+
+      if (redirect) {
+        sessionStorage.removeItem("redirectAfterLogin");
+        window.location.href = redirect;
+        return;
+      }
+
+      // Fallback padrão
       if (result.cargo === "gerencia") {
         window.location.href = "../administrador/index.html";
       } else {
@@ -24,12 +34,12 @@ document.getElementById("formLogin").addEventListener("submit", async (e) => {
     } else {
       exibirMensagem(result.erro, "danger");
     }
-  } catch (error) {
+  } catch {
     exibirMensagem("Erro na comunicação com o servidor", "danger");
   }
 });
 
 function exibirMensagem(texto, tipo) {
-  const div = document.getElementById("mensagem");
-  div.innerHTML = `<div class="alert alert-${tipo}">${texto}</div>`;
+  document.getElementById("mensagem").innerHTML =
+    `<div class="alert alert-${tipo}">${texto}</div>`;
 }
