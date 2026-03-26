@@ -91,6 +91,7 @@ $sqlRelatorios = "CREATE TABLE IF NOT EXISTS `relatorios` (
     `momento` ENUM('inicio','fim') NOT NULL,
     `observacoes` TEXT,
     `data_geracao` DATETIME NOT NULL,
+    `imagens` TEXT NULL,
     UNIQUE KEY `unique_inspecao` (`inspecao_id`, `sala`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
 $pdo->exec($sqlRelatorios);

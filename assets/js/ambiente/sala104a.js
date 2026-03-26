@@ -34,6 +34,7 @@ const answers = {};
 const observations = {};
 const etapaProcedimento = Object.keys(perguntas).length;
 let statusBackendProblema = false;
+const images = {};
 
 async function carregarStatusSala() {
   try {
@@ -212,11 +213,14 @@ function renderQuestion() {
 
   if (temObservacao) {
     html += `
-      <div class="observacao-field mt-3">
-        <label class="form-label fw-semibold">📝 Observação (descreva o problema):</label>
-        <textarea class="form-control" id="obs_${key}" rows="2" placeholder="Ex: cadeira quebrada, TV sem cabo...">${observations[key] || ""}</textarea>
-      </div>
-    `;
+    <div class="observacao-field mt-3">
+      <label class="form-label fw-semibold">Observação:</label>
+      <textarea class="form-control" id="obs_${key}" rows="2">${observations[key] || ""}</textarea>
+
+      <label class="form-label fw-semibold mt-2">Imagem:</label>
+      <input type="file" class="form-control" id="img_${key}" accept="image/*">
+    </div>
+  `;
   }
 
   html += `</div>`;
@@ -240,6 +244,10 @@ function renderQuestion() {
   if (temObservacao) {
     document.getElementById(`obs_${key}`).addEventListener("input", (e) => {
       observations[key] = e.target.value;
+    });
+
+    document.getElementById(`img_${key}`).addEventListener("change", (e) => {
+      images[key] = e.target.files[0];
     });
   }
   atualizarStatusLuz();
@@ -269,28 +277,53 @@ document
   .addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    let observacoesFinais = "";
-    for (let key of Object.keys(perguntas)) {
-      if (answers[key] === "nao") {
-        observacoesFinais += `${perguntas[key]}: ${observations[key]}\n`;
+    // ================= VALIDAÇÃO =================
+    const keys = Object.keys(perguntas);
+
+    for (let key of keys) {
+      if (!answers[key]) {
+        alert("Responda todas as perguntas.");
+        return;
+      }
+
+      if (answers[key] === "nao" && !observations[key]?.trim()) {
+        alert("Preencha a observação para itens com problema.");
+        return;
       }
     }
 
-    const dados = {
-      nome: document.getElementById("nome").value,
-      respostas: answers,
-      observacoes: observacoesFinais,
-      sala: sala,
-    };
+    // ================= MONTAGEM =================
+    let observacoesFinais = "";
+    const formData = new FormData();
 
+    keys.forEach((key) => {
+      if (answers[key] === "nao") {
+        observacoesFinais += `${perguntas[key]}: ${observations[key]}\n`;
+
+        if (images[key]) {
+          formData.append("imagens[]", images[key]);
+        }
+      }
+    });
+
+    formData.append("nome", document.getElementById("nome").value.trim());
+    formData.append("respostas", JSON.stringify(answers));
+    formData.append("observacoes", observacoesFinais);
+    formData.append("sala", sala);
+
+    // ================= ENVIO =================
     try {
       const response = await fetch("api/salvar_checklist.php", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dados),
+        body: formData,
       });
 
+      if (!response.ok) {
+        throw new Error("Falha HTTP");
+      }
+
       const result = await response.json();
+
       if (result.sucesso) {
         window.location.href = "../acessorios/encerramento.html";
       } else {
@@ -298,6 +331,8 @@ document
           `<div class="alert alert-danger">Erro: ${result.erro}</div>`;
       }
     } catch (error) {
+      console.error(error);
+
       document.getElementById("mensagem").innerHTML =
         `<div class="alert alert-danger">Erro na comunicação com o servidor.</div>`;
     }
