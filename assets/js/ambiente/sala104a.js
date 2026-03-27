@@ -70,14 +70,20 @@ function atualizarStatusLuz() {
 
   const problemaFinal = possuiProblemaAtual || statusBackendProblema;
 
+  const container = statusEl.closest(".status-container");
+
   if (problemaFinal) {
     statusEl.classList.remove("bg-success");
     statusEl.classList.add("bg-warning");
-    statusEl.textContent = "Atenção";
+    statusEl.innerHTML = "⚠️ ATENÇÃO";
+
+    container.classList.add("status-critico");
   } else {
     statusEl.classList.remove("bg-warning");
     statusEl.classList.add("bg-success");
-    statusEl.textContent = "Conforme";
+    statusEl.innerHTML = "✅ CONFORME";
+
+    container.classList.remove("status-critico");
   }
 }
 

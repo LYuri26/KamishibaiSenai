@@ -234,3 +234,74 @@
 .custom-file-upload label {
   cursor: pointer;
 }
+
+/* ===== ALERTA CRÍTICO ===== */
+.status-container {
+  transition: all 0.3s ease;
+}
+
+.status-critico {
+  animation: pulsarAlerta 0.8s infinite;
+}
+
+#statusLuz.bg-warning {
+  background: #dc2626 !important;
+  color: white;
+  font-weight: 800;
+  font-size: 1rem;
+  padding: 0.6rem 1.2rem;
+  box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+  animation: pulseBadge 1s infinite;
+}
+
+/* Pulso externo */
+@keyframes pulsarAlerta {
+  0% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(220, 38, 38, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+  }
+}
+
+/* Pulso do badge */
+@keyframes pulseBadge {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ===== STATUS CONFORME (ATIVO) ===== */
+#statusLuz.bg-success {
+  background: #059669 !important;
+  color: white;
+  font-weight: 800;
+  font-size: 1rem;
+  padding: 0.6rem 1.2rem;
+  animation: pulseSuave 2s infinite;
+}
+
+/* Pulso leve (confirmação visual) */
+@keyframes pulseSuave {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.4);
+  }
+  70% {
+    transform: scale(1.03);
+    box-shadow: 0 0 0 8px rgba(5, 150, 105, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(5, 150, 105, 0);
+  }
+}
