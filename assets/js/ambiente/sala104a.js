@@ -151,35 +151,35 @@ function renderQuestion() {
 
   if (currentQuestion === etapaProcedimento) {
     container.innerHTML = `
-      <div class="question-card fade-in">
-        <h5>📋 Procedimento Operacional da Sala</h5>
-        <p><strong>Orientações conforme manual do aluno.</strong></p>
-        <hr>
-        <h6>👕 Vestimentas e conduta</h6>
-        <ul>
-          <li>Utilizar vestimenta adequada ao ambiente educacional.</li>
-          <li>Manter postura adequada durante as atividades.</li>
-          <li>Seguir orientações do instrutor responsável.</li>
-        </ul>
-        <h6>📚 Uso correto do ambiente</h6>
-        <ul>
-          <li>Utilizar equipamentos apenas para atividades do curso.</li>
-          <li>Não consumir alimentos ou bebidas.</li>
-          <li>Não danificar mobiliário ou equipamentos.</li>
-        </ul>
-        <h6>🔒 Segurança e preservação</h6>
-        <ul>
-          <li>Comunicar imediatamente qualquer irregularidade.</li>
-          <li>Não manipular instalações elétricas.</li>
-        </ul>
-        <h6>🔚 Encerramento da atividade</h6>
-        <ul>
-          <li>Organizar carteiras e materiais utilizados.</li>
-          <li>Desligar equipamentos utilizados.</li>
-          <li>Deixar o ambiente pronto para a próxima turma.</li>
-        </ul>
-      </div>
-    `;
+        <div class="question-card fade-in">
+          <h5>📋 Procedimento Operacional da Sala</h5>
+          <p><strong>Orientações conforme manual do aluno.</strong></p>
+          <hr>
+          <h6>👕 Vestimentas e conduta</h6>
+          <ul>
+            <li>Utilizar vestimenta adequada ao ambiente educacional.</li>
+            <li>Manter postura adequada durante as atividades.</li>
+            <li>Seguir orientações do instrutor responsável.</li>
+          </ul>
+          <h6>📚 Uso correto do ambiente</h6>
+          <ul>
+            <li>Utilizar equipamentos apenas para atividades do curso.</li>
+            <li>Não consumir alimentos ou bebidas.</li>
+            <li>Não danificar mobiliário ou equipamentos.</li>
+          </ul>
+          <h6>🔒 Segurança e preservação</h6>
+          <ul>
+            <li>Comunicar imediatamente qualquer irregularidade.</li>
+            <li>Não manipular instalações elétricas.</li>
+          </ul>
+          <h6>🔚 Encerramento da atividade</h6>
+          <ul>
+            <li>Organizar carteiras e materiais utilizados.</li>
+            <li>Desligar equipamentos utilizados.</li>
+            <li>Deixar o ambiente pronto para a próxima turma.</li>
+          </ul>
+        </div>
+      `;
     document.getElementById("prevBtn").disabled = false;
     document.getElementById("nextBtn").classList.add("d-none");
     document.getElementById("submitBtn").classList.remove("d-none");
@@ -194,13 +194,13 @@ function renderQuestion() {
   const temObservacao = answers[key] === "nao";
 
   let html = `
-    <div class="question-card fade-in">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="mb-0">${pergunta}</h5>
-        <span class="badge bg-primary rounded-pill">${currentQuestion + 1}/${keys.length}</span>
-      </div>
-      <div class="btn-group w-100" role="group">
-  `;
+      <div class="question-card fade-in">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="mb-0">${pergunta}</h5>
+          <span class="badge bg-primary rounded-pill">${currentQuestion + 1}/${keys.length}</span>
+        </div>
+        <div class="btn-group w-100" role="group">
+    `;
 
   const simActive =
     answers[key] === "sim" ? "active btn-primary" : "btn-outline-primary";
@@ -213,14 +213,26 @@ function renderQuestion() {
 
   if (temObservacao) {
     html += `
-    <div class="observacao-field mt-3">
-      <label class="form-label fw-semibold">Observação:</label>
-      <textarea class="form-control" id="obs_${key}" rows="2">${observations[key] || ""}</textarea>
+      <div class="observacao-field mt-3">
+        <label class="form-label fw-semibold">Observação:</label>
+        <textarea class="form-control" id="obs_${key}" rows="2">${observations[key] || ""}</textarea>
 
-      <label class="form-label fw-semibold mt-2">Imagem:</label>
-      <input type="file" class="form-control" id="img_${key}" accept="image/*">
-    </div>
-  `;
+        <label class="form-label fw-semibold mt-2">Imagem:</label>
+        <div class="custom-file-upload">
+  <label for="img_${key}" class="btn btn-outline-primary w-100">
+    📷 Tirar ou anexar foto
+  </label>
+  <input 
+  type="file" 
+  id="img_${key}" 
+  accept="image/*" 
+  capture="environment"
+  hidden
+>
+  <small id="file_name_${key}" class="text-muted"></small>
+</div>
+      </div>
+    `;
   }
 
   html += `</div>`;
@@ -247,7 +259,29 @@ function renderQuestion() {
     });
 
     document.getElementById(`img_${key}`).addEventListener("change", (e) => {
-      images[key] = e.target.files[0];
+      const file = e.target.files[0];
+
+      // 🔴 VALIDAÇÃO DE TIPO
+      if (file && !file.type.startsWith("image/")) {
+        alert("Selecione apenas imagens.");
+        e.target.value = "";
+        return;
+      }
+
+      // 🔴 VALIDAÇÃO DE TAMANHO (5MB)
+      if (file && file.size > 5 * 1024 * 1024) {
+        alert("Imagem excede 5MB.");
+        e.target.value = "";
+        return;
+      }
+
+      // ✅ ARMAZENAMENTO SEGURO
+      images[key] = file;
+
+      const fileNameEl = document.getElementById(`file_name_${key}`);
+      if (file && fileNameEl) {
+        fileNameEl.textContent = file.name;
+      }
     });
   }
   atualizarStatusLuz();

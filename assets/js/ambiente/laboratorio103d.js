@@ -215,7 +215,19 @@ function renderQuestion() {
       <textarea class="form-control" id="obs_${key}" rows="2">${observations[key] || ""}</textarea>
 
       <label class="form-label fw-semibold mt-2">Imagem:</label>
-      <input type="file" class="form-control" id="img_${key}" accept="image/*">
+      <div class="custom-file-upload">
+  <label for="img_${key}" class="btn btn-outline-primary w-100">
+    📷 Tirar ou anexar foto
+  </label>
+  <input 
+  type="file" 
+  id="img_${key}" 
+  accept="image/*" 
+  capture="environment"
+  hidden
+>
+  <small id="file_name_${key}" class="text-muted"></small>
+</div>
     </div>
   `;
   }
@@ -246,7 +258,29 @@ function renderQuestion() {
     });
 
     document.getElementById(`img_${key}`).addEventListener("change", (e) => {
-      images[key] = e.target.files[0];
+      const file = e.target.files[0];
+
+      // 🔴 VALIDAÇÃO DE TIPO
+      if (file && !file.type.startsWith("image/")) {
+        alert("Selecione apenas imagens.");
+        e.target.value = "";
+        return;
+      }
+
+      // 🔴 VALIDAÇÃO DE TAMANHO (5MB)
+      if (file && file.size > 5 * 1024 * 1024) {
+        alert("Imagem excede 5MB.");
+        e.target.value = "";
+        return;
+      }
+
+      // ✅ ARMAZENAMENTO SEGURO
+      images[key] = file;
+
+      const fileNameEl = document.getElementById(`file_name_${key}`);
+      if (file && fileNameEl) {
+        fileNameEl.textContent = file.name;
+      }
     });
   }
   atualizarStatusLuz();

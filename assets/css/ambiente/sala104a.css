@@ -230,3 +230,7 @@
     border-radius: 0.8rem;
   }
 }
+
+.custom-file-upload label {
+  cursor: pointer;
+}
