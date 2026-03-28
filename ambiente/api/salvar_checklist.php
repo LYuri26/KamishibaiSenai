@@ -4,7 +4,13 @@ header('Content-Type: application/json');
 require_once __DIR__ . '/../../config/database.php';
 
 // ================= CONFIGURAÇÃO =================
-$salas_permitidas = ['104a', '103d'];
+$mapaSalas = [
+    '104a' => 'sala104a',
+    '103d' => 'laboratorio103d',
+    '102c' => 'oficina102c'
+];
+
+$salas_permitidas = array_keys($mapaSalas);
 
 // ================= ENTRADA =================
 $nome = $_POST['nome'] ?? '';
@@ -71,9 +77,9 @@ if (!empty($_FILES['imagens']['name'][0])) {
 
     $pastaBase = __DIR__ . "/../../assets/images/";
 
-    $pastaSala = ($sala === '104a')
-        ? $pastaBase . "sala104a/"
-        : $pastaBase . "laboratorio103d/";
+    // Mapeamento dinâmico
+    $subpasta = $mapaSalas[$sala];
+    $pastaSala = $pastaBase . $subpasta . "/";
 
     if (!is_dir($pastaSala)) {
         mkdir($pastaSala, 0777, true);
@@ -90,9 +96,7 @@ if (!empty($_FILES['imagens']['name'][0])) {
 
         if (move_uploaded_file($tmpName, $caminhoFinal)) {
 
-            $pathsImagens[] = "assets/images/" .
-                ($sala === '104a' ? "sala104a/" : "laboratorio103d/") .
-                $nomeArquivo;
+            $pathsImagens[] = "assets/images/" . $subpasta . "/" . $nomeArquivo;
         }
     }
 }

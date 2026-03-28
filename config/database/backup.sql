@@ -73,6 +73,64 @@ CREATE TABLE IF NOT EXISTS `103d` (
     `fios_expostos` ENUM('sim', 'nao') NOT NULL
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
+-- Tabela da oficina de soldagem 102c
+CREATE TABLE IF NOT EXISTS `102c` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `nome` VARCHAR(100) NOT NULL,
+    `data` DATETIME NOT NULL,
+    `momento` ENUM('inicio', 'fim') NOT NULL,
+    `observacoes` TEXT,
+    -- Acesso
+    `portao_funciona` ENUM('sim', 'nao') NOT NULL,
+    -- Instrutor (AJUSTADO PARA SEU JS)
+    `instrutor_epi` ENUM('sim', 'nao') NOT NULL,
+    -- BOX 01
+    `box1_epi_completo` ENUM('sim', 'nao') NOT NULL,
+    `box1_ferramentas_ok` ENUM('sim', 'nao') NOT NULL,
+    `box1_organizacao` ENUM('sim', 'nao') NOT NULL,
+    -- BOX 02
+    `box2_epi_completo` ENUM('sim', 'nao') NOT NULL,
+    `box2_ferramentas_ok` ENUM('sim', 'nao') NOT NULL,
+    `box2_organizacao` ENUM('sim', 'nao') NOT NULL,
+    -- BOX 03
+    `box3_epi_completo` ENUM('sim', 'nao') NOT NULL,
+    `box3_ferramentas_ok` ENUM('sim', 'nao') NOT NULL,
+    `box3_organizacao` ENUM('sim', 'nao') NOT NULL,
+    -- BOX 04
+    `box4_epi_completo` ENUM('sim', 'nao') NOT NULL,
+    `box4_ferramentas_ok` ENUM('sim', 'nao') NOT NULL,
+    `box4_organizacao` ENUM('sim', 'nao') NOT NULL,
+    -- BOX 05
+    `box5_epi_completo` ENUM('sim', 'nao') NOT NULL,
+    `box5_ferramentas_ok` ENUM('sim', 'nao') NOT NULL,
+    `box5_organizacao` ENUM('sim', 'nao') NOT NULL,
+    -- BOX 06
+    `box6_epi_completo` ENUM('sim', 'nao') NOT NULL,
+    `box6_ferramentas_ok` ENUM('sim', 'nao') NOT NULL,
+    -- BOX 07
+    `box7_epi_completo` ENUM('sim', 'nao') NOT NULL,
+    `box7_ferramentas_ok` ENUM('sim', 'nao') NOT NULL,
+    `box7_organizacao` ENUM('sim', 'nao') NOT NULL,
+    -- BOX 08
+    `box8_epi_completo` ENUM('sim', 'nao') NOT NULL,
+    `box8_ferramentas_ok` ENUM('sim', 'nao') NOT NULL,
+    `box8_organizacao` ENUM('sim', 'nao') NOT NULL,
+    -- BOX 09
+    `box9_epi_completo` ENUM('sim', 'nao') NOT NULL,
+    `box9_ferramentas_ok` ENUM('sim', 'nao') NOT NULL,
+    `box9_organizacao` ENUM('sim', 'nao') NOT NULL,
+    -- BOX 10
+    `box10_epi_completo` ENUM('sim', 'nao') NOT NULL,
+    `box10_ferramentas_ok` ENUM('sim', 'nao') NOT NULL,
+    `box10_organizacao` ENUM('sim', 'nao') NOT NULL,
+    -- Área geral
+    `area_limpa` ENUM('sim', 'nao') NOT NULL,
+    `area_organizacao` ENUM('sim', 'nao') NOT NULL,
+    `equipamentos_local` ENUM('sim', 'nao') NOT NULL,
+    `macarico_ok` ENUM('sim', 'nao') NOT NULL,
+    `estufa_ok` ENUM('sim', 'nao') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- Tabela de relatórios
 CREATE TABLE IF NOT EXISTS `relatorios` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -93,7 +151,8 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
     `nome` VARCHAR(100) NOT NULL,
     `sobrenome` VARCHAR(100) NOT NULL,
     `email` VARCHAR(255) UNIQUE NOT NULL,
-    `cargo` ENUM('instrutor', 'gerencia') NOT NULL,
+    `cargo` ENUM('instrutor', 'lider') NOT NULL,
     `senha` VARCHAR(255) NOT NULL,
     `data_criacao` DATETIME NOT NULL
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+

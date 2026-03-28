@@ -26,7 +26,7 @@ document.getElementById("formLogin").addEventListener("submit", async (e) => {
       }
 
       // Fallback padrão
-      if (result.cargo === "gerencia") {
+      if (result.cargo === "lider") {
         window.location.href = "../administrador/index.html";
       } else {
         window.location.href = "../ambiente/sala104a.html";

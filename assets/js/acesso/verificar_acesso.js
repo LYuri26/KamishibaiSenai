@@ -10,4 +10,4 @@ async function verificarAcesso(cargoNecessario = "gerencia") {
   }
 }
 
-verificarAcesso("gerencia");
+verificarAcesso("lider");

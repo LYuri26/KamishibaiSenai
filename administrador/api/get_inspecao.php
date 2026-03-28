@@ -4,7 +4,7 @@ session_start();
 
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['usuario_id']) || $_SESSION['usuario_cargo'] !== 'gerencia') {
+if (!isset($_SESSION['usuario_id']) || $_SESSION['usuario_cargo'] !== 'lider') {
 
     http_response_code(403);
     echo json_encode(['erro' => 'Acesso negado']);
