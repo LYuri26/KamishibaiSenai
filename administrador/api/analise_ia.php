@@ -1,44 +1,53 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
+ini_set('display_errors', 0); // Desliga exibição de erros para não poluir JSON
 error_reporting(E_ALL);
 session_start();
 header('Content-Type: application/json');
 
-// ================= VERIFICAÇÃO DE ACESSO =================
+// Verificação de acesso
 if (!isset($_SESSION['usuario_id']) || $_SESSION['usuario_cargo'] !== 'lider') {
     http_response_code(403);
     echo json_encode(['erro' => 'Acesso negado']);
     exit;
 }
 
-// ================= CONEXÃO COM BANCO =================
 require_once __DIR__ . '/../../config/database.php';
 
-// ================= PARÂMETROS =================
-$periodo = $_GET['periodo'] ?? 'mensal';   // 'mensal' ou 'anual'
+// Parâmetros
+$periodo = $_GET['periodo'] ?? 'mensal';
 $ano = (int) ($_GET['ano'] ?? date('Y'));
 $salaFiltro = $_GET['sala'] ?? 'todas';
 
-$salasPermitidas = ['102c', '103d', '104a'];
-$salas = ($salaFiltro === 'todas') ? $salasPermitidas : [$salaFiltro];
+// Obtém todas as tabelas que são salas de inspeção
+function obterTabelasSalas($pdo)
+{
+    try {
+        $stmt = $pdo->query("SHOW TABLES");
+        $todas = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        $excluir = ['relatorios', 'usuarios'];
+        return array_values(array_filter($todas, function ($t) use ($excluir) {
+            return !in_array($t, $excluir);
+        }));
+    } catch (PDOException $e) {
+        return [];
+    }
+}
 
-// ================= FUNÇÃO PARA ESCAPAR NOME DE TABELA =================
+$salasPermitidas = obterTabelasSalas($pdo);
+$salas = ($salaFiltro === 'todas') ? $salasPermitidas : array_intersect($salasPermitidas, [$salaFiltro]);
+
 function escTabela($tabela)
 {
     return "`$tabela`";
 }
 
-// ================= OBTÉM CAMPOS DE PROBLEMA DE CADA TABELA =================
 function getCamposProblemas($pdo, $tabela)
 {
     try {
         $stmt = $pdo->query("DESCRIBE " . escTabela($tabela));
         $colunas = $stmt->fetchAll(PDO::FETCH_COLUMN);
-        // Campos que não são de problema
         $excluir = ['id', 'nome', 'data', 'momento', 'observacoes'];
-        $campos = array_diff($colunas, $excluir);
-        return array_values($campos);
+        return array_values(array_diff($colunas, $excluir));
     } catch (PDOException $e) {
         return [];
     }
@@ -49,13 +58,12 @@ foreach ($salas as $sala) {
     $camposPorSala[$sala] = getCamposProblemas($pdo, $sala);
 }
 
-// ================= CONDIÇÃO DE DATA =================
 $condicaoData = ($periodo === 'mensal')
     ? "data >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)"
     : "YEAR(data) = $ano";
 
-// ================= COLETA DE INSPEÇÕES COM SEUS CAMPOS ESPECÍFICOS =================
-$todasInspecoes = [];   // array com ['sala', 'data', 'campos', 'valores']
+// Coleta de dados
+$todasInspecoes = [];
 $totalInspecoes = 0;
 $totalProblemas = 0;
 $totalCampos = 0;
@@ -64,25 +72,19 @@ foreach ($salas as $sala) {
     $campos = $camposPorSala[$sala];
     if (empty($campos))
         continue;
-
     $tabela = escTabela($sala);
     $camposList = implode(', ', $campos);
     $sql = "SELECT id, data, $camposList FROM $tabela WHERE $condicaoData";
     $stmt = $pdo->query($sql);
     $inspecoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
     $totalInspecoes += count($inspecoes);
-
     foreach ($inspecoes as $ins) {
-        $insData = [
+        $todasInspecoes[] = [
             'sala' => $sala,
             'data' => $ins['data'],
             'campos' => $campos,
             'valores' => $ins
         ];
-        $todasInspecoes[] = $insData;
-
-        // Contagem para taxa média
         foreach ($campos as $campo) {
             $totalCampos++;
             if (isset($ins[$campo]) && strtolower(trim($ins[$campo])) === 'nao') {
@@ -91,20 +93,16 @@ foreach ($salas as $sala) {
         }
     }
 }
-
 $taxaMedia = ($totalCampos > 0) ? round(($totalProblemas / $totalCampos) * 100, 1) : 0;
 
-// ================= EVOLUÇÃO TEMPORAL =================
+// Evolução temporal
 $evolucao = ['labels' => [], 'valores' => []];
-
 if ($periodo === 'mensal') {
-    // Agrupa por mês (YYYY-MM)
     $porMes = [];
     foreach ($todasInspecoes as $ins) {
         $mes = date('Y-m', strtotime($ins['data']));
-        if (!isset($porMes[$mes])) {
+        if (!isset($porMes[$mes]))
             $porMes[$mes] = ['total_campos' => 0, 'problemas' => 0];
-        }
         foreach ($ins['campos'] as $campo) {
             $porMes[$mes]['total_campos']++;
             if (isset($ins['valores'][$campo]) && strtolower(trim($ins['valores'][$campo])) === 'nao') {
@@ -119,12 +117,8 @@ if ($periodo === 'mensal') {
         $evolucao['valores'][] = $taxa;
     }
 } else {
-    // Anual: últimos 5 anos
     $anos = range($ano - 4, $ano);
-    $porAno = [];
-    foreach ($anos as $a) {
-        $porAno[$a] = ['total_campos' => 0, 'problemas' => 0];
-    }
+    $porAno = array_fill_keys($anos, ['total_campos' => 0, 'problemas' => 0]);
     foreach ($todasInspecoes as $ins) {
         $anoIns = date('Y', strtotime($ins['data']));
         if (isset($porAno[$anoIns])) {
@@ -144,43 +138,52 @@ if ($periodo === 'mensal') {
     }
 }
 
-// ================= PREVISÃO (REGRESSÃO LINEAR) =================
+// Previsão (regressão linear para os próximos 3 períodos)
 $previsao = ['labels' => [], 'historico' => [], 'previsao' => []];
 if ($periodo === 'mensal' && count($evolucao['valores']) >= 2) {
     $valores = $evolucao['valores'];
     $labels = $evolucao['labels'];
-    // Usa últimos 6 valores (ou menos se não houver 6)
     $historico = array_slice($valores, -6);
     $indices = range(1, count($historico));
     $n = count($historico);
-    $sumX = array_sum($indices);
-    $sumY = array_sum($historico);
-    $sumXY = 0;
-    $sumX2 = 0;
-    for ($i = 0; $i < $n; $i++) {
-        $sumXY += $indices[$i] * $historico[$i];
-        $sumX2 += $indices[$i] * $indices[$i];
+    if ($n > 1) {
+        $sumX = array_sum($indices);
+        $sumY = array_sum($historico);
+        $sumXY = 0;
+        $sumX2 = 0;
+        for ($i = 0; $i < $n; $i++) {
+            $sumXY += $indices[$i] * $historico[$i];
+            $sumX2 += $indices[$i] * $indices[$i];
+        }
+        $b = ($n * $sumXY - $sumX * $sumY) / ($n * $sumX2 - $sumX * $sumX);
+        $a = ($sumY - $b * $sumX) / $n;
+
+        // Previsões para os próximos 3 períodos
+        $previsoes = [];
+        $labelsPrev = $labels;
+        for ($i = 1; $i <= 3; $i++) {
+            $proximo = $a + $b * ($n + $i);
+            $proximo = round(max(0, min(100, $proximo)), 1);
+            $previsoes[] = $proximo;
+            $labelsPrev[] = 'Prev ' . $i;
+        }
+
+        $historicoCompleto = array_merge($valores, array_fill(0, 3, null));
+        $previsaoValores = array_fill(0, count($valores), null);
+        $previsaoValores = array_merge($previsaoValores, $previsoes);
+
+        $previsao = [
+            'labels' => $labelsPrev,
+            'historico' => $historicoCompleto,
+            'previsao' => $previsaoValores
+        ];
     }
-    $b = ($n * $sumXY - $sumX * $sumY) / ($n * $sumX2 - $sumX * $sumX);
-    $a = ($sumY - $b * $sumX) / $n;
-    $proximo = $a + $b * ($n + 1);
-    $proximo = round(max(0, min(100, $proximo)), 1);
-
-    $labelsPrev = array_merge($labels, ['Previsão']);
-    $valoresPrev = array_merge($valores, [$proximo]);
-
-    $previsao = [
-        'labels' => $labelsPrev,
-        'historico' => array_merge($valores, [null]),
-        'previsao' => array_fill(0, count($valores), null) + [$proximo]
-    ];
 }
 
-// ================= RANKING DOS ITENS MAIS PROBLEMÁTICOS =================
+// Ranking
 $ranking = [];
 $ocorrenciasPorItem = [];
 $totalRegistrosPorItem = [];
-
 foreach ($todasInspecoes as $ins) {
     foreach ($ins['campos'] as $campo) {
         $itemNome = ucwords(str_replace('_', ' ', $campo));
@@ -194,7 +197,6 @@ foreach ($todasInspecoes as $ins) {
         }
     }
 }
-
 foreach ($totalRegistrosPorItem as $item => $total) {
     $incidencia = round(($ocorrenciasPorItem[$item] / $total) * 100, 1);
     $ranking[] = [
@@ -203,12 +205,10 @@ foreach ($totalRegistrosPorItem as $item => $total) {
         'ocorrencias' => $ocorrenciasPorItem[$item]
     ];
 }
-usort($ranking, function ($a, $b) {
-    return $b['incidencia'] <=> $a['incidencia'];
-});
+usort($ranking, fn($a, $b) => $b['incidencia'] <=> $a['incidencia']);
 $ranking = array_slice($ranking, 0, 10);
 
-// ================= COMPARATIVO POR SALA =================
+// Comparativo por sala
 $salasTaxa = [];
 foreach ($salasPermitidas as $sala) {
     $campos = $camposPorSala[$sala];
@@ -221,7 +221,6 @@ foreach ($salasPermitidas as $sala) {
     $sql = "SELECT $camposList FROM $tabela WHERE $condicaoData";
     $stmt = $pdo->query($sql);
     $insSala = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
     $totalCamposSala = 0;
     $problemasSala = 0;
     foreach ($insSala as $ins) {
@@ -236,8 +235,8 @@ foreach ($salasPermitidas as $sala) {
     $salasTaxa[$sala] = $taxaSala;
 }
 
-// ================= MONTA RESPOSTA =================
-$dados = [
+// Resposta
+$resposta = [
     'total_inspecoes' => $totalInspecoes,
     'taxa_media_problemas' => $taxaMedia,
     'previsao_proximo' => $previsao['previsao'][array_key_last($previsao['previsao'])] ?? 0,
@@ -250,5 +249,5 @@ $dados = [
     ]
 ];
 
-echo json_encode($dados);
+echo json_encode($resposta);
 ?>

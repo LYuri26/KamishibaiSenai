@@ -1,9 +1,15 @@
+// =====================================================
+// ANALISE IA - KAMISHIBAI SENAI
+// Versão final com impressão otimizada
+// =====================================================
+
 let graficoEvolucao, graficoPrevisao, graficoSalas;
 
 // Preenche os anos disponíveis (últimos 5 anos)
 function preencherAnos() {
   const anoAtual = new Date().getFullYear();
   const selectAno = document.getElementById("filtroAno");
+  if (!selectAno) return;
   selectAno.innerHTML = "";
   for (let i = anoAtual; i >= anoAtual - 4; i--) {
     const option = document.createElement("option");
@@ -13,7 +19,7 @@ function preencherAnos() {
   }
 }
 
-// Carrega os dados da API
+// Carrega os dados da API e atualiza os componentes
 async function carregarDados() {
   const periodo = document.getElementById("filtroPeriodo").value;
   const ano = document.getElementById("filtroAno").value;
@@ -99,7 +105,7 @@ async function carregarDados() {
     tbody.innerHTML = "";
     if (data.ranking.length === 0) {
       tbody.innerHTML =
-        '<tr><td colspan="3" class="text-center">Nenhum dado disponível</td></tr>';
+        '发展<td colspan="3" class="text-center">Nenhum dado disponível</td>发展';
     } else {
       data.ranking.forEach((item) => {
         const row = document.createElement("tr");
@@ -141,12 +147,22 @@ async function carregarDados() {
         },
       },
     });
+
+    // Adiciona a data atual como atributo para impressão (rodapé)
+    const mainElement = document.querySelector("main.container");
+    if (mainElement) {
+      mainElement.setAttribute(
+        "data-print-date",
+        new Date().toLocaleString("pt-BR"),
+      );
+    }
   } catch (error) {
     console.error(error);
     alert("Erro ao carregar os dados da análise.");
   }
 }
 
+// Função para escapar HTML (segurança)
 function escapeHtml(text) {
   if (!text) return "";
   const div = document.createElement("div");
@@ -154,27 +170,65 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-// Inicialização
+// =====================================================
+// FUNÇÃO PARA GERAR PDF VIA IMPRESSÃO (window.print)
+// =====================================================
+async function gerarPDF() {
+  const btn = document.getElementById("btnExportarPDF");
+  if (!btn) return;
+
+  const originalText = btn.innerHTML;
+  btn.innerHTML =
+    '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Abrindo impressão...';
+  btn.disabled = true;
+
+  try {
+    // Garante que os gráficos estejam completamente renderizados
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    // Chama a impressão nativa do navegador
+    window.print();
+  } catch (err) {
+    console.error("Erro ao abrir impressão:", err);
+    alert("Não foi possível abrir a impressão. Tente novamente.");
+  } finally {
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+  }
+}
+
+// =====================================================
+// INICIALIZAÇÃO
+// =====================================================
 document.addEventListener("DOMContentLoaded", () => {
   preencherAnos();
   carregarDados();
 
-  document.getElementById("btnAtualizar").addEventListener("click", () => {
-    carregarDados();
-  });
+  const btnAtualizar = document.getElementById("btnAtualizar");
+  if (btnAtualizar) {
+    btnAtualizar.addEventListener("click", () => {
+      carregarDados();
+    });
+  }
+
+  const btnExportar = document.getElementById("btnExportarPDF");
+  if (btnExportar) {
+    btnExportar.addEventListener("click", gerarPDF);
+  }
 
   // Ao mudar o período, ajusta o controle de ano
-  document.getElementById("filtroPeriodo").addEventListener("change", (e) => {
-    const periodo = e.target.value;
-    const anoSelect = document.getElementById("filtroAno");
-    if (periodo === "anual") {
-      anoSelect.disabled = false;
-    } else {
-      anoSelect.disabled = true;
-      // Para mensal, usa ano atual
-      const anoAtual = new Date().getFullYear();
-      anoSelect.value = anoAtual;
-    }
-  });
-  document.getElementById("filtroPeriodo").dispatchEvent(new Event("change"));
+  const filtroPeriodo = document.getElementById("filtroPeriodo");
+  if (filtroPeriodo) {
+    filtroPeriodo.addEventListener("change", (e) => {
+      const periodo = e.target.value;
+      const anoSelect = document.getElementById("filtroAno");
+      if (periodo === "anual") {
+        anoSelect.disabled = false;
+      } else {
+        anoSelect.disabled = true;
+        const anoAtual = new Date().getFullYear();
+        anoSelect.value = anoAtual;
+      }
+    });
+    filtroPeriodo.dispatchEvent(new Event("change"));
+  }
 });
