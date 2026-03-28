@@ -192,3 +192,21 @@
   cursor: zoom-out;
   z-index: 10;
 }
+
+/* Estilo personalizado para o botão de Análise Preditiva (IA) */
+.btn-analise-ia {
+  background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+  border: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.btn-analise-ia:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+  background: linear-gradient(135deg, #0b5ed7, #0a58ca);
+}
+
+.btn-analise-ia:active {
+  transform: translateY(0);
+}

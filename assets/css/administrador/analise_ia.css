@@ -1,0 +1,28 @@
+/* Estilos específicos para a página de análise IA */
+
+.card {
+  border-radius: 1rem;
+}
+
+.card-header {
+  border-radius: 1rem 1rem 0 0 !important;
+  border-bottom: none;
+}
+
+canvas {
+  max-width: 100%;
+}
+
+#rankingProblemas tr {
+  transition: background-color 0.2s;
+}
+
+#rankingProblemas tr:hover {
+  background-color: #f8f9fa;
+}
+
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1rem;
+  }
+}
