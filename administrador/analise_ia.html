@@ -12,10 +12,8 @@
 </head>
 
 <body class="bg-light">
-    <!-- Cabeçalho -->
     <div id="header"></div>
 
-    <!-- Título e logout -->
     <div class="container d-flex justify-content-between align-items-center mt-3">
         <h1 class="h4 mb-0 text-primary">
             <i class="bi bi-graph-up me-2"></i>Análise Preditiva (IA)
@@ -39,9 +37,7 @@
                     </div>
                     <div class="col-md-3">
                         <label for="filtroAno" class="form-label fw-semibold">Ano</label>
-                        <select id="filtroAno" class="form-select rounded-pill">
-                            <!-- Preenchido via JS -->
-                        </select>
+                        <select id="filtroAno" class="form-select rounded-pill"></select>
                     </div>
                     <div class="col-md-3">
                         <label for="filtroSala" class="form-label fw-semibold">Sala</label>
@@ -58,8 +54,6 @@
                         </button>
                     </div>
                 </div>
-
-                <!-- Botão de exportar PDF (linha separada para responsividade) -->
                 <div class="row mt-3">
                     <div class="col-12 col-md-6 mx-auto">
                         <button id="btnExportarPDF" class="btn btn-danger rounded-pill w-100 btn-export-pdf">
@@ -70,7 +64,7 @@
             </div>
         </div>
 
-        <!-- Cards de Resumo -->
+        <!-- Cards Resumo -->
         <div class="row g-4 mb-4" id="cardsResumo">
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm h-100">
@@ -116,16 +110,40 @@
             <div class="col-md-4">
                 <div class="card shadow-sm">
                     <div class="card-header bg-white">
-                        <h5 class="mb-0">Previsão (Regressão Linear)</h5>
+                        <h5 class="mb-0">Previsão (Holt‑Winters)</h5>
                     </div>
                     <div class="card-body">
                         <canvas id="graficoPrevisao" height="300"></canvas>
+                        <div class="mt-2 text-center small text-muted" id="infoModelo"></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Ranking de Problemas -->
+        <!-- Explicabilidade -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-question-circle me-2"></i>Como a IA pensa?</h5>
+                <button class="btn btn-sm btn-outline-primary rounded-pill" id="btnDetalhesComponentes">
+                    Ver detalhes
+                </button>
+            </div>
+            <div class="card-body">
+                <p>Utilizamos o modelo <strong>Holt‑Winters multiplicativo</strong>, que decompõe a série temporal em
+                    três componentes:</p>
+                <ul>
+                    <li><strong>Nível</strong>: valor médio da taxa de problemas no período.</li>
+                    <li><strong>Tendência</strong>: direção de aumento ou redução ao longo do tempo.</li>
+                    <li><strong>Sazonalidade</strong>: padrões que se repetem a cada 12 meses (ex.: picos em certos
+                        meses do ano).</li>
+                </ul>
+                <p>O erro médio absoluto (MAE) indica a precisão média das previsões nos últimos períodos. Quanto menor,
+                    melhor o ajuste.</p>
+                <div id="componentesDetalhes" style="display: none;" class="mt-2 p-2 bg-light rounded small"></div>
+            </div>
+        </div>
+
+        <!-- Ranking -->
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-white">
                 <h5 class="mb-0">Itens Mais Problemáticos</h5>
@@ -150,7 +168,7 @@
             </div>
         </div>
 
-        <!-- Detalhamento por Sala -->
+        <!-- Comparativo por Sala -->
         <div class="card shadow-sm">
             <div class="card-header bg-white">
                 <h5 class="mb-0">Comparativo por Sala</h5>
@@ -167,7 +185,6 @@
         </div>
     </main>
 
-    <!-- Rodapé -->
     <div id="footer"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
