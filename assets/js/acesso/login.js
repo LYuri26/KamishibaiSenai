@@ -16,7 +16,6 @@ document.getElementById("formLogin").addEventListener("submit", async (e) => {
     if (result.sucesso) {
       exibirMensagem(`Bem-vindo, ${result.nome}! Redirecionando...`, "success");
 
-      // Recupera URL salva
       const redirect = sessionStorage.getItem("redirectAfterLogin");
 
       if (redirect) {
@@ -25,7 +24,6 @@ document.getElementById("formLogin").addEventListener("submit", async (e) => {
         return;
       }
 
-      // Fallback padrão
       if (result.cargo === "lider") {
         window.location.href = "../administrador/index.html";
       } else {
@@ -43,3 +41,32 @@ function exibirMensagem(texto, tipo) {
   document.getElementById("mensagem").innerHTML =
     `<div class="alert alert-${tipo}">${texto}</div>`;
 }
+
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    // Chama install.php para garantir que as tabelas existam
+    const response = await fetch("../../config/install.php");
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    // install.php retorna texto, não JSON. Apenas confirmamos que foi executado.
+    const text = await response.text();
+    console.log("Install executado:", text);
+    exibirMensagem("Sistema configurado com sucesso!", "success");
+    // Habilita o botão de login (já está habilitado, mas caso tenha sido desabilitado)
+    const submitBtn = document.querySelector(
+      "#formLogin button[type='submit']",
+    );
+    if (submitBtn) submitBtn.disabled = false;
+  } catch (error) {
+    console.error("Erro ao configurar sistema:", error);
+    exibirMensagem(
+      "Erro na configuração inicial. Contate o administrador.",
+      "danger",
+    );
+    const submitBtn = document.querySelector(
+      "#formLogin button[type='submit']",
+    );
+    if (submitBtn) submitBtn.disabled = true;
+  }
+});

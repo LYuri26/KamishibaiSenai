@@ -1,7 +1,7 @@
 async function carregarInspecoes() {
   const tbody = document.getElementById("listaInspecoes");
   tbody.innerHTML =
-    '<tr><td colspan="7" class="text-center"><div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>Carregando...</td></tr>';
+    '发展<td colspan="7" class="text-center"><div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>Carregando...</td></tr>';
 
   try {
     const response = await fetch("api/listar_inspecoes.php");
@@ -21,7 +21,30 @@ async function carregarInspecoes() {
       return;
     }
 
-    data.forEach((inspecao) => {
+    // Obter data atual (ano e mês)
+    const hoje = new Date();
+    const anoAtual = hoje.getFullYear();
+    const mesAtual = hoje.getMonth() + 1; // meses em JS são 0-index
+
+    // Filtrar inspeções do mês atual
+    const inspecoesFiltradas = data.filter((inspecao) => {
+      const dataInspecao = new Date(inspecao.data);
+      return (
+        dataInspecao.getFullYear() === anoAtual &&
+        dataInspecao.getMonth() + 1 === mesAtual
+      );
+    });
+
+    // Limitar aos 20 primeiros
+    const inspecoesExibir = inspecoesFiltradas.slice(0, 20);
+
+    if (inspecoesExibir.length === 0) {
+      tbody.innerHTML =
+        '<tr><td colspan="7" class="text-center text-secondary">Nenhuma inspeção registrada neste mês.</td></tr>';
+      return;
+    }
+
+    inspecoesExibir.forEach((inspecao) => {
       const row = document.createElement("tr");
       const momentoTexto = inspecao.momento === "inicio" ? "Início" : "Fim";
       const dataFormatada = new Date(inspecao.data).toLocaleString("pt-BR");
@@ -30,14 +53,15 @@ async function carregarInspecoes() {
           (inspecao.observacoes.length > 100 ? "…" : "")
         : "";
 
+      // Atributos data-label para responsividade mobile
       row.innerHTML = `
-        <td>${inspecao.id}</td>
-        <td>${escapeHtml(inspecao.nome)}</td>
-        <td>${dataFormatada}</td>
-        <td>${momentoTexto}</td>
-        <td>${escapeHtml(inspecao.sala)}</td>
-        <td class="obs-preview">${escapeHtml(obsPreview)}</td>
-        <td>
+        <td data-label="ID">${inspecao.id}</td>
+        <td data-label="Instrutor">${escapeHtml(inspecao.nome)}</td>
+        <td data-label="Data/Hora">${dataFormatada}</td>
+        <td data-label="Momento">${momentoTexto}</td>
+        <td data-label="Sala">${escapeHtml(inspecao.sala)}</td>
+        <td data-label="Observações" class="obs-preview">${escapeHtml(obsPreview)}</td>
+        <td data-label="Ações">
           <a href="visualizar.html?id=${inspecao.id}&sala=${inspecao.sala}" class="btn btn-sm btn-info rounded-pill">
             <i class="bi bi-eye me-1"></i>Detalhes
           </a>

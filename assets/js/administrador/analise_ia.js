@@ -1,6 +1,6 @@
 // =====================================================
 // ANALISE IA - KAMISHIBAI SENAI
-// Versão com impressão otimizada
+// Versão com impressão otimizada e recarga no período
 // =====================================================
 
 let graficoEvolucao, graficoPrevisao, graficoSalas;
@@ -60,14 +60,102 @@ async function carregarDados() {
         data.previsao?.componentes?.level &&
         data.previsao.componentes.level.length > 0
       ) {
+        const lastLevel =
+          data.previsao.componentes.level[
+            data.previsao.componentes.level.length - 1
+          ];
+        const lastTrend =
+          data.previsao.componentes.trend[
+            data.previsao.componentes.trend.length - 1
+          ];
+
+        // Formata a tendência com texto amigável
+        let trendText = "";
+        let trendIcon = "";
+        let trendDescription = "";
+
+        if (lastTrend > 0) {
+          trendIcon = '<i class="bi bi-arrow-up-short"></i>';
+          trendText = `<span class="text-success">${trendIcon} +${lastTrend.toFixed(2)}% (aumento gradual)</span>`;
+          trendDescription = `Isso significa que a taxa de problemas está aumentando lentamente a cada mês. Se essa tendência continuar, a situação pode piorar no futuro.`;
+        } else if (lastTrend < 0) {
+          trendIcon = '<i class="bi bi-arrow-down-short"></i>';
+          trendText = `<span class="text-danger">${trendIcon} ${lastTrend.toFixed(2)}% (redução gradual)</span>`;
+          trendDescription = `Isso indica que a taxa de problemas está diminuindo lentamente – um sinal positivo de melhoria.`;
+        } else {
+          trendIcon = '<i class="bi bi-dash"></i>';
+          trendText = `<span class="text-secondary">${trendIcon} estável (sem tendência significativa)</span>`;
+          trendDescription = `A taxa de problemas não mostra aumento nem redução significativa nos últimos meses. Está relativamente estável.`;
+        }
+
+        // Interpretação do nível
+        let levelInterpretation = "";
+        if (lastLevel < 20) {
+          levelInterpretation =
+            "Muito baixo – a maioria dos itens está em conformidade.";
+        } else if (lastLevel < 40) {
+          levelInterpretation = "Baixo – poucos itens apresentam problemas.";
+        } else if (lastLevel < 60) {
+          levelInterpretation =
+            "Moderado – metade dos itens tem algum problema; atenção necessária.";
+        } else if (lastLevel < 80) {
+          levelInterpretation =
+            "Alto – muitos itens apresentam falhas; ação urgente recomendada.";
+        } else {
+          levelInterpretation =
+            "Muito alto – a situação é crítica; intervenção imediata necessária.";
+        }
+
+        // Mensagem sobre o MAE (se disponível)
+        let maeMessage = "";
+        if (data.previsao.mae !== null && data.previsao.mae !== undefined) {
+          let maeInterpretation = "";
+          if (data.previsao.mae < 5) {
+            maeInterpretation = "muito boa (erro pequeno)";
+          } else if (data.previsao.mae < 10) {
+            maeInterpretation = "boa";
+          } else if (data.previsao.mae < 20) {
+            maeInterpretation = "razoável";
+          } else {
+            maeInterpretation = "alta (previsões menos confiáveis)";
+          }
+          maeMessage = `<div class="mt-2 small text-muted"><i class="bi bi-check-circle"></i> <strong>Precisão do modelo:</strong> o erro médio absoluto (MAE) é de ${data.previsao.mae}%, o que indica uma precisão ${maeInterpretation} para as previsões.</div>`;
+        } else {
+          maeMessage = `<div class="mt-2 small text-muted"><i class="bi bi-info-circle"></i> Não há dados suficientes para calcular a precisão das previsões (MAE).</div>`;
+        }
+
         compDiv.innerHTML = `
-          <div class="row mt-2">
-            <div class="col-md-6">
-              <strong>Últimos níveis (suavizados):</strong> ${data.previsao.componentes.level.map((v) => v.toFixed(2)).join(", ")}
+          <div class="mt-2 p-3 bg-light rounded shadow-sm">
+            <div class="row align-items-center">
+              <div class="col-md-6 mb-3 mb-md-0">
+                <div class="d-flex align-items-center">
+                  <i class="bi bi-graph-up fs-3 me-2 text-primary"></i>
+                  <div>
+                    <div class="text-muted small">📊 Nível atual (suavizado)</div>
+                    <div class="fs-2 fw-bold">${lastLevel.toFixed(2)}%</div>
+                    <div class="small text-muted">${levelInterpretation}</div>
+                    <div class="small text-muted">Valor médio da taxa de problemas, ajustado pela suavização exponencial.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="d-flex align-items-center">
+                  <i class="bi bi-arrow-left-right fs-3 me-2 text-warning"></i>
+                  <div>
+                    <div class="text-muted small">📈 Tendência atual</div>
+                    <div class="fs-5">${trendText}</div>
+                    <div class="small text-muted">${trendDescription}</div>
+                    <div class="small text-muted">Direção e magnitude da mudança ao longo do tempo.</div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="col-md-6">
-              <strong>Últimas tendências:</strong> ${data.previsao.componentes.trend.map((v) => v.toFixed(2)).join(", ")}
+            <hr class="my-2">
+            <div class="small text-muted">
+              <i class="bi bi-info-circle"></i> Os valores são os últimos calculados pelo modelo <strong>Holt‑Winters</strong>. 
+              O nível representa a componente de base, a tendência indica se a taxa está aumentando ou diminuindo.
             </div>
+            ${maeMessage}
           </div>
         `;
       } else {
@@ -190,9 +278,9 @@ async function carregarDados() {
       data.ranking.forEach((item) => {
         const row = document.createElement("tr");
         row.innerHTML = `
-           <td>${escapeHtml(item.item)}</td>
-           <td>${item.incidencia}%</td>
-           <td>${item.ocorrencias}</td>
+          <td>${escapeHtml(item.item)}</td>
+          <td>${item.incidencia}%</td>
+          <td>${item.ocorrencias}</td>
         `;
         tbody.appendChild(row);
       });
@@ -264,17 +352,11 @@ async function gerarPDF() {
   btn.disabled = true;
 
   try {
-    // Pequeno delay para garantir que os gráficos estejam completamente renderizados
     await new Promise((resolve) => setTimeout(resolve, 500));
-
-    // Força a re-renderização dos gráficos (opcional, mas ajuda)
     if (graficoEvolucao) graficoEvolucao.update();
     if (graficoPrevisao) graficoPrevisao.update();
     if (graficoSalas) graficoSalas.update();
-
-    // Pequeno delay adicional para o update
     await new Promise((resolve) => setTimeout(resolve, 200));
-
     window.print();
   } catch (err) {
     console.error("Erro ao abrir impressão:", err);
@@ -310,6 +392,8 @@ document.addEventListener("DOMContentLoaded", () => {
         anoSelect.disabled = true;
         anoSelect.value = new Date().getFullYear();
       }
+      // Recarrega os dados ao mudar o período
+      carregarDados();
     });
     filtroPeriodo.dispatchEvent(new Event("change"));
   }

@@ -1,6 +1,6 @@
 <?php
 // =====================================================
-// ANALISE IA - KAMISHIBAI SENAI (Versão corrigida)
+// ANALISE IA - KAMISHIBAI SENAI (Versão final)
 // =====================================================
 
 // Ativa exibição de erros para depuração (remova depois)
@@ -84,12 +84,13 @@ function getCamposProblemas($pdo, $tabela)
     }
 }
 
-// Função Holt-Winters corrigida
+// Função Holt-Winters adaptada para aceitar n == seasonal_period
 function holt_winters_forecast($y, $seasonal_period = 12, $forecast_steps = 3, $alpha = 0.3, $beta = 0.2, $gamma = 0.1)
 {
     $n = count($y);
-    // Exige pelo menos seasonal_period + 1 observações para inicialização
-    if ($n <= $seasonal_period) {
+
+    // Se houver menos de seasonal_period observações, usa média simples
+    if ($n < $seasonal_period) {
         $avg = array_sum($y) / max(1, $n);
         return [
             'forecast' => array_fill(0, $forecast_steps, round($avg, 1)),
@@ -110,9 +111,16 @@ function holt_winters_forecast($y, $seasonal_period = 12, $forecast_steps = 3, $
         $seasonal[$i] = $y[$i] / $avg_first;
     }
 
-    // Nível e tendência iniciais usando a observação de índice seasonal_period
+    // Nível inicial
     $level[0] = $y[0] / $seasonal[0];
-    $trend[0] = ($y[$seasonal_period] / $seasonal[0] - $y[0] / $seasonal[0]) / $seasonal_period;
+
+    // Tendência inicial: se temos pelo menos seasonal_period+1 pontos, usa a diferença
+    if ($n > $seasonal_period) {
+        $trend[0] = ($y[$seasonal_period] / $seasonal[0] - $y[0] / $seasonal[0]) / $seasonal_period;
+    } else {
+        // Com exatamente seasonal_period pontos, estima tendência como a variação média entre o último e o primeiro
+        $trend[0] = (($y[$seasonal_period - 1] / $seasonal[$seasonal_period - 1]) - ($y[0] / $seasonal[0])) / ($seasonal_period - 1);
+    }
 
     for ($t = 1; $t < $n; $t++) {
         $idx = $t % $seasonal_period;
@@ -175,10 +183,13 @@ try {
         $camposPorSala[$sala] = getCamposProblemas($pdo, $sala);
     }
 
-    $condicaoData = ($periodo === 'mensal')
-        ? "data >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)"
-        : "YEAR(data) = $ano";
-
+    if ($periodo === 'mensal') {
+        $condicaoData = "data >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)";
+    } else {
+        // Anual: buscar dados dos últimos 5 anos (ano-4 até ano)
+        $anoInicio = $ano - 4;
+        $condicaoData = "YEAR(data) BETWEEN $anoInicio AND $ano";
+    }
     $todasInspecoes = [];
     $totalInspecoes = 0;
     $totalProblemas = 0;
@@ -275,7 +286,7 @@ try {
         $labels = $evolucao['labels'];
         $n = count($valores);
 
-        if ($n > 12) { // Agora exige pelo menos 13 pontos
+        if ($n >= 12) { // Agora aceita 12 ou mais meses
             $hw = holt_winters_forecast($valores, 12, 3);
             $previsoes = $hw['forecast'];
             $labelsPrev = array_merge($labels, ['Prev 1', 'Prev 2', 'Prev 3']);

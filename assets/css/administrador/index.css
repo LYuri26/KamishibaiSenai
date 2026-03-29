@@ -5,6 +5,12 @@
   background: white;
   border-radius: 1.5rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  max-height: 600px;
+  overflow-y: auto;
+}
+/* Ajuste para manter o cabeçalho fixo quando houver rolagem */
+.table-responsive {
+  overflow-x: auto;
 }
 
 .table thead th {
@@ -16,6 +22,9 @@
   text-transform: uppercase;
   letter-spacing: 0.3px;
   white-space: nowrap; /* Evita quebra em desktop */
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .table td {
@@ -32,6 +41,7 @@
 /* Responsividade extra para mobile */
 @media (max-width: 576px) {
   .table thead {
+    position: static;
     display: none;
   }
   .table,
