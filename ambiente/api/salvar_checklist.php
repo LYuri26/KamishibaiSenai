@@ -3,16 +3,8 @@ date_default_timezone_set('America/Sao_Paulo');
 header('Content-Type: application/json');
 require_once __DIR__ . '/../../config/database.php';
 
-// ================= CONFIGURAÇÃO =================
-$mapaSalas = [
-    '104a' => 'sala104a',
-    '103d' => 'laboratorio103d',
-    '102c' => 'oficina102c'
-];
+$salas_permitidas = ['104a', '103d', '102c'];
 
-$salas_permitidas = array_keys($mapaSalas);
-
-// ================= ENTRADA =================
 $nome = $_POST['nome'] ?? '';
 $respostas = json_decode($_POST['respostas'] ?? '{}', true);
 $observacoes = $_POST['observacoes'] ?? '';
@@ -28,7 +20,6 @@ if (!in_array($sala, $salas_permitidas)) {
     exit;
 }
 
-// ================= PERÍODO =================
 $agora = time();
 $horaAtual = (int) date('H', $agora);
 $minutoAtual = (int) date('i', $agora);
@@ -40,7 +31,8 @@ $periodos = [
     'noite' => ['inicio' => 1110, 'fim' => 1350]
 ];
 
-function getPeriodo($minutos, $periodos) {
+function getPeriodo($minutos, $periodos)
+{
     foreach ($periodos as $nome => $p) {
         if ($minutos >= $p['inicio'] && $minutos <= $p['fim']) {
             return $nome;
@@ -53,7 +45,6 @@ $periodoAtual = getPeriodo($minutosTotais, $periodos);
 $meio = ($periodos[$periodoAtual]['inicio'] + $periodos[$periodoAtual]['fim']) / 2;
 $momento = ($minutosTotais > $meio) ? 'fim' : 'inicio';
 
-// ================= DUPLICIDADE =================
 $dataHoje = date('Y-m-d', $agora);
 $inicioTimestamp = strtotime($dataHoje) + $periodos[$periodoAtual]['inicio'] * 60;
 $fimTimestamp = strtotime($dataHoje) + $periodos[$periodoAtual]['fim'] * 60;
@@ -74,29 +65,45 @@ if ($checkStmt->fetchColumn() > 0) {
 $pathsImagens = [];
 
 if (!empty($_FILES['imagens']['name'][0])) {
+    $documentRoot = rtrim($_SERVER['DOCUMENT_ROOT'], '/');
+    $pastaBase = $documentRoot . '/assets/images/ambiente/';
 
-    $pastaBase = __DIR__ . "/../../assets/images/";
+    // Função para criar pasta com permissões
+    function criarPasta($caminho)
+    {
+        if (!is_dir($caminho)) {
+            if (!mkdir($caminho, 0777, true)) {
+                return false;
+            }
+            chmod($caminho, 0777);
+        }
+        return true;
+    }
 
-    // Mapeamento dinâmico
-    $subpasta = $mapaSalas[$sala];
-    $pastaSala = $pastaBase . $subpasta . "/";
+    if (!criarPasta($pastaBase)) {
+        echo json_encode(['sucesso' => false, 'erro' => 'Não foi possível criar a pasta base: ' . $pastaBase]);
+        exit;
+    }
 
-    if (!is_dir($pastaSala)) {
-        mkdir($pastaSala, 0777, true);
+    $pastaSala = $pastaBase . $sala . '/';
+    if (!criarPasta($pastaSala)) {
+        echo json_encode(['sucesso' => false, 'erro' => 'Não foi possível criar a pasta da sala: ' . $pastaSala]);
+        exit;
     }
 
     foreach ($_FILES['imagens']['tmp_name'] as $index => $tmpName) {
-
-        if (!is_uploaded_file($tmpName)) continue;
+        if (!is_uploaded_file($tmpName))
+            continue;
 
         $ext = pathinfo($_FILES['imagens']['name'][$index], PATHINFO_EXTENSION);
-        $nomeArquivo = uniqid() . "." . $ext;
-
+        $nomeArquivo = uniqid() . '.' . $ext;
         $caminhoFinal = $pastaSala . $nomeArquivo;
 
         if (move_uploaded_file($tmpName, $caminhoFinal)) {
-
-            $pathsImagens[] = "assets/images/" . $subpasta . "/" . $nomeArquivo;
+            $pathsImagens[] = "assets/images/ambiente/" . $sala . "/" . $nomeArquivo;
+        } else {
+            echo json_encode(['sucesso' => false, 'erro' => 'Falha ao mover o arquivo para: ' . $caminhoFinal]);
+            exit;
         }
     }
 }
@@ -125,12 +132,10 @@ $sql = "INSERT INTO `$sala` (" . implode(', ', $colunas) . ")
 
 $stmt = $pdo->prepare($sql);
 
-// ================= EXECUÇÃO =================
 try {
     $stmt->execute($valores);
     $idInspecao = $pdo->lastInsertId();
 
-    // ================= RELATÓRIO =================
     $sql2 = "INSERT INTO relatorios 
         (inspecao_id, sala, data, periodo, momento, observacoes, imagens, data_geracao)
         VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
@@ -155,3 +160,4 @@ try {
 } catch (PDOException $e) {
     echo json_encode(['sucesso' => false, 'erro' => $e->getMessage()]);
 }
+?>

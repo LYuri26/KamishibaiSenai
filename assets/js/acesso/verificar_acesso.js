@@ -1,4 +1,4 @@
-async function verificarAcesso(cargoNecessario = "gerencia") {
+async function verificarAcesso(cargoNecessario = "lider") {
   try {
     const response = await fetch("../acesso/api/verificar_sessao.php");
     const data = await response.json();
