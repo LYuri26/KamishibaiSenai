@@ -1,6 +1,6 @@
 <?php
 $host = 'localhost';
-$dbname = 'kamishibai-senai';
+$dbname = 'kamishibai';
 $username = 'root'; // altere conforme necessário
 $password = '';     // altere conforme necessário
 

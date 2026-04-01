@@ -1,7 +1,7 @@
 -- Criação do banco
-CREATE DATABASE IF NOT EXISTS `kamishibai-senai` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS `kamishibai` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-USE `kamishibai-senai`;
+USE `kamishibai`;
 
 -- Tabela da sala 104a com perguntas consolidadas (formulação positiva)
 CREATE TABLE IF NOT EXISTS `104a` (
@@ -129,7 +129,7 @@ CREATE TABLE IF NOT EXISTS `102c` (
     `equipamentos_local` ENUM('sim', 'nao') NOT NULL,
     `macarico_ok` ENUM('sim', 'nao') NOT NULL,
     `estufa_ok` ENUM('sim', 'nao') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- Tabela de relatórios
 CREATE TABLE IF NOT EXISTS `relatorios` (
@@ -155,4 +155,3 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
     `senha` VARCHAR(255) NOT NULL,
     `data_criacao` DATETIME NOT NULL
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
-

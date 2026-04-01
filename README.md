@@ -1,6 +1,6 @@
-# Kamishibai SENAI – Sistema de Inspeção com Análise Preditiva
+# Kamishibai – Sistema de Inspeção com Análise Preditiva
 
-O **Kamishibai SENAI** é uma plataforma digital que transforma o tradicional método de inspeção _Kamishibai_ (checklist visual) em uma ferramenta inteligente de gestão da qualidade. Automatiza a coleta de dados das inspeções das salas e laboratórios e utiliza um modelo de previsão baseado em **Holt‑Winters multiplicativo** para antecipar tendências, auxiliando líderes e instrutores na tomada de decisões proativas.
+O **Kamishibai** é uma plataforma digital que transforma o tradicional método de inspeção _Kamishibai_ (checklist visual) em uma ferramenta inteligente de gestão da qualidade. Automatiza a coleta de dados das inspeções das salas e laboratórios e utiliza um modelo de previsão baseado em **Holt‑Winters multiplicativo** para antecipar tendências, auxiliando líderes e instrutores na tomada de decisões proativas.
 
 ---
 
@@ -19,7 +19,7 @@ Kamishibai é uma técnica de gestão visual originária do Sistema Toyota de Pr
   - Oficina de soldagem 102c (boxes, EPIs, ferramentas, áreas)
 - **Registro de inspeções** por período (manhã/tarde) e momento (início/fim).
 - **Geração automática de relatórios** consolidados por sala e data.
-- \*\*Painel# Kamishibai SENAI – Sistema de Inspeção com Análise Preditiva## 📄 Licença
+- \*\*Painel# Kamishibai – Sistema de Inspeção com Análise Preditiva## 📄 Licença
 
 Este projeto é de código aberto e pode ser utilizado livremente para fins de aprendizado e treinament
 administrativo\*\* para visualização e busca de todas as inspeções.
@@ -42,7 +42,7 @@ administrativo\*\* para visualização e busca de todas as inspeções.
 ## 📁 Estrutura do projeto
 
 ```
-KamishibaiSenai/
+Kamishibai/
 ├── acesso/               # Páginas de login e cadastro
 ├── acessorios/           # Header, footer e componentes comuns
 ├── administrador/        # Área do líder (listagem, relatórios, análise IA)

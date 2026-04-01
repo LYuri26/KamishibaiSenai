@@ -18,8 +18,8 @@ async function carregarComponente(urls, elementoId) {
 // Detecta a base do projeto a partir da URL atual
 function getBasePath() {
   const path = window.location.pathname;
-  // Se estiver em /KamishibaiSenai/...
-  const match = path.match(/^(\/KamishibaiSenai\/)/);
+  // Se estiver em /Kamishibai/...
+  const match = path.match(/^(\/Kamishibai\/)/);
   if (match) {
     return match[1];
   }
@@ -31,7 +31,7 @@ function getBasePath() {
 document.addEventListener("DOMContentLoaded", () => {
   const basePath = getBasePath();
   const caminhosHeader = [
-    `${basePath}acessorios/header.html`, // Ex: /KamishibaiSenai/acessorios/header.html
+    `${basePath}acessorios/header.html`, // Ex: /Kamishibai/acessorios/header.html
     "../acessorios/header.html", // Relativo à página atual
     "./acessorios/header.html", // Alternativa
   ];

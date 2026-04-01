@@ -1,5 +1,5 @@
 // =====================================================
-// ANALISE IA - KAMISHIBAI SENAI
+// ANALISE IA - KAMISHIBAI
 // Versão com impressão otimizada e recarga no período
 // =====================================================
 

@@ -1,6 +1,6 @@
 <?php
 // =====================================================
-// ANALISE IA - KAMISHIBAI SENAI (Versão final)
+// ANALISE IA - KAMISHIBAI (Versão final)
 // =====================================================
 
 // Ativa exibição de erros para depuração (remova depois)
