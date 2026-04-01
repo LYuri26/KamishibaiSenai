@@ -13,7 +13,7 @@ require_once __DIR__ . '/../../config/database.php';
 
 try {
     // UNION das duas tabelas, selecionando os campos comuns e adicionando a coluna 'sala'
-$sql = "
+    $sql = "
     (SELECT id, nome, data, momento, observacoes, '104a' AS sala FROM `104a`)
     UNION ALL
     (SELECT id, nome, data, momento, observacoes, '103d' AS sala FROM `103d`)

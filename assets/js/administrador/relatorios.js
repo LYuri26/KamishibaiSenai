@@ -56,9 +56,9 @@ async function carregarRelatorios(data) {
                 const caminho = "../" + img;
 
                 return `
-        <img 
-          src="${caminho}" 
-          width="80" 
+        <img
+          src="${caminho}"
+          width="80"
           class="me-1 rounded border img-thumb"
           style="cursor:pointer"
           onclick='abrirModalImagens(${JSON.stringify(imgs)})'
@@ -121,8 +121,8 @@ function abrirModalImagens(listaImagens) {
     const caminho = "../" + img;
 
     container.innerHTML += `
-      <img 
-        src="${caminho}" 
+      <img
+        src="${caminho}"
         class="img-fluid rounded border"
         style="max-height:400px"
         onerror="this.style.display='none'"
