@@ -16,10 +16,10 @@ jobs:
     - name: 📂 Sync files
       uses: SamKirkland/FTP-Deploy-Action@4.3.0
       with:
-        server: appvision.com.br
+        server: 82.25.72.215
         username: ${{ secrets.USER }}
         password: ${{ secrets.PASSWORD }}
-        server-dir: /public_html/pcm/
+        server-dir: /public_html/kamishibai/
         exclude: |
           **/.git*
           **/.git*/**
