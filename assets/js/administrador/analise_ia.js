@@ -1,6 +1,6 @@
 // =====================================================
 // ANALISE IA - KAMISHIBAI
-// Versão com impressão otimizada e recarga no período
+// Versão com suporte a múltiplos modelos e intervalos de confiança
 // =====================================================
 
 let graficoEvolucao, graficoPrevisao, graficoSalas;
@@ -50,76 +50,80 @@ async function carregarDados() {
       if (data.previsao.mae !== null && data.previsao.mae !== undefined) {
         html += ` &nbsp;| <strong>MAE:</strong> ${data.previsao.mae}% (últimos 3 meses)`;
       }
+      if (data.previsao.mape !== null && data.previsao.mape !== undefined) {
+        html += ` &nbsp;| <strong>MAPE:</strong> ${data.previsao.mape}%`;
+      }
       modeloInfoDiv.innerHTML = html;
     }
 
-    // ========== COMPONENTES DA PREVISÃO ==========
+    // ========== COMPONENTES E DETALHES DA PREVISÃO ==========
     const compDiv = document.getElementById("componentesDetalhes");
     if (compDiv) {
+      const tipoModelo = data.previsao?.tipo_modelo;
+      const componentes = data.previsao?.componentes;
+      const mae = data.previsao?.mae;
+      const mape = data.previsao?.mape;
+      const rmse = data.previsao?.rmse;
+      const conf80 = data.previsao?.confidence80;
+      const conf95 = data.previsao?.confidence95;
+
+      // Caso 1: Holt-Winters com componentes disponíveis
       if (
-        data.previsao?.componentes?.level &&
-        data.previsao.componentes.level.length > 0
+        tipoModelo === "holt_winters" &&
+        componentes &&
+        componentes.level &&
+        componentes.level.length > 0
       ) {
-        const lastLevel =
-          data.previsao.componentes.level[
-            data.previsao.componentes.level.length - 1
-          ];
-        const lastTrend =
-          data.previsao.componentes.trend[
-            data.previsao.componentes.trend.length - 1
-          ];
+        const lastLevel = componentes.level[componentes.level.length - 1];
+        const lastTrend = componentes.trend[componentes.trend.length - 1];
 
-        // Formata a tendência com texto amigável
-        let trendText = "";
-        let trendIcon = "";
-        let trendDescription = "";
-
+        // Formata tendência
+        let trendText = "",
+          trendIcon = "",
+          trendDescription = "";
         if (lastTrend > 0) {
           trendIcon = '<i class="bi bi-arrow-up-short"></i>';
           trendText = `<span class="text-success">${trendIcon} +${lastTrend.toFixed(2)}% (aumento gradual)</span>`;
-          trendDescription = `Isso significa que a taxa de problemas está aumentando lentamente a cada mês. Se essa tendência continuar, a situação pode piorar no futuro.`;
+          trendDescription =
+            "Isso significa que a taxa de problemas está aumentando lentamente a cada mês. Se essa tendência continuar, a situação pode piorar no futuro.";
         } else if (lastTrend < 0) {
           trendIcon = '<i class="bi bi-arrow-down-short"></i>';
           trendText = `<span class="text-danger">${trendIcon} ${lastTrend.toFixed(2)}% (redução gradual)</span>`;
-          trendDescription = `Isso indica que a taxa de problemas está diminuindo lentamente – um sinal positivo de melhoria.`;
+          trendDescription =
+            "Isso indica que a taxa de problemas está diminuindo lentamente – um sinal positivo de melhoria.";
         } else {
           trendIcon = '<i class="bi bi-dash"></i>';
           trendText = `<span class="text-secondary">${trendIcon} estável (sem tendência significativa)</span>`;
-          trendDescription = `A taxa de problemas não mostra aumento nem redução significativa nos últimos meses. Está relativamente estável.`;
+          trendDescription =
+            "A taxa de problemas não mostra aumento nem redução significativa nos últimos meses. Está relativamente estável.";
         }
 
         // Interpretação do nível
         let levelInterpretation = "";
-        if (lastLevel < 20) {
+        if (lastLevel < 20)
           levelInterpretation =
             "Muito baixo – a maioria dos itens está em conformidade.";
-        } else if (lastLevel < 40) {
+        else if (lastLevel < 40)
           levelInterpretation = "Baixo – poucos itens apresentam problemas.";
-        } else if (lastLevel < 60) {
+        else if (lastLevel < 60)
           levelInterpretation =
             "Moderado – metade dos itens tem algum problema; atenção necessária.";
-        } else if (lastLevel < 80) {
+        else if (lastLevel < 80)
           levelInterpretation =
             "Alto – muitos itens apresentam falhas; ação urgente recomendada.";
-        } else {
+        else
           levelInterpretation =
             "Muito alto – a situação é crítica; intervenção imediata necessária.";
-        }
 
-        // Mensagem sobre o MAE (se disponível)
+        // Mensagem de precisão (MAE)
         let maeMessage = "";
-        if (data.previsao.mae !== null && data.previsao.mae !== undefined) {
+        if (mae !== null && mae !== undefined) {
           let maeInterpretation = "";
-          if (data.previsao.mae < 5) {
-            maeInterpretation = "muito boa (erro pequeno)";
-          } else if (data.previsao.mae < 10) {
-            maeInterpretation = "boa";
-          } else if (data.previsao.mae < 20) {
-            maeInterpretation = "razoável";
-          } else {
-            maeInterpretation = "alta (previsões menos confiáveis)";
-          }
-          maeMessage = `<div class="mt-2 small text-muted"><i class="bi bi-check-circle"></i> <strong>Precisão do modelo:</strong> o erro médio absoluto (MAE) é de ${data.previsao.mae}%, o que indica uma precisão ${maeInterpretation} para as previsões.</div>`;
+          if (mae < 5) maeInterpretation = "muito boa (erro pequeno)";
+          else if (mae < 10) maeInterpretation = "boa";
+          else if (mae < 20) maeInterpretation = "razoável";
+          else maeInterpretation = "alta (previsões menos confiáveis)";
+          maeMessage = `<div class="mt-2 small text-muted"><i class="bi bi-check-circle"></i> <strong>Precisão do modelo:</strong> o erro médio absoluto (MAE) é de ${mae}%, o que indica uma precisão ${maeInterpretation} para as previsões.</div>`;
         } else {
           maeMessage = `<div class="mt-2 small text-muted"><i class="bi bi-info-circle"></i> Não há dados suficientes para calcular a precisão das previsões (MAE).</div>`;
         }
@@ -158,9 +162,58 @@ async function carregarDados() {
             ${maeMessage}
           </div>
         `;
+      }
+      // Caso 2: Outros modelos (Holt, Média Móvel) com métricas disponíveis
+      else if (tipoModelo === "holt" || tipoModelo === "media_movel") {
+        let metricsHtml = "";
+        if (mae !== null && mae !== undefined) {
+          metricsHtml += `<div><i class="bi bi-bar-chart"></i> <strong>MAE:</strong> ${mae}% (erro médio absoluto)</div>`;
+        }
+        if (mape !== null && mape !== undefined) {
+          metricsHtml += `<div><i class="bi bi-percent"></i> <strong>MAPE:</strong> ${mape}% (erro percentual médio)</div>`;
+        }
+        if (rmse !== null && rmse !== undefined) {
+          metricsHtml += `<div><i class="bi bi-graph-up"></i> <strong>RMSE:</strong> ${rmse}% (raiz do erro quadrático médio)</div>`;
+        }
+
+        let confidenceHtml = "";
+        if (conf80 && conf80.lower && conf80.upper && conf80.lower.length > 0) {
+          confidenceHtml = `
+            <div class="mt-2">
+              <strong><i class="bi bi-shield-check"></i> Intervalos de confiança (para a primeira previsão):</strong><br>
+              <span class="badge bg-info">80%</span> entre ${conf80.lower[0]}% e ${conf80.upper[0]}%<br>
+              <span class="badge bg-secondary">95%</span> entre ${conf95.lower[0]}% e ${conf95.upper[0]}%
+            </div>
+          `;
+        }
+
+        compDiv.innerHTML = `
+          <div class="mt-2 p-3 bg-light rounded shadow-sm">
+            <div class="alert alert-info mb-2">
+              <i class="bi bi-robot"></i> <strong>Modelo utilizado:</strong> ${data.previsao.modelo}
+            </div>
+            ${
+              metricsHtml
+                ? `<div class="mb-2"><strong>📈 Métricas de qualidade:</strong><br>${metricsHtml}</div>`
+                : ""
+            }
+            ${confidenceHtml}
+            <hr class="my-2">
+            <div class="small text-muted">
+              <i class="bi bi-lightbulb"></i> Como não há sazonalidade clara ou dados suficientes, este modelo foi escolhido automaticamente.
+              Acompanhe o MAE (quanto menor, melhor) para avaliar a confiabilidade das previsões.
+            </div>
+          </div>
+        `;
       } else {
-        compDiv.innerHTML =
-          '<div class="text-muted mt-2">Nenhum dado de componentes disponível para este modelo.</div>';
+        // Nenhum modelo disponível
+        compDiv.innerHTML = `
+          <div class="text-muted mt-2 p-3 bg-light rounded">
+            <i class="bi bi-exclamation-triangle"></i> 
+            Não há dados suficientes para gerar componentes ou métricas de previsão.
+            Acumule pelo menos 3 meses de inspeções para obter análises preditivas.
+          </div>
+        `;
       }
     }
 
@@ -191,7 +244,7 @@ async function carregarDados() {
       },
     });
 
-    // ========== GRÁFICO PREVISÃO ==========
+    // ========== GRÁFICO PREVISÃO COM INTERVALOS DE CONFIANÇA ==========
     if (graficoPrevisao) graficoPrevisao.destroy();
     const ctxPrev = document.getElementById("graficoPrevisao").getContext("2d");
 
@@ -213,32 +266,74 @@ async function carregarDados() {
       },
     ];
 
-    const hasForecast = data.previsao?.previsao?.some((v) => v !== null);
-    if (hasForecast) {
-      const superior = data.previsao.previsao.map((v) =>
-        v !== null ? v + 5 : null,
-      );
-      const inferior = data.previsao.previsao.map((v) =>
-        v !== null ? Math.max(0, v - 5) : null,
-      );
-      datasets.push({
-        label: "Intervalo Superior",
-        data: superior,
-        borderColor: "rgba(255, 99, 132, 0)",
-        backgroundColor: "rgba(255, 99, 132, 0.2)",
-        fill: "+1",
-        pointRadius: 0,
-        showLine: false,
-      });
-      datasets.push({
-        label: "Intervalo Inferior",
-        data: inferior,
-        borderColor: "rgba(255, 99, 132, 0)",
-        backgroundColor: "rgba(255, 99, 132, 0.2)",
-        fill: "+2",
-        pointRadius: 0,
-        showLine: false,
-      });
+    const previsaoArray = data.previsao?.previsao || [];
+    const hasForecast = previsaoArray.some((v) => v !== null);
+    const conf80 = data.previsao?.confidence80;
+    const conf95 = data.previsao?.confidence95;
+
+    if (hasForecast && conf80 && conf80.lower && conf80.upper) {
+      // Índice onde começam as previsões (primeiro null depois de históricos)
+      const firstForecastIdx = previsaoArray.findIndex((v) => v !== null);
+      if (firstForecastIdx !== -1) {
+        const nForecasts = previsaoArray.length - firstForecastIdx;
+        // Mapeia os intervalos para o mesmo comprimento do array de previsão
+        const lower80 = previsaoArray.map((v, idx) =>
+          idx >= firstForecastIdx ? conf80.lower[idx - firstForecastIdx] : null,
+        );
+        const upper80 = previsaoArray.map((v, idx) =>
+          idx >= firstForecastIdx ? conf80.upper[idx - firstForecastIdx] : null,
+        );
+
+        datasets.push({
+          label: "IC 80%",
+          data: upper80,
+          borderColor: "rgba(255, 99, 132, 0)",
+          backgroundColor: "rgba(255, 99, 132, 0.15)",
+          fill: "+1",
+          pointRadius: 0,
+          showLine: false,
+        });
+        datasets.push({
+          label: "IC 80% (inferior)",
+          data: lower80,
+          borderColor: "rgba(255, 99, 132, 0)",
+          backgroundColor: "rgba(255, 99, 132, 0.15)",
+          fill: "+2",
+          pointRadius: 0,
+          showLine: false,
+        });
+      }
+    }
+
+    if (hasForecast && conf95 && conf95.lower && conf95.upper) {
+      const firstForecastIdx = previsaoArray.findIndex((v) => v !== null);
+      if (firstForecastIdx !== -1) {
+        const lower95 = previsaoArray.map((v, idx) =>
+          idx >= firstForecastIdx ? conf95.lower[idx - firstForecastIdx] : null,
+        );
+        const upper95 = previsaoArray.map((v, idx) =>
+          idx >= firstForecastIdx ? conf95.upper[idx - firstForecastIdx] : null,
+        );
+
+        datasets.push({
+          label: "IC 95%",
+          data: upper95,
+          borderColor: "rgba(255, 99, 132, 0)",
+          backgroundColor: "rgba(255, 99, 132, 0.08)",
+          fill: "+1",
+          pointRadius: 0,
+          showLine: false,
+        });
+        datasets.push({
+          label: "IC 95% (inferior)",
+          data: lower95,
+          borderColor: "rgba(255, 99, 132, 0)",
+          backgroundColor: "rgba(255, 99, 132, 0.08)",
+          fill: "+2",
+          pointRadius: 0,
+          showLine: false,
+        });
+      }
     }
 
     graficoPrevisao = new Chart(ctxPrev, {
@@ -273,7 +368,7 @@ async function carregarDados() {
     tbody.innerHTML = "";
     if (!data.ranking || data.ranking.length === 0) {
       tbody.innerHTML =
-        '发展<td colspan="3" class="text-center">Nenhum dado disponível</td>发展';
+        '<tr><td colspan="3" class="text-center">Nenhum dado disponível</td></tr>';
     } else {
       data.ranking.forEach((item) => {
         const row = document.createElement("tr");
@@ -392,7 +487,6 @@ document.addEventListener("DOMContentLoaded", () => {
         anoSelect.disabled = true;
         anoSelect.value = new Date().getFullYear();
       }
-      // Recarrega os dados ao mudar o período
       carregarDados();
     });
     filtroPeriodo.dispatchEvent(new Event("change"));
