@@ -1,13 +1,13 @@
 <?php
-// install.php - Criação de tabelas (execução silenciosa)
+// install.php - Criação de tabelas (produção segura)
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 set_time_limit(0);
 require_once __DIR__ . '/database.php';
 
-// Se já estiver em uso, não cria de novo
 try {
-    // Cria o banco se não existir
-    $pdo->exec("CREATE DATABASE IF NOT EXISTS `kamishibai` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-    $pdo->exec("USE `kamishibai`");
 
     // --- Tabela da sala 104a ---
     $colunas = [
@@ -41,10 +41,9 @@ try {
         'mesa_gavetas ENUM("sim","nao") NOT NULL',
         'cadeira_integra ENUM("sim","nao") NOT NULL'
     ];
-    $sql104a = "CREATE TABLE IF NOT EXISTS `104a` (" . implode(', ', $colunas) . ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
-    $pdo->exec($sql104a);
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `104a` (" . implode(', ', $colunas) . ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-    // --- Tabela do laboratório 103d ---
+    // --- Tabela 103d ---
     $colunas103d = [
         'id INT AUTO_INCREMENT PRIMARY KEY',
         'nome VARCHAR(100) NOT NULL',
@@ -66,10 +65,9 @@ try {
         'tomadas_intactas ENUM("sim","nao") NOT NULL',
         'fios_expostos ENUM("sim","nao") NOT NULL'
     ];
-    $sql103d = "CREATE TABLE IF NOT EXISTS `103d` (" . implode(', ', $colunas103d) . ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
-    $pdo->exec($sql103d);
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `103d` (" . implode(', ', $colunas103d) . ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-    // --- Tabela da oficina de soldagem 102c ---
+    // --- Tabela 102c ---
     $colunas102c = [
         'id INT AUTO_INCREMENT PRIMARY KEY',
         'nome VARCHAR(100) NOT NULL',
@@ -115,36 +113,33 @@ try {
     ];
     $pdo->exec("CREATE TABLE IF NOT EXISTS `102c` (" . implode(', ', $colunas102c) . ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-    // --- Tabela de relatórios ---
-    $sqlRelatorios = "CREATE TABLE IF NOT EXISTS `relatorios` (
-        `id` INT AUTO_INCREMENT PRIMARY KEY,
-        `inspecao_id` INT NOT NULL,
-        `sala` VARCHAR(50) NOT NULL,
-        `data` DATE NOT NULL,
-        `periodo` ENUM('manha','tarde','noite') NOT NULL,
-        `momento` ENUM('inicio','fim') NOT NULL,
-        `observacoes` TEXT,
-        `data_geracao` DATETIME NOT NULL,
-        `imagens` TEXT NULL,
-        UNIQUE KEY `unique_inspecao` (`inspecao_id`, `sala`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
-    $pdo->exec($sqlRelatorios);
+    // --- Relatórios ---
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `relatorios` (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        inspecao_id INT NOT NULL,
+        sala VARCHAR(50) NOT NULL,
+        data DATE NOT NULL,
+        periodo ENUM('manha','tarde','noite') NOT NULL,
+        momento ENUM('inicio','fim') NOT NULL,
+        observacoes TEXT,
+        data_geracao DATETIME NOT NULL,
+        imagens TEXT NULL,
+        UNIQUE KEY unique_inspecao (inspecao_id, sala)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-    // --- Tabela de usuários ---
-    $sqlUsuarios = "CREATE TABLE IF NOT EXISTS `usuarios` (
-        `id` INT AUTO_INCREMENT PRIMARY KEY,
-        `nome` VARCHAR(100) NOT NULL,
-        `sobrenome` VARCHAR(100) NOT NULL,
-        `email` VARCHAR(255) UNIQUE NOT NULL,
-        `cargo` ENUM('instrutor','lider') NOT NULL,
-        `senha` VARCHAR(255) NOT NULL,
-        `data_criacao` DATETIME NOT NULL
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
-    $pdo->exec($sqlUsuarios);
+    // --- Usuários ---
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `usuarios` (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        nome VARCHAR(100) NOT NULL,
+        sobrenome VARCHAR(100) NOT NULL,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        cargo ENUM('instrutor','lider') NOT NULL,
+        senha VARCHAR(255) NOT NULL,
+        data_criacao DATETIME NOT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-    // Opcional: não imprime nada para não poluir a saída JSON
-    // Se quiser feedback, pode retornar algo, mas o check_install.php capturará
+    echo "OK";
+
 } catch (PDOException $e) {
-    // Se houver erro, lança exceção para ser capturada pelo check_install.php
-    throw new Exception('Erro ao criar tabelas: ' . $e->getMessage());
+    echo "Erro: " . $e->getMessage();
 }
