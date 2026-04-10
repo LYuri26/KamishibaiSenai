@@ -8,28 +8,28 @@ jobs:
     name: 🎉 Deploy
     runs-on: ubuntu-latest
     steps:
-    - name: 🚚 Get latest code
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 2
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
 
-    - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.3.0
-      with:
-        server: 82.25.72.215
-        username: ${{ secrets.USER }}
-        password: ${{ secrets.PASSWORD }}
-        server-dir: /public_html/kamishibai/
-        exclude: |
-          **/.git*
-          **/.git*/**
-          **/.vscode/**
-          _documents/**
-          _phpinfo.php
-          *.code-workspace
-          *.bkp
-          *.zip
-          _test.html
-          _data/database/release.ini
-          mergeRelease.cmd
-          .env
+      - name: 📂 Sync files
+        uses: SamKirkland/FTP-Deploy-Action@4.3.0
+        with:
+          server: 82.25.72.215
+          username: ${{ secrets.USER }}
+          password: ${{ secrets.PASSWORD }}
+          server-dir: /
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.vscode/**
+            _documents/**
+            _phpinfo.php
+            *.code-workspace
+            *.bkp
+            *.zip
+            _test.html
+            _data/database/release.ini
+            mergeRelease.cmd
+            .env
