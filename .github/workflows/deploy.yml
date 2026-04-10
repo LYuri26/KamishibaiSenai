@@ -33,3 +33,4 @@ jobs:
             _data/database/release.ini
             mergeRelease.cmd
             .env
+            .github/**
