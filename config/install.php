@@ -5,9 +5,6 @@ require_once __DIR__ . '/database.php';
 
 // Se já estiver em uso, não cria de novo
 try {
-    // Cria o banco se não existir
-    $pdo->exec("CREATE DATABASE IF NOT EXISTS `u196097154_kamishibai` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-    $pdo->exec("USE `u196097154_kamishibai`");
 
     // --- Tabela da sala 104a ---
     $colunas = [
