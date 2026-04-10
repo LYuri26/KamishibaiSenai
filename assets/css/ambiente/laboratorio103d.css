@@ -1,30 +1,29 @@
-/* ===== ESTILOS ESPECÍFICOS PARA LABORATÓRIO 103d ===== */
+/* ===== ESTILOS ESPECÍFICOS PARA SALA 104a ===== */
 :root {
   --primary-light: #e8f0fe;
-  --card-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.15);
-  --transition-default: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --card-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.12);
+  --transition-default: all 0.3s ease;
 }
 
 .question-card {
-  background: linear-gradient(145deg, #ffffff, #fafcff);
+  background: #ffffff;
   border-radius: 2rem;
   padding: 2rem 1.5rem;
   margin: 1.5rem 0;
-  border: none;
+  border: 1px solid rgba(0, 0, 0, 0.03);
   box-shadow: var(--card-shadow);
   transition: var(--transition-default);
   animation: fadeSlide 0.4s ease-out;
 }
 
 .question-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 25px 35px -12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.18);
 }
 
 @keyframes fadeSlide {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(15px);
   }
   to {
     opacity: 1;
@@ -33,10 +32,12 @@
 }
 
 .question-card h5 {
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   font-weight: 700;
-  color: #0b1e3a;
-  line-height: 1.4;
+  color: #0f172a;
+  margin-bottom: 1.2rem;
+  border-bottom: 2px solid #f1f5f9;
+  padding-bottom: 0.75rem;
 }
 
 .btn-group {
@@ -52,20 +53,19 @@
   font-weight: 600;
   transition: var(--transition-default);
   flex: 1;
-  letter-spacing: 0.3px;
 }
 
 .btn-group .btn.active {
   transform: scale(1.02);
-  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.3);
 }
 
-.btn-group .btn-primary.active {
+.btn-primary.active {
   background: #10b981;
   border-color: #059669;
 }
 
-.btn-group .btn-secondary.active {
+.btn-secondary.active {
   background: #ef4444;
   border-color: #dc2626;
 }
@@ -109,12 +109,11 @@
 .progress {
   height: 1.2rem !important;
   border-radius: 3rem;
-  background: #e2e8f0;
-  overflow: hidden;
+  background: #e9eef2;
 }
 
 .progress-bar {
-  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  background: linear-gradient(90deg, #2563eb, #7c3aed);
   border-radius: 3rem;
   transition: width 0.4s ease;
   font-weight: 600;
@@ -123,45 +122,20 @@
 }
 
 #nome {
-  border: 2px solid #e2e8f0;
+  border: 2px solid #e9eef2;
   border-radius: 3rem;
   padding: 1rem 1.5rem;
-  font-size: 1.1rem;
   transition: var(--transition-default);
 }
 
 #nome:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
 }
 
 #checklistForm {
-  background: white;
   border-radius: 2.5rem;
-  box-shadow: 0 25px 40px -15px rgba(0, 0, 0, 0.2);
-  padding: 2rem !important;
-}
-
-.navigation-buttons button {
-  border-radius: 3rem !important;
-  padding: 0.9rem 2rem;
-  font-weight: 600;
-  transition: var(--transition-default);
-}
-
-.navigation-buttons button:hover:not(:disabled) {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 20px -10px rgba(0, 0, 0, 0.3);
-}
-
-.btn-outline-danger {
-  border-width: 2px;
-  transition: var(--transition-default);
-}
-
-.btn-outline-danger:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 15px -6px #dc2626;
+  box-shadow: 0 25px 40px -15px rgba(0, 0, 0, 0.15);
 }
 
 /* Responsividade */
@@ -172,16 +146,6 @@
   .btn-group .btn {
     font-size: 1rem;
     padding: 0.8rem 0.25rem;
-  }
-  .navigation-buttons {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  .navigation-buttons button {
-    width: 100%;
-  }
-  #checklistForm {
-    padding: 1.5rem !important;
   }
 }
 
@@ -315,6 +279,7 @@
     transform: scale(1);
   }
 }
+
 /* ===== STATUS CONFORME (ATIVO) ===== */
 #statusLuz.bg-success {
   background: #059669 !important;

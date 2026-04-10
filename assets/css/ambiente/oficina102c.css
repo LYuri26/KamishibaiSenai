@@ -1,31 +1,29 @@
-/* ===== ESTILOS ESPECÍFICOS PARA OFICINA 102C ===== */
+/* ===== ESTILOS ESPECÍFICOS PARA SALA 104a ===== */
 :root {
-  --primary-light: #fff7ed;
-  --card-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.15);
-  --transition-default: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --primary-light: #e8f0fe;
+  --card-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.12);
+  --transition-default: all 0.3s ease;
 }
 
-/* ===== CARD ===== */
 .question-card {
-  background: linear-gradient(145deg, #ffffff, #fffaf5);
+  background: #ffffff;
   border-radius: 2rem;
   padding: 2rem 1.5rem;
   margin: 1.5rem 0;
-  border-left: 6px solid #f97316; /* identidade oficina */
+  border: 1px solid rgba(0, 0, 0, 0.03);
   box-shadow: var(--card-shadow);
   transition: var(--transition-default);
   animation: fadeSlide 0.4s ease-out;
 }
 
 .question-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 25px 35px -12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.18);
 }
 
 @keyframes fadeSlide {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(15px);
   }
   to {
     opacity: 1;
@@ -34,13 +32,14 @@
 }
 
 .question-card h5 {
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   font-weight: 700;
-  color: #7c2d12;
-  line-height: 1.4;
+  color: #0f172a;
+  margin-bottom: 1.2rem;
+  border-bottom: 2px solid #f1f5f9;
+  padding-bottom: 0.75rem;
 }
 
-/* ===== BOTÕES ===== */
 .btn-group {
   display: flex;
   gap: 0.75rem;
@@ -54,39 +53,35 @@
   font-weight: 600;
   transition: var(--transition-default);
   flex: 1;
-  letter-spacing: 0.3px;
 }
 
 .btn-group .btn.active {
   transform: scale(1.02);
-  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.3);
 }
 
-/* OK */
-.btn-group .btn-primary.active {
-  background: #16a34a;
-  border-color: #15803d;
+.btn-primary.active {
+  background: #10b981;
+  border-color: #059669;
 }
 
-/* PROBLEMA */
-.btn-group .btn-secondary.active {
-  background: #dc2626;
-  border-color: #b91c1c;
+.btn-secondary.active {
+  background: #ef4444;
+  border-color: #dc2626;
 }
 
-/* ===== OBSERVAÇÃO ===== */
 .observacao-field {
   margin-top: 1.5rem;
   padding: 1.5rem;
-  background: #fff7ed;
-  border-left: 6px solid #f97316;
+  background: #fffbeb;
+  border-left: 6px solid #fbbf24;
   border-radius: 1.5rem;
   animation: fadeIn 0.3s ease;
 }
 
 .observacao-field label {
   font-weight: 700;
-  color: #c2410c;
+  color: #b45309;
   margin-bottom: 0.75rem;
   display: flex;
   align-items: center;
@@ -96,7 +91,7 @@
 .observacao-field textarea {
   width: 100%;
   padding: 1rem;
-  border: 2px solid #fdba74;
+  border: 2px solid #fde68a;
   border-radius: 1.5rem;
   background: white;
   resize: vertical;
@@ -106,82 +101,141 @@
 }
 
 .observacao-field textarea:focus {
-  border-color: #ea580c;
-  box-shadow: 0 0 0 4px rgba(234, 88, 12, 0.2);
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2);
   outline: none;
 }
 
-/* ===== PROGRESSO ===== */
 .progress {
   height: 1.2rem !important;
   border-radius: 3rem;
-  background: #e2e8f0;
-  overflow: hidden;
+  background: #e9eef2;
 }
 
 .progress-bar {
-  background: linear-gradient(90deg, #ea580c, #dc2626);
+  background: linear-gradient(90deg, #2563eb, #7c3aed);
   border-radius: 3rem;
   transition: width 0.4s ease;
   font-weight: 600;
   font-size: 0.85rem;
+  line-height: 1.2rem;
 }
 
-/* ===== INPUT ===== */
 #nome {
-  border: 2px solid #e2e8f0;
+  border: 2px solid #e9eef2;
   border-radius: 3rem;
   padding: 1rem 1.5rem;
-  font-size: 1.1rem;
   transition: var(--transition-default);
 }
 
 #nome:focus {
-  border-color: #ea580c;
-  box-shadow: 0 0 0 4px rgba(234, 88, 12, 0.2);
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
 }
 
-/* ===== FORM ===== */
 #checklistForm {
-  background: white;
   border-radius: 2.5rem;
-  box-shadow: 0 25px 40px -15px rgba(0, 0, 0, 0.2);
-  padding: 2rem !important;
+  box-shadow: 0 25px 40px -15px rgba(0, 0, 0, 0.15);
 }
 
-/* ===== BOTÕES NAVEGAÇÃO ===== */
-.navigation-buttons button {
-  border-radius: 3rem !important;
-  padding: 0.9rem 2rem;
-  font-weight: 600;
-  transition: var(--transition-default);
+/* Responsividade */
+@media (max-width: 768px) {
+  .question-card {
+    padding: 1.5rem 1rem;
+  }
+  .btn-group .btn {
+    font-size: 1rem;
+    padding: 0.8rem 0.25rem;
+  }
 }
 
-.navigation-buttons button:hover:not(:disabled) {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 20px -10px rgba(0, 0, 0, 0.3);
+@media (max-width: 480px) {
+  .question-card h5 {
+    font-size: 1.1rem;
+  }
+  .btn-group .btn {
+    font-size: 0.95rem;
+    padding: 0.7rem 0.1rem;
+  }
+  .observacao-field {
+    padding: 1rem;
+  }
+  .observacao-field textarea {
+    min-height: 100px;
+    font-size: 0.95rem;
+  }
+  .progress {
+    height: 1rem !important;
+  }
 }
 
-/* ===== MAPA ===== */
+@media (max-width: 360px) {
+  .btn-group {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .btn-group .btn {
+    width: 100% !important;
+  }
+}
+
+/* ===== MAPA DA SALA ===== */
 .mapa-sala-container {
+  width: 100%;
   display: flex;
   justify-content: center;
+  align-items: center;
   margin-bottom: 1.5rem;
 }
 
 .mapa-sala {
   width: 100%;
   max-width: 900px;
+  height: auto;
   border-radius: 1.5rem;
   box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.25);
-  transition: 0.3s;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  object-fit: cover;
 }
 
+/* Hover controlado */
 .mapa-sala:hover {
   transform: scale(1.01);
 }
 
-/* ===== ALERTA ===== */
+/* Tablet */
+@media (max-width: 768px) {
+  .mapa-sala {
+    max-width: 100%;
+    border-radius: 1.2rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .mapa-sala {
+    border-radius: 1rem;
+    box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.2);
+  }
+
+  .mapa-sala-container {
+    margin-bottom: 1rem;
+  }
+}
+
+/* Mobile crítico */
+@media (max-width: 360px) {
+  .mapa-sala {
+    border-radius: 0.8rem;
+  }
+}
+
+.custom-file-upload label {
+  cursor: pointer;
+}
+
+/* ===== ALERTA CRÍTICO ===== */
 .status-container {
   transition: all 0.3s ease;
 }
@@ -194,17 +248,13 @@
   background: #dc2626 !important;
   color: white;
   font-weight: 800;
+  font-size: 1rem;
+  padding: 0.6rem 1.2rem;
+  box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
   animation: pulseBadge 1s infinite;
 }
 
-#statusLuz.bg-success {
-  background: #059669 !important;
-  color: white;
-  font-weight: 800;
-  animation: pulseSuave 2s infinite;
-}
-
-/* ===== ANIMAÇÕES ===== */
+/* Pulso externo */
 @keyframes pulsarAlerta {
   0% {
     box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.5);
@@ -217,6 +267,7 @@
   }
 }
 
+/* Pulso do badge */
 @keyframes pulseBadge {
   0% {
     transform: scale(1);
@@ -229,74 +280,28 @@
   }
 }
 
+/* ===== STATUS CONFORME (ATIVO) ===== */
+#statusLuz.bg-success {
+  background: #059669 !important;
+  color: white;
+  font-weight: 800;
+  font-size: 1rem;
+  padding: 0.6rem 1.2rem;
+  animation: pulseSuave 2s infinite;
+}
+
+/* Pulso leve (confirmação visual) */
 @keyframes pulseSuave {
   0% {
     transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.4);
   }
-  50% {
+  70% {
     transform: scale(1.03);
+    box-shadow: 0 0 0 8px rgba(5, 150, 105, 0);
   }
   100% {
     transform: scale(1);
-  }
-}
-
-/* ===== RESPONSIVO ===== */
-@media (max-width: 768px) {
-  .question-card {
-    padding: 1.5rem 1rem;
-  }
-
-  .btn-group .btn {
-    font-size: 1rem;
-    padding: 0.8rem 0.25rem;
-  }
-
-  .navigation-buttons {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .navigation-buttons button {
-    width: 100%;
-  }
-
-  #checklistForm {
-    padding: 1.5rem !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .question-card h5 {
-    font-size: 1.1rem;
-  }
-
-  .btn-group .btn {
-    font-size: 0.95rem;
-    padding: 0.7rem 0.1rem;
-  }
-
-  .observacao-field {
-    padding: 1rem;
-  }
-
-  .observacao-field textarea {
-    min-height: 100px;
-    font-size: 0.95rem;
-  }
-
-  .progress {
-    height: 1rem !important;
-  }
-}
-
-@media (max-width: 360px) {
-  .btn-group {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .btn-group .btn {
-    width: 100% !important;
+    box-shadow: 0 0 0 0 rgba(5, 150, 105, 0);
   }
 }

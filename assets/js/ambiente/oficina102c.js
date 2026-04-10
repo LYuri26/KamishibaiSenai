@@ -187,12 +187,11 @@ function renderQuestion() {
 
   let html = `
     <div class="question-card fade-in">
-      <div class="d-flex justify-content-between mb-3">
-        <h5>${pergunta}</h5>
-        <span class="badge bg-primary">${currentQuestion + 1}/${keys.length}</span>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0">${pergunta}</h5>
+        <span class="badge bg-primary rounded-pill">${currentQuestion + 1}/${keys.length}</span>
       </div>
-
-      <div class="btn-group w-100">
+      <div class="btn-group w-100" role="group">
   `;
 
   const simClass =
@@ -206,19 +205,27 @@ function renderQuestion() {
 
   if (temObs) {
     html += `
-      <div class="mt-3">
-        <textarea id="obs_${key}" class="form-control">${observations[key] || ""}</textarea>
+      <div class="observacao-field mt-3">
+        <label class="form-label fw-semibold">Observação:</label>
+        <textarea class="form-control" id="obs_${key}" rows="2">${observations[key] || ""}</textarea>
 
-        <label class="btn btn-outline-primary w-100 mt-2">
-          📷 Anexar imagem
-          <input type="file" id="img_${key}" hidden accept="image/*">
-        </label>
-
-        <small id="file_${key}"></small>
+        <label class="form-label fw-semibold mt-2">Imagem:</label>
+        <div class="custom-file-upload">
+  <label for="img_${key}" class="btn btn-outline-primary w-100">
+    📷 Tirar ou anexar foto
+  </label>
+  <input 
+  type="file" 
+  id="img_${key}" 
+  accept="image/*" 
+  capture="environment"
+  hidden
+>
+  <small id="file_name_${key}" class="text-muted"></small>
+</div>
       </div>
     `;
   }
-
   html += `</div>`;
   container.innerHTML = html;
 
