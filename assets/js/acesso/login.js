@@ -45,7 +45,7 @@ function exibirMensagem(texto, tipo) {
 document.addEventListener("DOMContentLoaded", async () => {
   try {
     // Chama install.php para garantir que as tabelas existam
-    const response = await fetch("../../config/install.php");
+    const response = await fetch("api/login.php");
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
