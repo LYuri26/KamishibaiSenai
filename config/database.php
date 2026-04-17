@@ -1,7 +1,7 @@
 <?php
 $host = 'localhost';
 $dbname = 'u196097154_kamishibai';
-$username = 'u196097154_lenon'; // altere conforme necessário
+$username = 'u196097154_kamishibai'; // altere conforme necessário
 $password = 'j=3KPDnhVj6x';     // altere conforme necessário
 
 try {
