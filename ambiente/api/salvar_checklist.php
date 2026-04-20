@@ -9,6 +9,7 @@ $nome = $_POST['nome'] ?? '';
 $respostas = json_decode($_POST['respostas'] ?? '{}', true);
 $observacoes = $_POST['observacoes'] ?? '';
 $sala = $_POST['sala'] ?? '';
+$verificacao_sexta = $_POST['verificacao_sexta'] ?? null;
 
 if (empty($nome) || empty($respostas) || empty($sala)) {
     echo json_encode(['sucesso' => false, 'erro' => 'Dados incompletos']);
@@ -18,6 +19,19 @@ if (empty($nome) || empty($respostas) || empty($sala)) {
 if (!in_array($sala, $salas_permitidas)) {
     echo json_encode(['sucesso' => false, 'erro' => 'Sala não permitida']);
     exit;
+}
+
+// Valida se verificacao_sexta é um JSON válido (se fornecido)
+if ($verificacao_sexta !== null) {
+    $testeJson = json_decode($verificacao_sexta, true);
+    if ($testeJson === null && $verificacao_sexta !== 'null') {
+        echo json_encode(['sucesso' => false, 'erro' => 'Formato inválido para verificacao_sexta']);
+        exit;
+    }
+    // Se for string vazia ou 'null', transforma em null
+    if ($verificacao_sexta === 'null' || $verificacao_sexta === '') {
+        $verificacao_sexta = null;
+    }
 }
 
 $agora = time();
@@ -125,6 +139,13 @@ foreach ($respostas as $item => $resposta) {
     $colunas[] = $item;
     $placeholders[] = ":$item";
     $valores[":$item"] = $resposta;
+}
+
+// Adiciona verificacao_sexta se existir
+if ($verificacao_sexta !== null) {
+    $colunas[] = 'verificacao_sexta';
+    $placeholders[] = ':verificacao_sexta';
+    $valores[':verificacao_sexta'] = $verificacao_sexta;
 }
 
 $sql = "INSERT INTO `$sala` (" . implode(', ', $colunas) . ")

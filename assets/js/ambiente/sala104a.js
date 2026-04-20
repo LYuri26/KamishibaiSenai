@@ -28,6 +28,15 @@ const perguntas = {
   cadeira_integra: "A cadeira do instrutor está em bom estado?",
 };
 
+// Perguntas extras para verificação de sexta-feira (responsável)
+const perguntasExtras = {
+  limpeza_piso: "O piso está limpo e sem resíduos?",
+  cortinas_ok: "As cortinas estão em bom estado e funcionais?",
+  projetor_funciona: "O projetor está funcionando corretamente?",
+  lixeiras_vazias: "As lixeiras estão vazias e em bom estado?",
+  ventilacao: "A ventilação do ambiente está adequada?",
+};
+
 const sala = "104a";
 let currentQuestion = 0;
 const answers = {};
@@ -35,6 +44,12 @@ const observations = {};
 const etapaProcedimento = Object.keys(perguntas).length;
 let statusBackendProblema = false;
 const images = {};
+
+// Variáveis para responsável e sexta-feira
+let usuarioAtual = null;
+let isResponsavel = false;
+let isSexta = false;
+let respostasExtras = {};
 
 async function carregarStatusSala() {
   try {
@@ -61,7 +76,6 @@ async function carregarStatusSala() {
   }
 }
 
-// ================= STATUS VISUAL =================
 function atualizarStatusLuz() {
   const statusEl = document.getElementById("statusLuz");
   if (!statusEl) return;
@@ -107,13 +121,93 @@ async function preencherNomeInstrutor() {
     nomeInput.value =
       dados.nome + (dados.sobrenome ? " " + dados.sobrenome : "");
     nomeInput.disabled = true;
+    usuarioAtual = dados;
   } else {
     nomeInput.disabled = false;
     nomeInput.placeholder = "Digite seu nome completo (não autenticado)";
   }
 }
 
-// ================= REGISTRO DE RESPOSTA =================
+// Verifica se o usuário é responsável pelo ambiente e se hoje é sexta-feira
+async function verificarResponsavelESexta() {
+  if (!usuarioAtual || !usuarioAtual.id) return;
+
+  try {
+    // Buscar responsável por este ambiente
+    const response = await fetch("/administrador/api/lider.php?action=listar");
+    const data = await response.json();
+    if (data.sucesso && data.ambientes[sala]) {
+      const responsavel = data.ambientes[sala];
+      isResponsavel = responsavel && responsavel.id == usuarioAtual.id;
+    }
+
+    // Verifica se hoje é sexta-feira (getDay() = 5)
+    const hoje = new Date();
+    isSexta = hoje.getDay() === 5;
+
+    if (isResponsavel && isSexta) {
+      document.getElementById("extra-questions").style.display = "block";
+      carregarPerguntasExtras();
+    } else {
+      document.getElementById("extra-questions").style.display = "none";
+    }
+  } catch (error) {
+    console.error("Erro ao verificar responsável:", error);
+  }
+}
+
+function carregarPerguntasExtras() {
+  const container = document.getElementById("extra-fields-container");
+  if (!container) return;
+
+  container.innerHTML = "";
+  for (const [key, texto] of Object.entries(perguntasExtras)) {
+    const div = document.createElement("div");
+    div.className = "mb-3";
+    div.innerHTML = `
+      <label class="form-label fw-semibold">${texto}</label>
+      <div class="btn-group w-100" role="group">
+        <button type="button" class="btn btn-outline-success btn-extras" data-key="${key}" data-value="sim">✅ Sim</button>
+        <button type="button" class="btn btn-outline-danger btn-extras" data-key="${key}" data-value="nao">❌ Não</button>
+      </div>
+      <textarea class="form-control mt-2 obs-extra" data-key="${key}" placeholder="Observação (se Não)" style="display: none;"></textarea>
+    `;
+    container.appendChild(div);
+  }
+
+  // Adicionar eventos aos botões extras
+  document.querySelectorAll(".btn-extras").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const key = btn.dataset.key;
+      const valor = btn.dataset.value;
+      respostasExtras[key] = { valor, observacao: "" };
+
+      // Atualizar aparência dos botões
+      const group = btn.closest(".mb-3");
+      group.querySelectorAll(".btn-extras").forEach((b) => {
+        b.classList.remove("active", "btn-success", "btn-danger");
+        if (b.dataset.value === "sim") b.classList.add("btn-outline-success");
+        else b.classList.add("btn-outline-danger");
+      });
+      btn.classList.add("active");
+      if (valor === "sim") btn.classList.add("btn-success");
+      else btn.classList.add("btn-danger");
+
+      // Exibir campo de observação se for "nao"
+      const obsField = group.querySelector(".obs-extra");
+      if (valor === "nao") {
+        obsField.style.display = "block";
+        obsField.addEventListener("input", (e) => {
+          respostasExtras[key].observacao = e.target.value;
+        });
+      } else {
+        obsField.style.display = "none";
+        respostasExtras[key].observacao = "";
+      }
+    });
+  });
+}
+
 function registrarResposta(key, valor) {
   answers[key] = valor;
 
@@ -267,21 +361,18 @@ function renderQuestion() {
     document.getElementById(`img_${key}`).addEventListener("change", (e) => {
       const file = e.target.files[0];
 
-      // 🔴 VALIDAÇÃO DE TIPO
       if (file && !file.type.startsWith("image/")) {
         alert("Selecione apenas imagens.");
         e.target.value = "";
         return;
       }
 
-      // 🔴 VALIDAÇÃO DE TAMANHO (5MB)
       if (file && file.size > 5 * 1024 * 1024) {
         alert("Imagem excede 5MB.");
         e.target.value = "";
         return;
       }
 
-      // ✅ ARMAZENAMENTO SEGURO
       images[key] = file;
 
       const fileNameEl = document.getElementById(`file_name_${key}`);
@@ -317,7 +408,6 @@ document
   .addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // ================= VALIDAÇÃO =================
     const keys = Object.keys(perguntas);
 
     for (let key of keys) {
@@ -332,7 +422,25 @@ document
       }
     }
 
-    // ================= MONTAGEM =================
+    // Validação das perguntas extras se estiverem visíveis
+    if (isResponsavel && isSexta) {
+      for (let key of Object.keys(perguntasExtras)) {
+        if (!respostasExtras[key]) {
+          alert("Responda todas as perguntas da verificação de sexta-feira.");
+          return;
+        }
+        if (
+          respostasExtras[key].valor === "nao" &&
+          !respostasExtras[key].observacao?.trim()
+        ) {
+          alert(
+            "Preencha a observação para itens com problema na verificação de sexta-feira.",
+          );
+          return;
+        }
+      }
+    }
+
     let observacoesFinais = "";
     const formData = new FormData();
 
@@ -351,7 +459,18 @@ document
     formData.append("observacoes", observacoesFinais);
     formData.append("sala", sala);
 
-    // ================= ENVIO =================
+    // Adicionar verificacao_sexta se for responsável e sexta
+    if (isResponsavel && isSexta) {
+      const extraObj = {};
+      for (const [key, data] of Object.entries(respostasExtras)) {
+        extraObj[key] = {
+          valor: data.valor,
+          observacao: data.observacao || "",
+        };
+      }
+      formData.append("verificacao_sexta", JSON.stringify(extraObj));
+    }
+
     try {
       const response = await fetch("api/salvar_checklist.php", {
         method: "POST",
@@ -372,7 +491,6 @@ document
       }
     } catch (error) {
       console.error(error);
-
       document.getElementById("mensagem").innerHTML =
         `<div class="alert alert-danger">Erro na comunicação com o servidor.</div>`;
     }
@@ -380,6 +498,7 @@ document
 
 document.addEventListener("DOMContentLoaded", async () => {
   await carregarStatusSala();
-  preencherNomeInstrutor();
+  await preencherNomeInstrutor();
+  await verificarResponsavelESexta();
   renderQuestion();
 });

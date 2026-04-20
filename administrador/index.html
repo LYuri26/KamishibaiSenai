@@ -15,8 +15,11 @@
     <!-- Cabeçalho genérico -->
     <div id="header"></div>
 
-    <!-- Título da página e logout -->
+    <!-- Título da página, botão voltar e logout -->
     <div class="container d-flex justify-content-between align-items-center mt-3">
+        <button class="btn btn-outline-secondary rounded-pill" onclick="history.back()">
+            <i class="bi bi-arrow-left me-1"></i>Voltar
+        </button>
         <h1 class="h4 mb-0 text-primary">
             <i class="bi bi-clipboard-data me-2"></i>Relatórios de Inspeção
         </h1>
@@ -28,12 +31,20 @@
     <main class="container">
         <!-- Alertas -->
         <div id="alertasContainer" class="alertas-container mb-4"></div>
-        <!-- Botão para relatórios consolidados -->
-        <div class="mb-4">
+
+        <!-- Botões de navegação do admin -->
+        <div class="d-flex flex-wrap gap-3 mb-4">
             <a href="relatorios.html" class="btn btn-primary rounded-pill">
                 <i class="bi bi-bar-chart-steps me-2"></i>Relatórios Consolidados
             </a>
+            <a href="analise_ia.html" class="btn btn-primary rounded-pill">
+                <i class="bi bi-graph-up me-2"></i>Análise Preditiva (IA)
+            </a>
+            <a href="lider.html" class="btn btn-secondary rounded-pill">
+                <i class="bi bi-people me-2"></i>Gerenciar Responsáveis
+            </a>
         </div>
+
         <!-- Tabela de inspeções -->
         <div class="table-wrapper bg-white rounded-4 shadow-sm p-3 p-md-4">
             <div class="table-responsive">
@@ -59,11 +70,6 @@
                     </tbody>
                 </table>
             </div>
-        </div>
-        <div class="mb-4 mt-3">
-            <a href="analise_ia.html" class="btn btn-primary rounded-pill">
-                <i class="bi bi-graph-up me-2"></i>Análise Preditiva (IA)
-            </a>
         </div>
     </main>
 

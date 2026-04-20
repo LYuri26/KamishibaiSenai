@@ -50,6 +50,15 @@ const perguntas = {
   estufa_ok: "A estufa de eletrodos está em condições de uso?",
 };
 
+// Perguntas extras para verificação de sexta-feira (responsável)
+const perguntasExtras = {
+  extintores: "Os extintores estão no local correto e dentro do prazo?",
+  sinalizacao: "A sinalização de segurança está visível e legível?",
+  ventilacao_forcada: "O sistema de ventilação forçada está funcionando?",
+  piso_antiderrapante: "O piso está em condições antiderrapantes?",
+  kit_primeiros_socorros: "O kit de primeiros socorros está completo?",
+};
+
 const sala = "102c";
 let currentQuestion = 0;
 const answers = {};
@@ -58,7 +67,11 @@ const images = {};
 const etapaProcedimento = Object.keys(perguntas).length;
 let statusBackendProblema = false;
 
-// ================= STATUS BACKEND =================
+let usuarioAtual = null;
+let isResponsavel = false;
+let isSexta = false;
+let respostasExtras = {};
+
 async function carregarStatusSala() {
   try {
     const response = await fetch("../administrador/api/listar_inspecoes.php");
@@ -80,7 +93,6 @@ async function carregarStatusSala() {
   }
 }
 
-// ================= STATUS VISUAL =================
 function atualizarStatusLuz() {
   const statusEl = document.getElementById("statusLuz");
   if (!statusEl) return;
@@ -103,7 +115,6 @@ function atualizarStatusLuz() {
   }
 }
 
-// ================= USUÁRIO =================
 async function carregarDadosUsuario() {
   try {
     const response = await fetch("../acesso/api/dados_usuario.php");
@@ -123,12 +134,86 @@ async function preencherNomeInstrutor() {
   if (dados?.nome) {
     input.value = dados.nome + (dados.sobrenome ? " " + dados.sobrenome : "");
     input.disabled = true;
+    usuarioAtual = dados;
   } else {
     input.placeholder = "Digite seu nome completo";
   }
 }
 
-// ================= CONTROLE =================
+async function verificarResponsavelESexta() {
+  if (!usuarioAtual || !usuarioAtual.id) return;
+
+  try {
+    const response = await fetch("/administrador/api/lider.php?action=listar");
+    const data = await response.json();
+    if (data.sucesso && data.ambientes[sala]) {
+      const responsavel = data.ambientes[sala];
+      isResponsavel = responsavel && responsavel.id == usuarioAtual.id;
+    }
+
+    const hoje = new Date();
+    isSexta = hoje.getDay() === 5;
+
+    if (isResponsavel && isSexta) {
+      document.getElementById("extra-questions").style.display = "block";
+      carregarPerguntasExtras();
+    } else {
+      document.getElementById("extra-questions").style.display = "none";
+    }
+  } catch (error) {
+    console.error("Erro ao verificar responsável:", error);
+  }
+}
+
+function carregarPerguntasExtras() {
+  const container = document.getElementById("extra-fields-container");
+  if (!container) return;
+
+  container.innerHTML = "";
+  for (const [key, texto] of Object.entries(perguntasExtras)) {
+    const div = document.createElement("div");
+    div.className = "mb-3";
+    div.innerHTML = `
+      <label class="form-label fw-semibold">${texto}</label>
+      <div class="btn-group w-100" role="group">
+        <button type="button" class="btn btn-outline-success btn-extras" data-key="${key}" data-value="sim">✅ Sim</button>
+        <button type="button" class="btn btn-outline-danger btn-extras" data-key="${key}" data-value="nao">❌ Não</button>
+      </div>
+      <textarea class="form-control mt-2 obs-extra" data-key="${key}" placeholder="Observação (se Não)" style="display: none;"></textarea>
+    `;
+    container.appendChild(div);
+  }
+
+  document.querySelectorAll(".btn-extras").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const key = btn.dataset.key;
+      const valor = btn.dataset.value;
+      respostasExtras[key] = { valor, observacao: "" };
+
+      const group = btn.closest(".mb-3");
+      group.querySelectorAll(".btn-extras").forEach((b) => {
+        b.classList.remove("active", "btn-success", "btn-danger");
+        if (b.dataset.value === "sim") b.classList.add("btn-outline-success");
+        else b.classList.add("btn-outline-danger");
+      });
+      btn.classList.add("active");
+      if (valor === "sim") btn.classList.add("btn-success");
+      else btn.classList.add("btn-danger");
+
+      const obsField = group.querySelector(".obs-extra");
+      if (valor === "nao") {
+        obsField.style.display = "block";
+        obsField.addEventListener("input", (e) => {
+          respostasExtras[key].observacao = e.target.value;
+        });
+      } else {
+        obsField.style.display = "none";
+        respostasExtras[key].observacao = "";
+      }
+    });
+  });
+}
+
 function avancarPergunta() {
   const keys = Object.keys(perguntas);
 
@@ -150,12 +235,10 @@ function avancarPergunta() {
   renderQuestion();
 }
 
-// ================= RENDER =================
 function renderQuestion() {
   const container = document.getElementById("questionsContainer");
   const keys = Object.keys(perguntas);
 
-  // ===== PROCEDIMENTO FINAL =====
   if (currentQuestion === etapaProcedimento) {
     container.innerHTML = `
       <div class="question-card fade-in">
@@ -229,7 +312,6 @@ function renderQuestion() {
   html += `</div>`;
   container.innerHTML = html;
 
-  // ===== EVENTOS =====
   document.querySelectorAll("button[data-value]").forEach((btn) => {
     btn.onclick = () => {
       const val = btn.dataset.value;
@@ -264,7 +346,7 @@ function renderQuestion() {
       }
 
       images[key] = file;
-      document.getElementById(`file_${key}`).textContent = file.name;
+      document.getElementById(`file_name_${key}`).textContent = file.name;
     };
   }
 
@@ -280,7 +362,6 @@ function renderQuestion() {
     Math.round(progress) + "%";
 }
 
-// ================= NAVEGAÇÃO =================
 document.getElementById("nextBtn").onclick = avancarPergunta;
 
 document.getElementById("prevBtn").onclick = () => {
@@ -290,7 +371,6 @@ document.getElementById("prevBtn").onclick = () => {
   }
 };
 
-// ================= ENVIO =================
 document.getElementById("checklistForm").onsubmit = async (e) => {
   e.preventDefault();
 
@@ -303,6 +383,33 @@ document.getElementById("checklistForm").onsubmit = async (e) => {
       if (images[key]) formData.append("imagens[]", images[key]);
     }
   });
+
+  // Validação extras
+  if (isResponsavel && isSexta) {
+    for (let key of Object.keys(perguntasExtras)) {
+      if (!respostasExtras[key]) {
+        alert("Responda todas as perguntas da verificação de sexta-feira.");
+        return;
+      }
+      if (
+        respostasExtras[key].valor === "nao" &&
+        !respostasExtras[key].observacao?.trim()
+      ) {
+        alert(
+          "Preencha a observação para itens com problema na verificação de sexta-feira.",
+        );
+        return;
+      }
+    }
+    const extraObj = {};
+    for (const [key, data] of Object.entries(respostasExtras)) {
+      extraObj[key] = {
+        valor: data.valor,
+        observacao: data.observacao || "",
+      };
+    }
+    formData.append("verificacao_sexta", JSON.stringify(extraObj));
+  }
 
   formData.append("nome", document.getElementById("nome").value);
   formData.append("respostas", JSON.stringify(answers));
@@ -323,9 +430,9 @@ document.getElementById("checklistForm").onsubmit = async (e) => {
   }
 };
 
-// ================= INIT =================
 document.addEventListener("DOMContentLoaded", async () => {
   await preencherNomeInstrutor();
   await carregarStatusSala();
+  await verificarResponsavelESexta();
   renderQuestion();
 });

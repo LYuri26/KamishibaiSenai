@@ -8,7 +8,7 @@
 // =====================================================
 
 error_reporting(E_ALL);
-ini_set('display_errors', 0);
+ini_set('display_errors', 0); // não mostrar erros diretamente (retornamos JSON)
 ini_set('log_errors', 1);
 ini_set('error_log', '/tmp/php_errors.log');
 
@@ -25,6 +25,7 @@ register_shutdown_function(function () {
 session_start();
 header('Content-Type: application/json');
 
+// ========== PERMISSÃO: APENAS LÍDER ==========
 if (!isset($_SESSION['usuario_id']) || $_SESSION['usuario_cargo'] !== 'lider') {
     http_response_code(403);
     echo json_encode(['erro' => 'Acesso negado']);
@@ -41,14 +42,20 @@ $periodo = $_GET['periodo'] ?? 'mensal';
 $ano = (int) ($_GET['ano'] ?? date('Y'));
 $salaFiltro = $_GET['sala'] ?? 'todas';
 
-// ================= FUNÇÕES AUXILIARES =================
+// ================= FUNÇÕES AUXILIARES (sem arrow functions) =================
 function obterTabelasSalas($pdo)
 {
     try {
         $stmt = $pdo->query("SHOW TABLES");
         $todas = $stmt->fetchAll(PDO::FETCH_COLUMN);
-        $excluir = ['relatorios', 'usuarios'];
-        return array_values(array_filter($todas, fn($t) => !in_array($t, $excluir)));
+        $excluir = ['relatorios', 'usuarios', 'responsaveis'];
+        $filtradas = array();
+        foreach ($todas as $tabela) {
+            if (!in_array($tabela, $excluir)) {
+                $filtradas[] = $tabela;
+            }
+        }
+        return $filtradas;
     } catch (PDOException $e) {
         error_log("Erro ao obter tabelas: " . $e->getMessage());
         return [];
@@ -65,8 +72,14 @@ function getCamposProblemas($pdo, $tabela)
     try {
         $stmt = $pdo->query("DESCRIBE " . escTabela($tabela));
         $colunas = $stmt->fetchAll(PDO::FETCH_COLUMN);
-        $excluir = ['id', 'nome', 'data', 'momento', 'observacoes'];
-        return array_values(array_diff($colunas, $excluir));
+        $excluir = ['id', 'nome', 'data', 'momento', 'observacoes', 'verificacao_sexta'];
+        $campos = array();
+        foreach ($colunas as $col) {
+            if (!in_array($col, $excluir)) {
+                $campos[] = $col;
+            }
+        }
+        return $campos;
     } catch (PDOException $e) {
         error_log("Erro ao descrever $tabela: " . $e->getMessage());
         return [];
@@ -77,9 +90,10 @@ function detectOutliers($data)
 {
     if (count($data) < 4)
         return [];
-    sort($data);
-    $q1 = $data[floor(count($data) * 0.25)];
-    $q3 = $data[floor(count($data) * 0.75)];
+    $sorted = $data;
+    sort($sorted);
+    $q1 = $sorted[floor(count($sorted) * 0.25)];
+    $q3 = $sorted[floor(count($sorted) * 0.75)];
     $iqr = $q3 - $q1;
     $lower = $q1 - 1.5 * $iqr;
     $upper = $q3 + 1.5 * $iqr;
@@ -226,12 +240,20 @@ function holtWintersOptimized($y, $seasonal_period = 3, $forecast_steps = 3, $al
     $z80 = 1.28;
     $z95 = 1.96;
     $confidence80 = [
-        'lower' => array_map(fn($f) => round(max(0, $f - $z80 * $std_res), 1), $best_forecast),
-        'upper' => array_map(fn($f) => round(min(100, $f + $z80 * $std_res), 1), $best_forecast)
+        'lower' => array_map(function ($f) use ($z80, $std_res) {
+            return round(max(0, $f - $z80 * $std_res), 1);
+        }, $best_forecast),
+        'upper' => array_map(function ($f) use ($z80, $std_res) {
+            return round(min(100, $f + $z80 * $std_res), 1);
+        }, $best_forecast)
     ];
     $confidence95 = [
-        'lower' => array_map(fn($f) => round(max(0, $f - $z95 * $std_res), 1), $best_forecast),
-        'upper' => array_map(fn($f) => round(min(100, $f + $z95 * $std_res), 1), $best_forecast)
+        'lower' => array_map(function ($f) use ($z95, $std_res) {
+            return round(max(0, $f - $z95 * $std_res), 1);
+        }, $best_forecast),
+        'upper' => array_map(function ($f) use ($z95, $std_res) {
+            return round(min(100, $f + $z95 * $std_res), 1);
+        }, $best_forecast)
     ];
     return [
         'forecast' => $best_forecast,
@@ -266,7 +288,9 @@ function selectBestModel($y, $forecast_steps = 3)
     $weights = [0.5, 0.3, 0.2];
     $lastVals = array_slice($y, -min(3, $n));
     $weights = array_slice($weights, 0, count($lastVals));
-    $weights = array_map(fn($w) => $w / array_sum($weights), $weights);
+    $sumWeights = array_sum($weights);
+    foreach ($weights as &$w)
+        $w /= $sumWeights;
     $avg = 0;
     foreach ($lastVals as $i => $val)
         $avg += $val * $weights[$i];
@@ -296,8 +320,16 @@ function correlation($x, $y)
 // ================= COLETA DE DADOS (TODO O HISTÓRICO) =================
 try {
     $salasPermitidas = obterTabelasSalas($pdo);
-    $salas = ($salaFiltro === 'todas') ? $salasPermitidas : array_intersect($salasPermitidas, [$salaFiltro]);
-    if (empty($salas)) { /* retorno vazio */
+    $salas = array();
+    if ($salaFiltro === 'todas') {
+        $salas = $salasPermitidas;
+    } else {
+        if (in_array($salaFiltro, $salasPermitidas)) {
+            $salas = [$salaFiltro];
+        }
+    }
+    if (empty($salas)) {
+        $salas = [];
     }
 
     $camposPorSala = [];
@@ -368,7 +400,7 @@ try {
             $evolucaoCompleta['valores'][] = $taxa;
         }
     } else {
-        // Anual: igual ao original
+        // Anual
         $anos = range($ano - 4, $ano);
         $porAno = array_fill_keys($anos, ['total_campos' => 0, 'problemas' => 0]);
         foreach ($todasInspecoes as $ins) {
@@ -398,7 +430,6 @@ try {
         $evolucao['labels'] = array_slice($evolucaoCompleta['labels'], $inicio);
         $evolucao['valores'] = array_slice($evolucaoCompleta['valores'], $inicio);
     } else {
-        // Para anual, mantemos todos os anos (geralmente poucos)
         $evolucao = $evolucaoCompleta;
     }
 
@@ -436,16 +467,11 @@ try {
 
         if ($model['type'] === 'holt_winters') {
             $details = $model['details'];
-            // Previsões já são para 3 meses à frente a partir do último ponto da série completa
             $previsaoNumeros = $details['forecast'];
-            // Para exibição, pegamos os últimos 12 meses da série completa
             $historicoExibicao = array_slice($valoresCompletos, -12);
             $labelsExibicao = array_slice($labelsCompletos, -12);
-            // Monta labels finais: 12 meses + Prev 1,2,3
             $labelsFinais = array_merge($labelsExibicao, ['Prev 1', 'Prev 2', 'Prev 3']);
-            // Array de histórico com null nas posições de previsão
             $historicoFinal = array_merge($historicoExibicao, array_fill(0, 3, null));
-            // Array de previsão: null para os históricos, valores para os 3 passos
             $previsaoFinal = array_merge(array_fill(0, count($historicoExibicao), null), $previsaoNumeros);
 
             $previsao = [
@@ -510,7 +536,7 @@ try {
         $previsao_proximo = $previsao['previsao'][$last_key] ?? 0;
     }
 
-    // ================= RANKING (sem mudanças) =================
+    // ================= RANKING =================
     $ranking = [];
     $ocorrenciasPorItem = [];
     $totalRegistrosPorItem = [];
@@ -531,7 +557,9 @@ try {
         $incidencia = round(($ocorrenciasPorItem[$item] / $total) * 100, 1);
         $ranking[] = ['item' => $item, 'incidencia' => $incidencia, 'ocorrencias' => $ocorrenciasPorItem[$item]];
     }
-    usort($ranking, fn($a, $b) => $b['incidencia'] <=> $a['incidencia']);
+    usort($ranking, function ($a, $b) {
+        return $b['incidencia'] <=> $a['incidencia'];
+    });
     $ranking = array_slice($ranking, 0, 10);
 
     // ================= COMPARATIVO POR SALA =================
@@ -574,3 +602,4 @@ try {
     http_response_code(500);
     echo json_encode(['erro' => 'Exceção', 'mensagem' => $e->getMessage()]);
 }
+?>

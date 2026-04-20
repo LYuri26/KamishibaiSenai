@@ -40,7 +40,9 @@ CREATE TABLE IF NOT EXISTS `104a` (
     -- Mesa e Cadeira do Instrutor
     `mesa_firme` ENUM('sim', 'nao') NOT NULL,
     `mesa_gavetas` ENUM('sim', 'nao') NOT NULL,
-    `cadeira_integra` ENUM('sim', 'nao') NOT NULL
+    `cadeira_integra` ENUM('sim', 'nao') NOT NULL,
+    -- Coluna para verificação de sexta-feira (JSON)
+    `verificacao_sexta` JSON NULL
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- Tabela do laboratório 103d
@@ -70,7 +72,9 @@ CREATE TABLE IF NOT EXISTS `103d` (
     `janelas_intactas` ENUM('sim', 'nao') NOT NULL,
     -- Tomadas
     `tomadas_intactas` ENUM('sim', 'nao') NOT NULL,
-    `fios_expostos` ENUM('sim', 'nao') NOT NULL
+    `fios_expostos` ENUM('sim', 'nao') NOT NULL,
+    -- Coluna para verificação de sexta-feira (JSON)
+    `verificacao_sexta` JSON NULL
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- Tabela da oficina de soldagem 102c
@@ -82,7 +86,7 @@ CREATE TABLE IF NOT EXISTS `102c` (
     `observacoes` TEXT,
     -- Acesso
     `portao_funciona` ENUM('sim', 'nao') NOT NULL,
-    -- Instrutor (AJUSTADO PARA SEU JS)
+    -- Instrutor
     `instrutor_epi` ENUM('sim', 'nao') NOT NULL,
     -- BOX 01
     `box1_epi_completo` ENUM('sim', 'nao') NOT NULL,
@@ -128,7 +132,9 @@ CREATE TABLE IF NOT EXISTS `102c` (
     `area_organizacao` ENUM('sim', 'nao') NOT NULL,
     `equipamentos_local` ENUM('sim', 'nao') NOT NULL,
     `macarico_ok` ENUM('sim', 'nao') NOT NULL,
-    `estufa_ok` ENUM('sim', 'nao') NOT NULL
+    `estufa_ok` ENUM('sim', 'nao') NOT NULL,
+    -- Coluna para verificação de sexta-feira (JSON)
+    `verificacao_sexta` JSON NULL
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- Tabela de relatórios
@@ -145,7 +151,7 @@ CREATE TABLE IF NOT EXISTS `relatorios` (
     UNIQUE KEY `unique_inspecao` (`inspecao_id`, `sala`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
--- Tabela de usuários
+-- Tabela de usuários (com cargo incluindo 'admin')
 CREATE TABLE IF NOT EXISTS `usuarios` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     `nome` VARCHAR(100) NOT NULL,
@@ -154,4 +160,14 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
     `cargo` ENUM('instrutor', 'lider') NOT NULL,
     `senha` VARCHAR(255) NOT NULL,
     `data_criacao` DATETIME NOT NULL
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+-- Tabela de responsáveis (um responsável por ambiente)
+CREATE TABLE IF NOT EXISTS `responsaveis` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `usuario_id` INT NOT NULL,
+    `ambiente` VARCHAR(50) NOT NULL,
+    `data_atribuicao` DATETIME NOT NULL,
+    UNIQUE KEY `unique_ambiente` (`ambiente`),
+    FOREIGN KEY (`usuario_id`) REFERENCES `usuarios`(`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
