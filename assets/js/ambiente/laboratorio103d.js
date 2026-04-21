@@ -16,6 +16,16 @@ const perguntas = {
   fios_expostos: "Não há fios expostos ou improvisações?",
 };
 
+// Perguntas extras para verificação de sexta-feira (responsável)
+const perguntasExtras = {
+  projetor_lab: "O projetor multimídia está funcionando?",
+  caixas_som: "As caixas de som estão operacionais?",
+  nobreak: "O nobreak está funcionando e com bateria ok?",
+  rede_internet: "A conexão com a internet está estável?",
+  softwares_instalados:
+    "Os softwares necessários estão instalados e atualizados?",
+};
+
 const sala = "103d";
 let currentQuestion = 0;
 const answers = {};
@@ -23,6 +33,12 @@ const observations = {};
 const etapaProcedimento = Object.keys(perguntas).length;
 let statusBackendProblema = false;
 const images = {};
+
+// Variáveis para responsável e sexta-feira
+let usuarioAtual = null;
+let isResponsavel = false;
+let isSexta = false;
+let respostasExtras = {};
 
 async function carregarStatusSala() {
   try {
@@ -97,10 +113,86 @@ async function preencherNomeInstrutor() {
     nomeInput.value =
       dados.nome + (dados.sobrenome ? " " + dados.sobrenome : "");
     nomeInput.disabled = true;
+    usuarioAtual = dados;
   } else {
     nomeInput.disabled = false;
     nomeInput.placeholder = "Digite seu nome completo (não autenticado)";
   }
+}
+
+// Verifica se o usuário é responsável pelo ambiente e se hoje é sexta-feira
+async function verificarResponsavelESexta() {
+  if (!usuarioAtual || !usuarioAtual.id) return;
+
+  try {
+    const response = await fetch("/administrador/api/lider.php?action=listar");
+    const data = await response.json();
+    if (data.sucesso && data.ambientes[sala]) {
+      const responsavel = data.ambientes[sala];
+      isResponsavel = responsavel && responsavel.id == usuarioAtual.id;
+    }
+
+    const hoje = new Date();
+    isSexta = hoje.getDay() === 5;
+
+    if (isResponsavel && isSexta) {
+      document.getElementById("extra-questions").style.display = "block";
+      carregarPerguntasExtras();
+    } else {
+      document.getElementById("extra-questions").style.display = "none";
+    }
+  } catch (error) {
+    console.error("Erro ao verificar responsável:", error);
+  }
+}
+
+function carregarPerguntasExtras() {
+  const container = document.getElementById("extra-fields-container");
+  if (!container) return;
+
+  container.innerHTML = "";
+  for (const [key, texto] of Object.entries(perguntasExtras)) {
+    const div = document.createElement("div");
+    div.className = "mb-3";
+    div.innerHTML = `
+      <label class="form-label fw-semibold">${texto}</label>
+      <div class="btn-group w-100" role="group">
+        <button type="button" class="btn btn-outline-success btn-extras" data-key="${key}" data-value="sim">✅ Sim</button>
+        <button type="button" class="btn btn-outline-danger btn-extras" data-key="${key}" data-value="nao">❌ Não</button>
+      </div>
+      <textarea class="form-control mt-2 obs-extra" data-key="${key}" placeholder="Observação (se Não)" style="display: none;"></textarea>
+    `;
+    container.appendChild(div);
+  }
+
+  document.querySelectorAll(".btn-extras").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const key = btn.dataset.key;
+      const valor = btn.dataset.value;
+      respostasExtras[key] = { valor, observacao: "" };
+
+      const group = btn.closest(".mb-3");
+      group.querySelectorAll(".btn-extras").forEach((b) => {
+        b.classList.remove("active", "btn-success", "btn-danger");
+        if (b.dataset.value === "sim") b.classList.add("btn-outline-success");
+        else b.classList.add("btn-outline-danger");
+      });
+      btn.classList.add("active");
+      if (valor === "sim") btn.classList.add("btn-success");
+      else btn.classList.add("btn-danger");
+
+      const obsField = group.querySelector(".obs-extra");
+      if (valor === "nao") {
+        obsField.style.display = "block";
+        obsField.addEventListener("input", (e) => {
+          respostasExtras[key].observacao = e.target.value;
+        });
+      } else {
+        obsField.style.display = "none";
+        respostasExtras[key].observacao = "";
+      }
+    });
+  });
 }
 
 // ================= REGISTRO DE RESPOSTA =================
@@ -334,6 +426,25 @@ document
       }
     }
 
+    // Validação das perguntas extras se estiverem visíveis
+    if (isResponsavel && isSexta) {
+      for (let key of Object.keys(perguntasExtras)) {
+        if (!respostasExtras[key]) {
+          alert("Responda todas as perguntas da verificação de sexta-feira.");
+          return;
+        }
+        if (
+          respostasExtras[key].valor === "nao" &&
+          !respostasExtras[key].observacao?.trim()
+        ) {
+          alert(
+            "Preencha a observação para itens com problema na verificação de sexta-feira.",
+          );
+          return;
+        }
+      }
+    }
+
     // ================= MONTAGEM =================
     let observacoesFinais = "";
     const formData = new FormData();
@@ -352,6 +463,18 @@ document
     formData.append("respostas", JSON.stringify(answers));
     formData.append("observacoes", observacoesFinais);
     formData.append("sala", sala);
+
+    // Adicionar verificacao_sexta se for responsável e sexta
+    if (isResponsavel && isSexta) {
+      const extraObj = {};
+      for (const [key, data] of Object.entries(respostasExtras)) {
+        extraObj[key] = {
+          valor: data.valor,
+          observacao: data.observacao || "",
+        };
+      }
+      formData.append("verificacao_sexta", JSON.stringify(extraObj));
+    }
 
     // ================= ENVIO =================
     try {
@@ -382,7 +505,8 @@ document
 
 // Inicialização
 document.addEventListener("DOMContentLoaded", async () => {
-  preencherNomeInstrutor();
+  await preencherNomeInstrutor();
+  await verificarResponsavelESexta();
   renderQuestion();
   await carregarStatusSala();
   atualizarStatusLuz();

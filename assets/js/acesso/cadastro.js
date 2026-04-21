@@ -5,13 +5,25 @@ document
 
     const nome = document.getElementById("nome").value.trim();
     const sobrenome = document.getElementById("sobrenome").value.trim();
-    const email = document.getElementById("email").value.trim();
+    let email = document.getElementById("email").value.trim();
     const cargo = document.getElementById("cargo").value;
     const senha = document.getElementById("senha").value;
     const confirmarSenha = document.getElementById("confirmarSenha").value;
 
+    // Converter e-mail para minúsculas antes de enviar
+    email = email.toLowerCase();
+
     if (senha !== confirmarSenha) {
       exibirMensagem("As senhas não coincidem", "danger");
+      return;
+    }
+
+    // 🔹 Validação de nível de senha no frontend (opcional, melhora a experiência)
+    if (senha.length < 6 || !/[A-Za-z]/.test(senha) || !/[0-9]/.test(senha)) {
+      exibirMensagem(
+        "A senha deve ter no mínimo 6 caracteres, com letras e números",
+        "danger",
+      );
       return;
     }
 

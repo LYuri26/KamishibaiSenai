@@ -1,0 +1,274 @@
+/* ========== VARIÁVEIS E RESET ========== */
+:root {
+  --primary: #3498db;
+  --primary-dark: #2980b9;
+  --success: #28a745;
+  --danger: #dc3545;
+  --warning: #ffc107;
+  --gray-bg: #f8f9fa;
+  --gray-border: #dee2e6;
+  --text-dark: #2c3e50;
+  --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* ========== ESTRUTURA PARA RODAPÉ NO FINAL ========== */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #f0f2f5;
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Conteúdo principal deve crescer para empurrar o rodapé */
+main,
+.container:first-of-type {
+  flex: 1;
+}
+
+/* Rodapé sempre no final */
+footer {
+  margin-top: auto;
+}
+
+/* ========== CONTAINER PRINCIPAL ========== */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* ========== CABEÇALHO COM BOTÕES ========== */
+.d-flex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.justify-content-between {
+  justify-content: space-between;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+/* Botão Voltar (estilo consistente) */
+.btn-voltar {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.btn-voltar:hover {
+  background-color: #5a6268;
+  transform: translateX(-2px);
+  color: white;
+}
+
+/* Botão Sair (já existente, mantido) */
+.btn-outline-danger {
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.875rem;
+}
+
+/* ========== TÍTULO ========== */
+h1 {
+  text-align: center;
+  color: var(--text-dark);
+  margin: 1rem 0 1.5rem 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+/* ========== MENSAGENS ========== */
+.message {
+  text-align: center;
+  padding: 0.8rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border-left: 4px solid var(--success);
+}
+
+.message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border-left: 4px solid var(--danger);
+}
+
+/* ========== GRID RESPONSIVA ========== */
+.responsaveis-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.8rem;
+  margin-top: 1.5rem;
+}
+
+/* ========== CARTÕES ========== */
+.card {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--gray-border);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card h3 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  color: #1e466e;
+  font-size: 1.4rem;
+  border-left: 4px solid var(--primary);
+  padding-left: 0.75rem;
+  display: inline-block;
+  width: 100%;
+}
+
+.card p {
+  margin: 0.5rem 0;
+  color: #495057;
+  font-size: 0.95rem;
+}
+
+/* ========== FORMULÁRIOS DENTRO DO CARTÃO ========== */
+.card select,
+.card button {
+  width: 100%;
+  padding: 0.7rem;
+  margin-top: 0.8rem;
+  border-radius: 0.75rem;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.card select {
+  background-color: white;
+  border: 1px solid var(--gray-border);
+  cursor: pointer;
+}
+
+.card select:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.card button {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.card button:hover {
+  background-color: var(--primary-dark);
+  transform: scale(1.02);
+}
+
+/* ========== RESPONSIVIDADE (MOBILE FIRST) ========== */
+@media (max-width: 768px) {
+  .container {
+    padding: 0.75rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    margin: 0.5rem 0 1rem;
+  }
+
+  .responsaveis-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+
+  .card h3 {
+    font-size: 1.2rem;
+  }
+
+  .btn-voltar {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .d-flex {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.3rem;
+    text-align: center;
+  }
+
+  .card button,
+  .card select {
+    padding: 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  .btn-voltar {
+    font-size: 0.75rem;
+  }
+}
+
+/* ========== UTILITÁRIOS ADICIONAIS ========== */
+.mt-3 {
+  margin-top: 1rem;
+}
+.mt-4 {
+  margin-top: 1.5rem;
+}
+.mb-0 {
+  margin-bottom: 0;
+}
+.text-center {
+  text-align: center;
+}
+.rounded-pill {
+  border-radius: 2rem !important;
+}

@@ -1,19 +1,72 @@
-/* ===== CABEÇALHO ===== */
+/* =====================================================
+   ACESSORIOS.CSS - KAMISHIBAI
+   Estilos globais para cabeçalho fixo, rodapé no final
+   e responsividade consistente em todas as páginas
+   ===================================================== */
+
+/* ----- Variáveis globais ----- */
+:root {
+  --primary: #0d6efd;
+  --primary-dark: #0b5ed7;
+  --secondary: #6c757d;
+  --success: #198754;
+  --danger: #dc3545;
+  --warning: #ffc107;
+  --light: #f8f9fa;
+  --dark: #212529;
+  --shadow: 0 2px 10px -5px rgba(0, 0, 0, 0.1);
+  --border-radius: 1rem;
+}
+
+/* ----- Reset base ----- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* ----- Estrutura principal com flexbox ----- */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  padding-top: 80px; /* espaço para o cabeçalho fixo */
+}
+
+/* ----- Cabeçalho fixo no topo ----- */
 header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
   background: white;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 2px 10px -5px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
+  z-index: 1030;
 }
 
 header .container {
   display: flex;
   align-items: center;
   gap: 1rem;
+  padding: 0.75rem 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 header img {
   object-fit: contain;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  max-height: 50px;
 }
 
 header span {
@@ -23,30 +76,120 @@ header span {
   letter-spacing: -0.02em;
 }
 
-/* ===== RODAPÉ ===== */
-footer {
-  border-top: 1px solid #e9ecef;
+/* ----- Rodapé sempre no final (grudado) ----- */
+footer,
+#footer {
+  margin-top: auto; /* força o rodapé para o final */
   background: #ffffff;
-  color: #6c757d;
   font-size: 0.9rem;
-  padding: 2rem 0;
+  padding: 1.5rem 0;
+  text-align: center;
 }
 
-footer p {
+footer p,
+#footer p {
   margin-bottom: 0.25rem;
   font-weight: 500;
 }
 
-@media (max-width: 576px) {
+/* ----- Conteúdo principal (deve ocupar espaço restante) ----- */
+main,
+.main-content {
+  flex: 1;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* ----- Responsividade para tablets ----- */
+@media (max-width: 768px) {
+  body {
+    padding-top: 70px;
+  }
+
   header .container {
     flex-wrap: wrap;
     justify-content: center;
     text-align: center;
+    gap: 0.5rem;
   }
+
   header span {
     font-size: 1.1rem;
   }
-  footer {
-    font-size: 0.8rem;
+
+  header img {
+    max-height: 40px;
   }
+
+  main,
+  .main-content {
+    padding: 0.75rem;
+  }
+}
+
+/* ----- Responsividade para celulares ----- */
+@media (max-width: 576px) {
+  body {
+    padding-top: 60px;
+  }
+
+  header .container {
+    padding: 0.5rem;
+  }
+
+  header span {
+    font-size: 1rem;
+  }
+
+  footer,
+  #footer {
+    font-size: 0.75rem;
+    padding: 1rem 0;
+  }
+
+  main,
+  .main-content {
+    padding: 0.5rem;
+  }
+}
+
+/* ----- Ajuste para impressão ----- */
+@media print {
+  header,
+  footer,
+  #header,
+  #footer,
+  .btn,
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    padding-top: 0 !important;
+    background: white;
+  }
+
+  main,
+  .main-content {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+}
+
+/* ----- Utilitários adicionais para alinhamento ----- */
+.text-center {
+  text-align: center;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* ----- Correção para quando o conteúdo for muito curto ----- */
+.flex-grow-1 {
+  flex: 1;
 }
