@@ -9,24 +9,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get latest code
-        uses: actions/checkout@v4   # atualizado (antes v2)
+        uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
-      - name: Sync files
-        uses: SamKirkland/FTP-Deploy-Action@4.3.0
+      - name: Deploy via SFTP with password
+        uses: easingthemes/ssh-deploy@v4.1.8
         with:
-          server: 82.25.72.215
-          username: ${{ secrets.USER }}
-          # Aspas simples na senha para evitar problemas com @ / ?
-          password: '${{ secrets.PASSWORD }}'
-          # Caminho remoto correto (ajuste conforme necessidade)
-          server-dir: /public_html/kamishibai/
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/.vscode/**
-            _documents/**
+          REMOTE_HOST: 82.25.72.215
+          REMOTE_USER: ${{ secrets.USER }}
+          REMOTE_PORT: 22
+          PASSWORD: ${{ secrets.PASSWORD }}
+          TARGET: /public_html/kamishibai/
+          SOURCE: "./"
+          ARGS: -avzr --delete
+          EXCLUDE: |
+            .git*
+            .vscode/
+            _documents/
             _phpinfo.php
             *.code-workspace
             *.bkp
@@ -35,4 +35,4 @@ jobs:
             _data/database/release.ini
             mergeRelease.cmd
             .env
-            .github/**
+            .github/
