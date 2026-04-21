@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get latest code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4   # atualizado (antes v2)
         with:
           fetch-depth: 2
 
@@ -18,8 +18,10 @@ jobs:
         with:
           server: 82.25.72.215
           username: ${{ secrets.USER }}
-          password: ${{ secrets.PASSWORD }}
-          server-dir: /
+          # Aspas simples na senha para evitar problemas com @ / ?
+          password: '${{ secrets.PASSWORD }}'
+          # Caminho remoto correto (ajuste conforme necessidade)
+          server-dir: /public_html/kamishibai/
           exclude: |
             **/.git*
             **/.git*/**
