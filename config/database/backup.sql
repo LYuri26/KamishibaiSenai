@@ -156,7 +156,8 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     `nome` VARCHAR(100) NOT NULL,
     `sobrenome` VARCHAR(100) NOT NULL,
-    `email` VARCHAR(255) UNIQUE NOT NULL,
+    `email_hash` VARCHAR(64) UNIQUE NOT NULL,
+    `email_encrypted` TEXT NOT NULL,
     `cargo` ENUM('instrutor', 'lider') NOT NULL,
     `senha` VARCHAR(255) NOT NULL,
     `data_criacao` DATETIME NOT NULL
