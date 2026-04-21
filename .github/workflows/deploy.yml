@@ -2,31 +2,31 @@ on:
   push:
     branches:
       - release
-name: Deploy Release on push
+name: 🚀 Deploy Release on push
 jobs:
   web-deploy:
-    name: Deploy
+    name: 🎉 Deploy
     runs-on: ubuntu-latest
     steps:
-      - name: Get latest code
+      - name: 🚚 Get latest code
         uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
-      - name: Deploy via SFTP with password
-        uses: easingthemes/ssh-deploy@v4.1.8
+      - name: 📂 Sync files
+        uses: SamKirkland/FTP-Deploy-Action@4.3.0
         with:
-          REMOTE_HOST: 82.25.72.215
-          REMOTE_USER: ${{ secrets.USER }}
-          REMOTE_PORT: 22
-          PASSWORD: ${{ secrets.PASSWORD }}
-          TARGET: /public_html/kamishibai/
-          SOURCE: "./"
-          ARGS: -avzr --delete
-          EXCLUDE: |
-            .git*
-            .vscode/
-            _documents/
+          server: 82.25.72.215
+          port: 21
+          protocol: ftps                # Força FTPS (explícito)
+          username: ${{ secrets.USER }}
+          password: '${{ secrets.PASSWORD }}'   # Aspas simples para caracteres especiais
+          server-dir: /public_html/kamishibai/   # Caminho correto
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.vscode/**
+            _documents/**
             _phpinfo.php
             *.code-workspace
             *.bkp
@@ -35,4 +35,4 @@ jobs:
             _data/database/release.ini
             mergeRelease.cmd
             .env
-            .github/
+            .github/**
