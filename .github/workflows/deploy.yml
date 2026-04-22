@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 🚚 Get latest code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
@@ -17,9 +17,11 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
         with:
           server: 82.25.72.215
+          port: 21
+          protocol: ftps                # Força FTPS (explícito)
           username: ${{ secrets.USER }}
-          password: ${{ secrets.PASSWORD }}
-          server-dir: /
+          password: '${{ secrets.PASSWORD }}'   # Aspas simples para caracteres especiais
+          server-dir: /public_html/kamishibai/   # Caminho correto
           exclude: |
             **/.git*
             **/.git*/**
