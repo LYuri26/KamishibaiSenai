@@ -1,14 +1,3 @@
-Aqui está o **README final completo**, unificando:
-
-- Seu README original
-- O guia prático do PDF
-- A explicação da IA (Holt-Winters)
-- E melhorias de clareza, organização e escalabilidade
-
-Agora ele está em nível de **documentação profissional + manual técnico + material didático**.
-
----
-
 # 📘 Kamishibai – Sistema de Inspeção com Análise Preditiva
 
 ## 🎯 Objetivos de Aprendizagem
