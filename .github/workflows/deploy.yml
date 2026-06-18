@@ -21,7 +21,7 @@ jobs:
           protocol: ftps                # Força FTPS (explícito)
           username: ${{ secrets.USER }}
           password: '${{ secrets.PASSWORD }}'   # Aspas simples para caracteres especiais
-          server-dir: /public_html/kamishibai/   # Caminho correto
+          server-dir: /   # Caminho correto
           exclude: |
             **/.git*
             **/.git*/**
