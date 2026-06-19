@@ -1,57 +1,113 @@
 <?php
 // =====================================================
-// INSERIR DADOS COMPLETOS 2022-2026
+// INSERIR DADOS COMPLETOS 2022-2026 (KAMISHIBAI)
 // =====================================================
 
 require_once __DIR__ . '/database.php';
 
-// Garante que a tabela relatorios existe (se não existir, cria)
+// Aumentando o limite de tempo e memória caso gere muitos dados
+set_time_limit(300);
+ini_set('memory_limit', '256M');
+
+// =====================================================
+// LIMPAR TABELAS (RESET COMPLETO DOS DADOS DE TESTE)
+// =====================================================
+
 try {
-    $pdo->exec("CREATE TABLE IF NOT EXISTS `relatorios` (
-        `id` INT AUTO_INCREMENT PRIMARY KEY,
-        `inspecao_id` INT NOT NULL,
-        `sala` VARCHAR(50) NOT NULL,
-        `data` DATE NOT NULL,
-        `periodo` ENUM('manha','tarde','noite') NOT NULL,
-        `momento` ENUM('inicio','fim') NOT NULL,
-        `observacoes` TEXT,
-        `data_geracao` DATETIME NOT NULL,
-        `imagens` TEXT NULL,
-        UNIQUE KEY `unique_inspecao` (`inspecao_id`, `sala`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-    echo "Tabela relatorios verificada/criada.<br>";
+    $pdo->exec("SET FOREIGN_KEY_CHECKS = 0");
+
+    // Limpar usuários e responsáveis
+    $pdo->exec("TRUNCATE TABLE responsaveis");
+    $pdo->exec("TRUNCATE TABLE usuarios");
+
+    // Limpar relatórios e tabelas de salas
+    $pdo->exec("TRUNCATE TABLE relatorios");
+    $pdo->exec("TRUNCATE TABLE `104a`");
+    $pdo->exec("TRUNCATE TABLE `103d`");
+    $pdo->exec("TRUNCATE TABLE `102c`");
+
+    $pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
+
+    echo "Tabelas limpas com sucesso (usuarios, responsaveis, relatorios e salas).<br>";
 } catch (PDOException $e) {
-    echo "Erro ao criar tabela relatorios: " . $e->getMessage() . "<br>";
+    echo "Erro ao limpar tabelas: " . $e->getMessage() . "<br>";
+    exit;
 }
 
-// Limpa todas as tabelas de dados (mantém apenas a estrutura)
-$tabelas = ['104a', '103d', '102c', 'relatorios'];
-foreach ($tabelas as $tabela) {
-    try {
-        $pdo->exec("TRUNCATE TABLE `$tabela`");
-        echo "Tabela $tabela limpa.<br>";
-    } catch (PDOException $e) {
-        echo "Erro ao truncar $tabela: " . $e->getMessage() . "<br>";
+// =====================================================
+// GERAR USUÁRIOS E RESPONSÁVEIS
+// =====================================================
+
+// Lista de usuários fictícios (3 líderes para 3 salas + vários instrutores)
+$usuariosSistema = [
+    // Lideres (Coordenadores/Supervisores)
+    ['Lenon', 'Yuri', 'lider'],
+    ['José', 'Ferreira', 'lider'],
+    ['Patrícia', 'Mendes', 'lider'],
+
+    // Instrutores
+    ['Carlos', 'Silva', 'instrutor'],
+    ['Mariana', 'Souza', 'instrutor'],
+    ['João', 'Pereira', 'instrutor'],
+    ['Ana', 'Lima', 'instrutor'],
+    ['Roberto', 'Alves', 'instrutor'],
+    ['Fernanda', 'Costa', 'instrutor'],
+    ['Lucas', 'Mendes', 'instrutor'],
+    ['Juliana', 'Rocha', 'instrutor'],
+    ['Paulo', 'Henrique', 'instrutor'],
+    ['Cristina', 'Oliveira', 'instrutor'],
+    ['Ricardo', 'Santos', 'instrutor'],
+    ['Bruno', 'Carvalho', 'instrutor'],
+    ['Tatiane', 'Martins', 'instrutor'],
+    ['Gustavo', 'Almeida', 'instrutor'],
+    ['Camila', 'Ferreira', 'instrutor']
+];
+
+$instrutores = [];
+$lideres = [];
+$senhaPadrao = password_hash('123456', PASSWORD_DEFAULT);
+
+$stmtUsuario = $pdo->prepare("
+    INSERT INTO usuarios (nome, sobrenome, email_hash, email_encrypted, cargo, senha, data_criacao)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+");
+
+foreach ($usuariosSistema as $usuario) {
+    [$nome, $sobrenome, $cargo] = $usuario;
+    $email = strtolower($nome . "." . $sobrenome) . "@senai.local";
+    $emailHash = hash('sha256', $email);
+
+    $stmtUsuario->execute([
+        $nome,
+        $sobrenome,
+        $emailHash,
+        $email,
+        $cargo,
+        $senhaPadrao,
+        date('Y-m-d H:i:s')
+    ]);
+
+    $usuarioId = $pdo->lastInsertId();
+
+    if ($cargo === 'lider') {
+        $lideres[] = $usuarioId;
+    } else {
+        $instrutores[] = "$nome $sobrenome";
     }
 }
 
-// Lista de instrutores fictícios
-$instrutores = [
-    'Carlos Silva',
-    'Mariana Souza',
-    'João Pereira',
-    'Ana Lima',
-    'Roberto Alves',
-    'Fernanda Costa',
-    'Lucas Mendes',
-    'Juliana Rocha',
-    'Paulo Henrique',
-    'Cristina Oliveira',
-    'Ricardo Santos',
-    'Patrícia Gomes'
-];
+// Atribuir responsáveis aos ambientes
+$stmtResponsavel = $pdo->prepare("INSERT INTO responsaveis (usuario_id, ambiente, data_atribuicao) VALUES (?, ?, NOW())");
+$stmtResponsavel->execute([$lideres[0], '104a']);
+$stmtResponsavel->execute([$lideres[1], '103d']);
+$stmtResponsavel->execute([$lideres[2], '102c']);
 
-// Campos por sala (idênticos ao schema fornecido)
+echo "Usuários e Responsáveis criados.<br>";
+
+// =====================================================
+// DEFINIÇÃO DAS SALAS E SEUS CAMPOS 
+// =====================================================
+
 $camposPorSala = [
     '104a' => [
         'carteiras_organizadas',
@@ -135,85 +191,113 @@ $camposPorSala = [
     ]
 ];
 
-// Função para calcular a probabilidade de um campo ser 'nao'
+// Horários realistas de SENAI/Escola
+$horariosPorPeriodo = [
+    'manha' => ['inicio' => '07:30:00', 'fim' => '11:30:00'],
+    'tarde' => ['inicio' => '13:30:00', 'fim' => '17:30:00'],
+    'noite' => ['inicio' => '19:00:00', 'fim' => '22:30:00']
+];
+
 function getProbabilidadeProblema($ano, $mes)
 {
-    // Sazonalidade: pico no verão (dezembro/janeiro) e vale no inverno (junho/julho)
-    // Pico em janeiro (mês 1)
     $sazonal = 0.25 * (1 + cos(2 * M_PI * ($mes - 1) / 12));
-    // Tendência: aumento gradual dos problemas ao longo dos anos
     $tendencia = 0.02 * ($ano - 2022);
-    // Base
     $base = 0.12 + $tendencia + $sazonal;
     return min(0.75, max(0.05, $base));
 }
 
-// Determinar o último mês a ser inserido (atual)
 $anoAtual = (int) date('Y');
 $mesAtual = (int) date('m');
-$ultimoAno = $anoAtual;
-$ultimoMes = $mesAtual;
-
-echo "Gerando dados de 2022-01 até $ultimoAno-$ultimoMes<br><br>";
-
 $totalInsercoes = 0;
 
-// Loop sobre os anos e meses
-for ($ano = 2022; $ano <= $ultimoAno; $ano++) {
+echo "Gerando dados de histórico (2022 até $anoAtual-$mesAtual)... Isso pode levar alguns segundos.<br><br>";
+
+// =====================================================
+// LOOP DE GERAÇÃO DE DADOS
+// =====================================================
+
+for ($ano = 2022; $ano <= $anoAtual; $ano++) {
     $mesInicio = ($ano == 2022) ? 1 : 1;
-    $mesFim = ($ano == $ultimoAno) ? $ultimoMes : 12;
+    $mesFim = ($ano == $anoAtual) ? $mesAtual : 12;
 
     for ($mes = $mesInicio; $mes <= $mesFim; $mes++) {
         $prob = getProbabilidadeProblema($ano, $mes);
-        echo "Processando $ano-$mes | Taxa base: " . round($prob * 100, 1) . "%<br>";
+        $mesStr = sprintf('%02d', $mes);
 
-        // Para cada sala
-        foreach (['104a', '103d', '102c'] as $sala) {
-            $campos = $camposPorSala[$sala];
+        // Gera duas datas representativas no mês para evitar sobrecarga excessiva de DB
+        // Usamos strtotime para pegar dias reais de semana, forçando pelo menos uma sexta-feira no mês
+        $datasBase = [
+            date('Y-m-d', strtotime("first friday of $ano-$mesStr")),
+            date('Y-m-d', strtotime("third wednesday of $ano-$mesStr"))
+        ];
 
-            // Para cada momento (início e fim)
-            foreach (['inicio' => '08:00:00', 'fim' => '16:00:00'] as $momento => $hora) {
-                // Escolhe um dia representativo (10 para início, 20 para fim)
-                $dia = ($momento == 'inicio') ? 10 : 20;
-                $dataStr = sprintf('%04d-%02d-%02d %s', $ano, $mes, $dia, $hora);
-                $dataObj = new DateTime($dataStr);
+        foreach ($datasBase as $dataBase) {
+            $isSexta = (date('N', strtotime($dataBase)) == 5); // 5 = Sexta-feira
 
-                // Gerar valores aleatórios para cada campo
-                $valores = [];
-                foreach ($campos as $campo) {
-                    // Pequena variação aleatória na probabilidade para cada campo
-                    $var = mt_rand(-10, 10) / 100;
-                    $probCampo = max(0.02, min(0.98, $prob + $var));
-                    $valores[$campo] = (mt_rand(1, 100) <= $probCampo * 100) ? 'nao' : 'sim';
+            foreach (['104a', '103d', '102c'] as $sala) {
+                $campos = $camposPorSala[$sala];
+
+                foreach (['manha', 'tarde', 'noite'] as $periodo) {
+
+                    foreach (['inicio', 'fim'] as $momento) {
+                        $hora = $horariosPorPeriodo[$periodo][$momento];
+                        $dataStr = "$dataBase $hora";
+
+                        $valores = [];
+                        $problemas = [];
+
+                        // Preencher "sim" ou "nao"
+                        foreach ($campos as $campo) {
+                            $var = mt_rand(-10, 10) / 100;
+                            $probCampo = max(0.02, min(0.98, $prob + $var));
+                            $resultado = (mt_rand(1, 100) <= $probCampo * 100) ? 'nao' : 'sim';
+                            $valores[$campo] = $resultado;
+
+                            if ($resultado === 'nao') {
+                                $problemas[] = $campo;
+                            }
+                        }
+
+                        // Observações
+                        $observacao = (count($problemas) > 0)
+                            ? "Não conformidades encontradas: " . implode(', ', $problemas)
+                            : "Ambiente inspecionado sem não conformidades.";
+
+                        // Verificação de Sexta (JSON)
+                        $verificacaoSexta = null;
+                        if ($isSexta && $momento === 'fim') {
+                            $verificacaoSexta = json_encode([
+                                'limpeza_pesada_realizada' => (mt_rand(1, 10) <= 9) ? 'sim' : 'nao',
+                                'equipamentos_desligados_fds' => (mt_rand(1, 10) <= 8) ? 'sim' : 'nao'
+                            ]);
+                        }
+
+                        // SQL Dinâmico para inserção
+                        $camposList = implode(', ', array_keys($valores));
+                        $placeholders = implode(', ', array_fill(0, count($valores), '?'));
+                        $sql = "INSERT INTO `$sala` (nome, data, momento, observacoes, verificacao_sexta, $camposList) 
+                                VALUES (?, ?, ?, ?, ?, $placeholders)";
+
+                        $stmt = $pdo->prepare($sql);
+                        $nomeInstrutor = $instrutores[array_rand($instrutores)];
+
+                        $params = array_merge([$nomeInstrutor, $dataStr, $momento, $observacao, $verificacaoSexta], array_values($valores));
+                        $stmt->execute($params);
+                        $inspecao_id = $pdo->lastInsertId();
+
+                        // Inserir Relatório
+                        $sqlRel = "INSERT INTO relatorios (inspecao_id, sala, data, periodo, momento, observacoes, data_geracao) 
+                                   VALUES (?, ?, ?, ?, ?, ?, NOW())";
+                        $stmtRel = $pdo->prepare($sqlRel);
+                        $stmtRel->execute([$inspecao_id, $sala, $dataBase, $periodo, $momento, $observacao]);
+
+                        $totalInsercoes++;
+                    }
                 }
-
-                // Inserir na tabela da sala
-                $camposList = implode(', ', array_keys($valores));
-                $placeholders = implode(', ', array_fill(0, count($valores), '?'));
-                $sql = "INSERT INTO `$sala` (nome, data, momento, observacoes, $camposList) 
-                        VALUES (?, ?, ?, ?, $placeholders)";
-                $stmt = $pdo->prepare($sql);
-
-                $nomeInstrutor = $instrutores[array_rand($instrutores)];
-                $observacao = "Inspeção de $momento - $sala - $ano-$mes";
-
-                $params = array_merge([$nomeInstrutor, $dataStr, $momento, $observacao], array_values($valores));
-                $stmt->execute($params);
-                $inspecao_id = $pdo->lastInsertId();
-
-                // Determinar período (manha/tarde)
-                $periodo = ($momento == 'inicio') ? 'manha' : 'tarde';
-
-                // Inserir relatório
-                $sqlRel = "INSERT INTO relatorios (inspecao_id, sala, data, periodo, momento, observacoes, data_geracao) 
-                           VALUES (?, ?, ?, ?, ?, ?, NOW())";
-                $stmtRel = $pdo->prepare($sqlRel);
-                $stmtRel->execute([$inspecao_id, $sala, $dataObj->format('Y-m-d'), $periodo, $momento, $observacao]);
-
-                $totalInsercoes++;
             }
         }
     }
 }
 
-echo "<hr>Inserção concluída! Total de registros: $totalInsercoes inspeções.";
+echo "<hr><strong>Inserção concluída com sucesso!</strong> Total de registros: $totalInsercoes inspeções.";
+?>
