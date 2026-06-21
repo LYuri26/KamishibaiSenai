@@ -1,52 +1,326 @@
-/* ===== PÁGINA INICIAL - ESTILOS COMPLEMENTARES ===== */
+/* =====================================================
+   PÁGINA INICIAL - KAMISHIBAI
+   ===================================================== */
 
-/* Hero section usando cores do tema */
-.hero {
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  margin-bottom: 0; /* removido espaçamento extra, agora controlado pelo container */
-  border-bottom: 4px solid rgba(255, 255, 255, 0.1);
+/* ===== VARIÁVEIS ===== */
+:root {
+  --primary: #0d6efd;
+  --primary-dark: #0a58ca;
+  --primary-light: #e8f0fe;
+  --success: #198754;
+  --success-dark: #157347;
+  --warning: #ffc107;
+  --warning-dark: #e0a800;
+  --secondary: #6c757d;
+  --secondary-dark: #5a6268;
+  --shadow-card: 0 8px 25px rgba(0, 0, 0, 0.05);
+  --shadow-hover: 0 16px 40px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --radius-card: 1.25rem;
 }
 
-/* Círculo para ícones nos cards */
+/* ===== HERO SECTION ===== */
+.hero {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  border-bottom: 4px solid rgba(255, 255, 255, 0.12);
+  padding: 3.5rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Efeito de fundo decorativo */
+.hero::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+}
+
+.hero .display-4 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.hero .lead {
+  font-weight: 300;
+  opacity: 0.9;
+  max-width: 650px;
+  margin: 0 auto;
+}
+
+/* Badges do Hero */
+.hero .badge {
+  background: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff !important;
+  font-weight: 500;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.9rem;
+  transition: var(--transition);
+}
+
+.hero .badge:hover {
+  background: rgba(255, 255, 255, 0.25) !important;
+  transform: translateY(-2px);
+}
+
+/* ===== CARDS DE NAVEGAÇÃO ===== */
+.nav-card {
+  border-radius: var(--radius-card);
+  transition: var(--transition);
+  background: #ffffff;
+  border: none;
+  cursor: default;
+  box-shadow: var(--shadow-card);
+}
+
+.nav-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-hover) !important;
+}
+
+.nav-card .card-body {
+  padding: 1.8rem 1.2rem;
+}
+
+.nav-card .card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+}
+
+.nav-card .card-text {
+  font-size: 0.875rem;
+  color: #64748b;
+  line-height: 1.5;
+  min-height: 3.5rem;
+}
+
+/* ===== ÍCONES CIRCULARES ===== */
 .icon-circle {
-  width: 90px;
-  height: 90px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease-in-out;
+  font-size: 2.2rem;
+  margin: 0 auto 1rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+  transition: var(--transition);
+  color: #ffffff;
 }
 
-.card:hover .icon-circle {
-  transform: scale(1.05);
+.nav-card:hover .icon-circle {
+  transform: scale(1.06) rotate(-2deg);
 }
 
-/* Efeito hover nos cards */
-.hover-card {
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+/* Gradientes para ícones */
+.bg-gradient-success {
+  background: linear-gradient(135deg, var(--success), var(--success-dark));
 }
-.hover-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.12) !important;
+.bg-gradient-warning {
+  background: linear-gradient(135deg, var(--warning), var(--warning-dark));
+}
+.bg-gradient-secondary {
+  background: linear-gradient(135deg, var(--secondary), var(--secondary-dark));
+}
+.bg-gradient-primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
 }
 
-/* Ajustes de tipografia para responsividade */
-@media (max-width: 576px) {
-  .display-3 {
-    font-size: 2.5rem;
+/* ===== BOTÕES DOS CARDS ===== */
+.nav-card .btn {
+  border-radius: 2rem;
+  padding: 0.4rem 1.6rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: var(--transition);
+  border: none;
+}
+
+.nav-card .btn-success {
+  background: var(--success);
+  color: #fff;
+}
+.nav-card .btn-success:hover {
+  background: var(--success-dark);
+  transform: scale(1.04);
+  box-shadow: 0 6px 16px rgba(25, 135, 84, 0.25);
+}
+
+.nav-card .btn-outline-warning {
+  border: 2px solid var(--warning);
+  color: #856404;
+  background: transparent;
+}
+.nav-card .btn-outline-warning:hover {
+  background: var(--warning);
+  color: #212529;
+  transform: scale(1.04);
+  box-shadow: 0 6px 16px rgba(255, 193, 7, 0.3);
+}
+
+.nav-card .btn-outline-secondary {
+  border: 2px solid var(--secondary);
+  color: var(--secondary);
+  background: transparent;
+}
+.nav-card .btn-outline-secondary:hover {
+  background: var(--secondary);
+  color: #ffffff;
+  transform: scale(1.04);
+  box-shadow: 0 6px 16px rgba(108, 117, 125, 0.3);
+}
+
+/* ===== RESPONSIVIDADE ===== */
+
+/* Tablets e telas médias */
+@media (max-width: 992px) {
+  .hero {
+    padding: 2.5rem 0;
   }
-  .lead {
-    font-size: 1.1rem;
+  .hero .display-4 {
+    font-size: 2.8rem;
   }
   .icon-circle {
     width: 70px;
     height: 70px;
+    font-size: 1.8rem;
   }
-  .icon-circle i {
-    font-size: 2rem;
+  .nav-card .card-body {
+    padding: 1.5rem 1rem;
   }
+}
+
+/* Celulares grandes */
+@media (max-width: 768px) {
+  .hero {
+    padding: 2rem 0;
+  }
+  .hero .display-4 {
+    font-size: 2.2rem;
+  }
+  .hero .lead {
+    font-size: 1rem;
+  }
+  .hero .badge {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.8rem;
+  }
+  .icon-circle {
+    width: 64px;
+    height: 64px;
+    font-size: 1.6rem;
+  }
+  .nav-card .card-title {
+    font-size: 1rem;
+  }
+  .nav-card .card-text {
+    font-size: 0.8rem;
+    min-height: 2.8rem;
+  }
+  .nav-card .btn {
+    font-size: 0.8rem;
+    padding: 0.3rem 1.2rem;
+  }
+}
+
+/* Celulares pequenos */
+@media (max-width: 576px) {
+  .hero {
+    padding: 1.5rem 0;
+  }
+  .hero .display-4 {
+    font-size: 1.8rem;
+  }
+  .hero .badge {
+    display: inline-block;
+    margin-bottom: 0.3rem;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+  }
+  .hero .d-flex.gap-3 {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .icon-circle {
+    width: 56px;
+    height: 56px;
+    font-size: 1.3rem;
+  }
+  .nav-card .card-body {
+    padding: 1rem 0.8rem;
+  }
+  .nav-card .card-text {
+    min-height: 2rem;
+    font-size: 0.75rem;
+  }
+  .nav-card .btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 1rem;
+  }
+  .container.my-5 {
+    margin-top: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+}
+
+/* ===== ANIMAÇÕES ===== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.nav-card {
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+.nav-card:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.nav-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.nav-card:nth-child(3) {
+  animation-delay: 0.15s;
+}
+.nav-card:nth-child(4) {
+  animation-delay: 0.2s;
+}
+.nav-card:nth-child(5) {
+  animation-delay: 0.25s;
+}
+
+/* ===== UTILITÁRIOS EXTRAS ===== */
+.text-gradient-primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.shadow-hover {
+  transition: var(--transition);
+}
+.shadow-hover:hover {
+  box-shadow: var(--shadow-hover) !important;
+}
+
+/* ===== GARANTIR QUE O RODAPÉ FIQUE NO FINAL ===== */
+body {
+  background-color: #f8fafc;
 }

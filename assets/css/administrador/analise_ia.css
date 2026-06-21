@@ -118,11 +118,43 @@
   transform: translateX(4px);
 }
 
-/* Gráficos */
+/* ===== GRÁFICOS - MELHORIAS DE RESPONSIVIDADE ===== */
 canvas {
   max-width: 100%;
-  height: auto;
+  height: auto !important; /* permite que o Chart.js defina a altura via JS, mas com fallback */
   border-radius: 1rem;
+  display: block;
+  /* Garante que o canvas não force altura extra */
+}
+
+/* Container dos gráficos para evitar tremores em mobile */
+.card-body canvas {
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 16 / 9; /* Mantém proporção consistente */
+  max-height: 300px; /* Altura máxima em desktop */
+  min-height: 200px; /* Altura mínima para evitar colapso */
+}
+
+/* Ajuste específico para o gráfico de barras (comparativo por sala) */
+#graficoSalas {
+  aspect-ratio: 16 / 9;
+  max-height: 280px;
+  min-height: 200px;
+}
+
+/* Gráfico de previsão (Holt-Winters) */
+#graficoPrevisao {
+  aspect-ratio: 16 / 9;
+  max-height: 250px;
+  min-height: 180px;
+}
+
+/* Gráfico de evolução */
+#graficoEvolucao {
+  aspect-ratio: 16 / 9;
+  max-height: 300px;
+  min-height: 200px;
 }
 
 /* Botão exportar PDF */
@@ -139,7 +171,7 @@ canvas {
   background: linear-gradient(135deg, #bb2d3b, #a71d2a);
 }
 
-/* Responsividade */
+/* ===== RESPONSIVIDADE PARA TELAS PEQUENAS ===== */
 @media (max-width: 768px) {
   .card-header {
     padding: 0.75rem 1rem;
@@ -165,6 +197,68 @@ canvas {
 
   .btn-export-pdf {
     width: 100%;
+  }
+
+  /* Ajustes para gráficos em mobile */
+  .card-body canvas {
+    aspect-ratio: 4 / 3; /* Proporção mais quadrada em mobile */
+    max-height: 220px;
+    min-height: 160px;
+  }
+
+  #graficoSalas {
+    aspect-ratio: 4 / 3;
+    max-height: 220px;
+    min-height: 160px;
+  }
+
+  #graficoPrevisao {
+    aspect-ratio: 4 / 3;
+    max-height: 200px;
+    min-height: 150px;
+  }
+
+  #graficoEvolucao {
+    aspect-ratio: 4 / 3;
+    max-height: 220px;
+    min-height: 160px;
+  }
+}
+
+/* Para telas muito pequenas (até 480px) */
+@media (max-width: 480px) {
+  .card-body canvas {
+    aspect-ratio: 1 / 1; /* Proporção quadrada para ocupar melhor espaço */
+    max-height: 180px;
+    min-height: 140px;
+  }
+
+  #graficoSalas {
+    aspect-ratio: 1 / 1;
+    max-height: 180px;
+    min-height: 140px;
+  }
+
+  #graficoPrevisao {
+    aspect-ratio: 1 / 1;
+    max-height: 160px;
+    min-height: 130px;
+  }
+
+  #graficoEvolucao {
+    aspect-ratio: 1 / 1;
+    max-height: 180px;
+    min-height: 140px;
+  }
+
+  /* Ajustes nos cards de resumo para ocupar melhor espaço */
+  #cardsResumo .col-md-4 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+  #cardsResumo .col-md-4:last-child {
+    flex: 0 0 100%;
+    max-width: 100%;
   }
 }
 
@@ -206,11 +300,12 @@ canvas {
   canvas {
     display: block !important;
     visibility: visible !important;
-    max-height: 220px;
+    max-height: 220px !important;
     height: auto !important;
     width: auto !important;
     page-break-inside: avoid;
     break-inside: avoid;
+    aspect-ratio: auto !important; /* Remove restrições de proporção na impressão */
   }
 
   /* Remove qualquer possibilidade de ocultação acidental */
@@ -223,19 +318,12 @@ canvas {
   }
 }
 
-/* Ajuste específico para o gráfico de barras (comparativo por sala) */
-#graficoSalas {
-  max-height: 280px !important; /* um pouco mais alto que os outros */
-  width: 100% !important;
-  height: auto !important;
-  page-break-inside: avoid;
-  break-inside: avoid;
-}
-
-/* Garante que o card que o contém não interfira */
-#graficoSalas + .card-body,
-.card:has(#graficoSalas) .card-body {
-  padding: 8px 10px !important;
+/* Ajuste específico para o gráfico de barras (comparativo por sala) - impressão */
+@media print {
+  #graficoSalas {
+    max-height: 220px !important;
+    height: auto !important;
+  }
 }
 
 /* Estilos para a seção de explicabilidade */
@@ -249,9 +337,4 @@ canvas {
   background: #f8f9fa;
   border-radius: 0.75rem;
   font-family: monospace;
-}
-
-/* Melhorias para o gráfico de previsão */
-#graficoPrevisao {
-  max-height: 250px;
 }
