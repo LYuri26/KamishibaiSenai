@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rota Kamishibai - Início</title>
+    <title>Kamishibai - Início</title>
     <!-- Bootstrap 5 + Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -14,115 +14,125 @@
     <link rel="stylesheet" href="assets/css/index.css">
 </head>
 
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100 bg-light">
     <!-- Cabeçalho -->
     <div id="header"></div>
 
     <main class="flex-grow-1">
-        <!-- Hero Section com Bootstrap -->
-        <section class="hero bg-primary text-white py-5">
+        <!-- Hero Section com gradiente e sombra -->
+        <section class="hero bg-gradient-primary text-white py-5 shadow-sm">
             <div class="container text-center">
-                <h1 class="display-3 fw-bold mb-3">
-                    <i class="bi bi-clipboard-check me-2"></i>Kamishibai
-                </h1>
-                <p class="lead fs-4 mx-auto" style="max-width: 700px;">
+                <div class="d-flex align-items-center justify-content-center gap-3 mb-3">
+                    <i class="bi bi-clipboard-check fs-1"></i>
+                    <h1 class="display-4 fw-bold mb-0">Kamishibai</h1>
+                </div>
+                <p class="lead fs-5 mx-auto" style="max-width: 650px; opacity: 0.9;">
                     Sistema de inspeção visual para ambientes de aula
                 </p>
+                <div class="d-flex justify-content-center gap-3 mt-4">
+                    <span class="badge bg-white text-primary rounded-pill px-4 py-2 fs-6">
+                        <i class="bi bi-check-circle-fill me-1"></i> Simples
+                    </span>
+                    <span class="badge bg-white text-primary rounded-pill px-4 py-2 fs-6">
+                        <i class="bi bi-check-circle-fill me-1"></i> Rápido
+                    </span>
+                    <span class="badge bg-white text-primary rounded-pill px-4 py-2 fs-6">
+                        <i class="bi bi-check-circle-fill me-1"></i> Eficiente
+                    </span>
+                </div>
             </div>
         </section>
 
-        <!-- Cards de acesso -->
+        <!-- Cards de acesso em grid aprimorado -->
         <div class="container my-5">
             <div class="row g-4 justify-content-center">
-                <!-- Card para Sala 104a -->
+                <!-- Card Sala 104a -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 border-0 shadow-sm hover-card">
-                        <div class="card-body text-center p-4">
-                            <div class="icon-circle bg-success bg-gradient text-white mb-4 mx-auto">
-                                <i class="bi bi-pc-display fs-1"></i>
+                    <div class="card nav-card h-100 border-0 shadow-sm text-center p-3">
+                        <div class="card-body">
+                            <div class="icon-circle bg-gradient-success text-white mb-3 mx-auto">
+                                <i class="bi bi-tv fs-2"></i>
                             </div>
-                            <h3 class="card-title h4 fw-semibold">Sala 104a</h3>
-                            <p class="card-text text-secondary">
+                            <h3 class="card-title h5 fw-bold">Sala 104a</h3>
+                            <p class="card-text text-secondary small">
                                 Inspecione carteiras, TV, ar-condicionado, quadro, porta, janelas, tomadas, mesa e
                                 cadeira do instrutor.
                             </p>
-                            <a href="ambiente/sala104a.html" class="btn btn-success rounded-pill px-4 py-2 mt-3">
-                                Acessar <i class="bi bi-arrow-right ms-2"></i>
+                            <a href="ambiente/sala104a.html" class="btn btn-success rounded-pill px-4 mt-2">
+                                Acessar <i class="bi bi-arrow-right ms-1"></i>
                             </a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card para Laboratório 103d -->
+                <!-- Card Laboratório 103d -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 border-0 shadow-sm hover-card">
-                        <div class="card-body text-center p-4">
-                            <div class="icon-circle bg-success bg-gradient text-white mb-4 mx-auto">
-                                <i class="bi bi-pc-display fs-1"></i>
+                    <div class="card nav-card h-100 border-0 shadow-sm text-center p-3">
+                        <div class="card-body">
+                            <div class="icon-circle bg-gradient-success text-white mb-3 mx-auto">
+                                <i class="bi bi-pc-display fs-2"></i>
                             </div>
-                            <h3 class="card-title h4 fw-semibold">Laboratório 103d</h3>
-                            <p class="card-text text-secondary">
+                            <h3 class="card-title h5 fw-bold">Laboratório 103d</h3>
+                            <p class="card-text text-secondary small">
                                 Inspecione computadores, periféricos, cadeiras, ar-condicionado, quadro, mesa do
                                 instrutor, portão e janelas.
                             </p>
-                            <a href="ambiente/laboratorio103d.html" class="btn btn-success rounded-pill px-4 py-2 mt-3">
-                                Acessar <i class="bi bi-arrow-right ms-2"></i>
+                            <a href="ambiente/laboratorio103d.html" class="btn btn-success rounded-pill px-4 mt-2">
+                                Acessar <i class="bi bi-arrow-right ms-1"></i>
                             </a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card para Oficina 102c -->
+                <!-- Card Oficina 102c -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 border-0 shadow-sm hover-card">
-                        <div class="card-body text-center p-4">
-                            <div class="icon-circle bg-success bg-gradient text-white mb-4 mx-auto">
-                                <i class="bi bi-pc-display fs-1"></i>
+                    <div class="card nav-card h-100 border-0 shadow-sm text-center p-3">
+                        <div class="card-body">
+                            <div class="icon-circle bg-gradient-success text-white mb-3 mx-auto">
+                                <i class="bi bi-tools fs-2"></i>
                             </div>
-                            <h3 class="card-title h4 fw-semibold">Oficina 102c</h3>
-                            <p class="card-text text-secondary">
+                            <h3 class="card-title h5 fw-bold">Oficina 102c</h3>
+                            <p class="card-text text-secondary small">
                                 Inspecione equipamentos, ferramentas, mesa do instrutor, portão e janelas.
                             </p>
-                            <a href="ambiente/oficina102c.html" class="btn btn-success rounded-pill px-4 py-2 mt-3">
-                                Acessar <i class="bi bi-arrow-right ms-2"></i>
+                            <a href="ambiente/oficina102c.html" class="btn btn-success rounded-pill px-4 mt-2">
+                                Acessar <i class="bi bi-arrow-right ms-1"></i>
                             </a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card para Líderes / Responsáveis -->
+                <!-- Card Responsáveis -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 border-0 shadow-sm hover-card">
-                        <div class="card-body text-center p-4">
-                            <div class="icon-circle bg-warning bg-gradient text-dark mb-4 mx-auto">
-                                <i class="bi bi-people fs-1"></i>
+                    <div class="card nav-card h-100 border-0 shadow-sm text-center p-3">
+                        <div class="card-body">
+                            <div class="icon-circle bg-gradient-warning text-dark mb-3 mx-auto">
+                                <i class="bi bi-people fs-2"></i>
                             </div>
-                            <h3 class="card-title h4 fw-semibold">Responsáveis</h3>
-                            <p class="card-text text-secondary">
+                            <h3 class="card-title h5 fw-bold">Responsáveis</h3>
+                            <p class="card-text text-secondary small">
                                 Gerencie os responsáveis por cada ambiente e realize verificações semanais.
                             </p>
-                            <a href="administrador/lider.html"
-                                class="btn btn-outline-warning rounded-pill px-4 py-2 mt-3">
-                                Acessar <i class="bi bi-arrow-right ms-2"></i>
+                            <a href="administrador/lider.html" class="btn btn-outline-warning rounded-pill px-4 mt-2">
+                                Gerenciar <i class="bi bi-arrow-right ms-1"></i>
                             </a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card para Administrador -->
+                <!-- Card Administrador -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 border-0 shadow-sm hover-card">
-                        <div class="card-body text-center p-4">
-                            <div class="icon-circle bg-secondary bg-gradient text-white mb-4 mx-auto">
-                                <i class="bi bi-person-gear fs-1"></i>
+                    <div class="card nav-card h-100 border-0 shadow-sm text-center p-3">
+                        <div class="card-body">
+                            <div class="icon-circle bg-gradient-secondary text-white mb-3 mx-auto">
+                                <i class="bi bi-person-gear fs-2"></i>
                             </div>
-                            <h3 class="card-title h4 fw-semibold">Administrador</h3>
-                            <p class="card-text text-secondary">
+                            <h3 class="card-title h5 fw-bold">Administrador</h3>
+                            <p class="card-text text-secondary small">
                                 Visualize todos os relatórios de inspeção realizados e gerencie alertas.
                             </p>
-                            <a href="administrador/index.html"
-                                class="btn btn-outline-secondary rounded-pill px-4 py-2 mt-3">
-                                Acessar Painel <i class="bi bi-arrow-right ms-2"></i>
+                            <a href="administrador/index.html" class="btn btn-outline-secondary rounded-pill px-4 mt-2">
+                                Painel <i class="bi bi-arrow-right ms-1"></i>
                             </a>
                         </div>
                     </div>
