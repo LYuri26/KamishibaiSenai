@@ -39,7 +39,6 @@ body {
   min-height: 100vh;
   background-color: #f0f2f5;
   font-family: "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-  padding-top: 80px; /* espaço para o cabeçalho fixo */
 }
 
 /* ----- Cabeçalho fixo no topo ----- */
