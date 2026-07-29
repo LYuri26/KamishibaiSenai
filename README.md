@@ -91,7 +91,7 @@ KamishibaiSenai/
 │   ├── api/
 │   │   ├── cadastrar_usuario.php
 │   │   ├── dados_usuario.php
-│   │   ├── login.php
+│   │   ├── login.html
 │   │   ├── logout.php
 │   │   └── verificar_sessao.php
 │   │
@@ -112,7 +112,7 @@ KamishibaiSenai/
 │   │   └── verificar_alertas.php
 │   │
 │   ├── analise_ia.html
-│   ├── index.html
+│   ├── index.php
 │   ├── relatorios.html
 │   └── visualizar.html
 │
@@ -197,7 +197,7 @@ KamishibaiSenai/
 │   └── install.php
 │
 ├── .gitattributes
-├── index.html
+├── index.php
 └── README.md
 ```
 
@@ -271,7 +271,7 @@ http://localhost/KamishibaiSenai/
 ### Página inicial
 
 ```
-/index.html
+/index.php
 ```
 
 - Lista ambientes
@@ -358,7 +358,7 @@ Incluindo:
 ### Painel
 
 ```
-/administrador/index.html
+/administrador/index.php
 ```
 
 - Lista de inspeções

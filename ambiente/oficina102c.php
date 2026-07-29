@@ -1,3 +1,13 @@
+<?php
+session_start();
+
+// Se não houver ID na sessão, redireciona imediatamente para o Login
+if (!isset($_SESSION['usuario_id'])) {
+    header('Location: ../acesso/login.html'); // Altere para o caminho do seu formulário de login
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 

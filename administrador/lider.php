@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+// Acesso permitido EXCLUSIVAMENTE para o cargo 'lider'
+if (!isset($_SESSION['usuario_id']) || ($_SESSION['usuario_cargo'] ?? '') !== 'lider') {
+    header('Location: ../acesso/login.html');
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -34,10 +43,10 @@
 
     <!-- Painel de Gestão e Atribuições -->
     <main class="container">
-        <!-- Container Central de Feedbacks e Mensagens (Sucesso/Aviso) -->
+        <!-- Container Central de Feedbacks e Mensagens -->
         <div id="message" class="message-container mb-4" aria-live="polite"></div>
 
-        <!-- Grade Dinâmica dos Cards dos Ambientes (Sincronizado via lider.js) -->
+        <!-- Grade Dinâmica dos Cards dos Ambientes -->
         <div id="responsaveis-list" class="responsaveis-grid" aria-label="Lista de ambientes e líderes atribuídos">
             <div class="text-center py-5 bg-white rounded-4 shadow-sm">
                 <div class="spinner-border text-primary" role="status">

@@ -1,54 +1,65 @@
 <?php
 // =====================================================
-// INSERIR DADOS COMPLETOS 2022-2026 (KAMISHIBAI)
+// INSERIR DADOS COMPLETOS 2022-2026 (KAMISHIBAI) - CORRIGIDO
 // =====================================================
 
-require_once __DIR__ . '/database.php';
+date_default_timezone_set('America/Sao_Paulo');
 
-// Configurando limites razoáveis de tempo e memória
+// Tenta carregar o banco e a criptografia do sistema
+if (file_exists(__DIR__ . '/../../config/database.php')) {
+    require_once __DIR__ . '/../../config/database.php';
+    require_once __DIR__ . '/../../config/encryption.php';
+} elseif (file_exists(__DIR__ . '/config/database.php')) {
+    require_once __DIR__ . '/config/database.php';
+    require_once __DIR__ . '/config/encryption.php';
+} else {
+    require_once __DIR__ . '/database.php';
+    if (file_exists(__DIR__ . '/encryption.php')) {
+        require_once __DIR__ . '/encryption.php';
+    }
+}
+
+// Configurando limites de tempo e memória para não travar a execução
 set_time_limit(300);
 ini_set('memory_limit', '512M');
 
 header('Content-Type: text/html; charset=utf-8');
 
 // =====================================================
-// LIMPAR TABELAS (RESET COMPLETO DOS DADOS DE TESTE)
+// 1. LIMPAR TABELAS (RESET COMPLETO DOS DADOS)
 // =====================================================
 
 try {
     $pdo->exec("SET FOREIGN_KEY_CHECKS = 0");
 
-    // Limpar usuários e responsáveis
     $pdo->exec("TRUNCATE TABLE responsaveis");
     $pdo->exec("TRUNCATE TABLE usuarios");
-
-    // Limpar relatórios e tabelas de salas
     $pdo->exec("TRUNCATE TABLE relatorios");
     $pdo->exec("TRUNCATE TABLE `104a`");
     $pdo->exec("TRUNCATE TABLE `103d`");
     $pdo->exec("TRUNCATE TABLE `102c`");
     $pdo->exec("TRUNCATE TABLE `102d`");
-    $pdo->exec("TRUNCATE TABLE `101d`"); // Limpar a nova tabela 101d
+    $pdo->exec("TRUNCATE TABLE `101d`");
 
     $pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
 
-    echo "Tabelas limpas com sucesso (usuarios, responsaveis, relatorios e salas).<br>";
+    echo "✅ Tabelas limpas com sucesso.<br>";
 } catch (PDOException $e) {
-    echo "Erro ao limpar tabelas: " . $e->getMessage() . "<br>";
+    echo "❌ Erro ao limpar tabelas: " . $e->getMessage() . "<br>";
     exit;
 }
 
 // =====================================================
-// GERAR USUÁRIOS E RESPONSÁVEIS
+// 2. GERAR USUÁRIOS E RESPONSÁVEIS (PADRÃO FIEMG E CRIPTOGRAFADO)
 // =====================================================
 
 $usuariosSistema = [
-    // Lideres (Coordenadores/Supervisores)
+    // Líderes
     ['Lenon', 'Yuri', 'lider'],
     ['José', 'Ferreira', 'lider'],
     ['Patrícia', 'Mendes', 'lider'],
-    ['Gisele', 'Nunes', 'lider'],       // Líder responsável pelo Lab 102D
-    ['Alexandre', 'Barbosa', 'lider'],   // Novo líder responsável pela Microdestilaria 101D
+    ['Gisele', 'Nunes', 'lider'],
+    ['Alexandre', 'Barbosa', 'lider'],
 
     // Instrutores
     ['Carlos', 'Silva', 'instrutor'],
@@ -70,7 +81,10 @@ $usuariosSistema = [
 
 $instrutores = [];
 $lideres = [];
-$senhaPadrao = password_hash('123456', PASSWORD_DEFAULT);
+
+// Senha padrão válida (atende a regra de ter letras e números)
+$senhaPadraoRaw = 'senai123';
+$senhaPadraoHash = password_hash($senhaPadraoRaw, PASSWORD_DEFAULT);
 
 $stmtUsuario = $pdo->prepare("
     INSERT INTO usuarios (nome, sobrenome, email_hash, email_encrypted, cargo, senha, data_criacao)
@@ -79,16 +93,21 @@ $stmtUsuario = $pdo->prepare("
 
 foreach ($usuariosSistema as $usuario) {
     [$nome, $sobrenome, $cargo] = $usuario;
-    $email = strtolower($nome . "." . $sobrenome) . "@senai.local";
+
+    // E-mail formatado conforme exigência (@fiemg.com.br)
+    $email = strtolower($nome . "." . $sobrenome) . "@fiemg.com.br";
     $emailHash = hash('sha256', $email);
+
+    // Criptografa o e-mail usando a função nativa do sistema
+    $emailEncrypted = function_exists('encryptEmail') ? encryptEmail($email) : $email;
 
     $stmtUsuario->execute([
         $nome,
         $sobrenome,
         $emailHash,
-        $email,
+        $emailEncrypted,
         $cargo,
-        $senhaPadrao,
+        $senhaPadraoHash,
         date('Y-m-d H:i:s')
     ]);
 
@@ -101,18 +120,18 @@ foreach ($usuariosSistema as $usuario) {
     }
 }
 
-// Atribuir responsáveis aos respectivos ambientes
+// Vincula responsáveis aos ambientes
 $stmtResponsavel = $pdo->prepare("INSERT INTO responsaveis (usuario_id, ambiente, data_atribuicao) VALUES (?, ?, NOW())");
 $stmtResponsavel->execute([$lideres[0], '104a']);
 $stmtResponsavel->execute([$lideres[1], '103d']);
 $stmtResponsavel->execute([$lideres[2], '102c']);
 $stmtResponsavel->execute([$lideres[3], '102d']);
-$stmtResponsavel->execute([$lideres[4], '101d']); // Alexandre responsável pela Oficina 101D
+$stmtResponsavel->execute([$lideres[4], '101d']);
 
-echo "Usuários e Responsáveis vinculados com sucesso.<br>";
+echo "✅ Usuários e Responsáveis vinculados com e-mails criptografados.<br>";
 
 // =====================================================
-// DEFINIÇÃO DAS SALAS E SEUS RESPECTIVOS CAMPOS 
+// 3. DEFINIÇÃO DAS SALAS E CAMPOS
 // =====================================================
 
 $camposPorSala = [
@@ -246,22 +265,16 @@ $camposPorSala = [
     ]
 ];
 
-// Horários pedagógicos do SENAI
 $horariosPorPeriodo = [
     'manha' => ['inicio' => '07:30:00', 'fim' => '11:30:00'],
     'tarde' => ['inicio' => '13:30:00', 'fim' => '17:30:00'],
     'noite' => ['inicio' => '19:00:00', 'fim' => '22:30:00']
 ];
 
-// Função que modela sazonalidade e tendências para alimentar previsões estatísticas
 function getProbabilidadeProblema($ano, $mes)
 {
-    // Sazonalidade: Elevação de problemas em épocas quentes ou finais de semestre (Dezembro e Junho)
     $sazonal = 0.20 * (1 + cos(2 * M_PI * ($mes - 6) / 12));
-
-    // Tendência: Lenta diminuição de ocorrências ao longo dos anos devido a ações preventivas da coordenação
     $tendencia = -0.015 * ($ano - 2022);
-
     $base = 0.15 + $tendencia + $sazonal;
     return min(0.60, max(0.04, $base));
 }
@@ -270,11 +283,12 @@ $anoAtual = (int) date('Y');
 $mesAtual = (int) date('m');
 $totalInsercoes = 0;
 
-echo "Gerando dados históricos estruturados de 2022 até $anoAtual-$mesAtual...<br>";
+echo "🔄 Gerando histórico de inspeções...<br>";
 
 // =====================================================
-// INÍCIO DA TRANSAÇÃO PARA OTIMIZAÇÃO DE PERFORMANCE
+// 4. TRANSAÇÃO DE INSERÇÃO DOS CHECKLISTS E RELATÓRIOS
 // =====================================================
+
 try {
     $pdo->beginTransaction();
 
@@ -285,14 +299,12 @@ try {
             $prob = getProbabilidadeProblema($ano, $mes);
             $mesStr = sprintf('%02d', $mes);
 
-            // Coleta datas representativas para evitar inflar desnecessariamente o banco
             $datasBase = [
                 date('Y-m-d', strtotime("first friday of $ano-$mesStr")),
                 date('Y-m-d', strtotime("third wednesday of $ano-$mesStr"))
             ];
 
             foreach ($datasBase as $dataBase) {
-                // Se a conversão falhar ou retornar fora do intervalo, ignora
                 if (empty($dataBase) || strpos($dataBase, "$ano-$mesStr") === false) {
                     continue;
                 }
@@ -310,12 +322,9 @@ try {
                             $valores = [];
                             $problemas = [];
 
-                            // Definição das conformidades
                             foreach ($campos as $campo) {
                                 $var = mt_rand(-12, 12) / 100;
                                 $probCampo = max(0.01, min(0.99, $prob + $var));
-
-                                // 'sim' = Sem problemas, 'nao' = Não conformidade
                                 $resultado = (mt_rand(1, 100) <= $probCampo * 100) ? 'nao' : 'sim';
                                 $valores[$campo] = $resultado;
 
@@ -324,12 +333,10 @@ try {
                                 }
                             }
 
-                            // Texto descritivo das observações
                             $observacao = (count($problemas) > 0)
                                 ? "Não conformidades apontadas: " . implode(', ', $problemas)
                                 : "Inspeção realizada com sucesso. Nada a declarar.";
 
-                            // Verificação estruturada de Sexta-feira
                             $verificacaoSexta = null;
                             if ($isSexta && $momento === 'fim') {
                                 $verificacaoSexta = json_encode([
@@ -338,7 +345,6 @@ try {
                                 ]);
                             }
 
-                            // Montagem dinâmica da instrução preparada
                             $camposList = implode(', ', array_keys($valores));
                             $placeholders = implode(', ', array_fill(0, count($valores), '?'));
                             $sql = "INSERT INTO `$sala` (nome, data, momento, observacoes, verificacao_sexta, $camposList) 
@@ -355,7 +361,6 @@ try {
                             $stmt->execute($params);
                             $inspecao_id = $pdo->lastInsertId();
 
-                            // Registro complementar na central de relatórios
                             $sqlRel = "INSERT INTO relatorios (inspecao_id, sala, data, periodo, momento, observacoes, data_geracao) 
                                        VALUES (?, ?, ?, ?, ?, ?, NOW())";
                             $stmtRel = $pdo->prepare($sqlRel);
@@ -369,15 +374,17 @@ try {
         }
     }
 
-    // Comita tudo em lote
     $pdo->commit();
-    echo "<hr><strong>Processamento concluído com sucesso!</strong> Foram inseridos $totalInsercoes registros no banco de dados.";
+    echo "<hr><strong>🎉 Processamento concluído com sucesso!</strong><br>";
+    echo "Foram inseridos <b>$totalInsercoes</b> registros no banco.<br><br>";
+    echo "<b>Credenciais de Acesso de Teste:</b><br>";
+    echo "• Líder Exemplo: <code>lenon.yuri@fiemg.com.br</code> | Senha: <code>senai123</code><br>";
+    echo "• Instrutor Exemplo: <code>carlos.silva@fiemg.com.br</code> | Senha: <code>senai123</code>";
 
 } catch (Exception $e) {
-    // Desfaz alterações em caso de falha crítica
     if ($pdo->inTransaction()) {
         $pdo->rollBack();
     }
-    echo "<hr><strong>Falha crítica ao preencher lote:</strong> " . $e->getMessage();
+    echo "<hr>❌ <strong>Falha crítica ao preencher lote:</strong> " . $e->getMessage();
 }
 ?>

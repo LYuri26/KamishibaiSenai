@@ -1,3 +1,15 @@
+<?php
+session_start();
+
+// Obtém o cargo da sessão
+$cargo = $_SESSION['usuario_cargo'] ?? '';
+
+// Verifica se está logado e se o cargo é 'instrutor' ou 'lider'
+if (!isset($_SESSION['usuario_id']) || !in_array($cargo, ['instrutor', 'lider'])) {
+    header('Location: acesso/login.html'); // Redireciona para o login
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -64,7 +76,7 @@
                                 Inspecione carteiras, TV, ar-condicionado, quadro, porta, janelas, tomadas e móveis do
                                 instrutor.
                             </p>
-                            <a href="ambiente/sala104a.html" class="btn btn-success rounded-pill px-4 mt-2">
+                            <a href="ambiente/sala104a.php" class="btn btn-success rounded-pill px-4 mt-2">
                                 Acessar <i class="bi bi-arrow-right ms-1"></i>
                             </a>
                         </div>
@@ -83,7 +95,7 @@
                                 Inspecione computadores, mouses, teclados, monitores, infraestrutura de rede, portão e
                                 janelas.
                             </p>
-                            <a href="ambiente/laboratorio103d.html" class="btn btn-success rounded-pill px-4 mt-2">
+                            <a href="ambiente/laboratorio103d.php" class="btn btn-success rounded-pill px-4 mt-2">
                                 Acessar <i class="bi bi-arrow-right ms-1"></i>
                             </a>
                         </div>
@@ -102,14 +114,14 @@
                                 Inspecione os boxes de soldagem, organização de ferramentas, EPIs do setor e rede
                                 pneumática.
                             </p>
-                            <a href="ambiente/oficina102c.html" class="btn btn-success rounded-pill px-4 mt-2">
+                            <a href="ambiente/oficina102c.php" class="btn btn-success rounded-pill px-4 mt-2">
                                 Acessar <i class="bi bi-arrow-right ms-1"></i>
                             </a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card Laboratório 102d (Atualizado com ícone retrocompatível) -->
+                <!-- Card Laboratório 102d -->
                 <div class="col-md-6 col-lg-4">
                     <div class="card nav-card h-100 border-0 shadow-sm text-center p-3">
                         <div class="card-body">
@@ -128,7 +140,7 @@
                     </div>
                 </div>
 
-                <!-- Card Oficina 101d (Opcional - Ícone alternativo universal) -->
+                <!-- Card Oficina 101d -->
                 <div class="col-md-6 col-lg-4">
                     <div class="card nav-card h-100 border-0 shadow-sm text-center p-3">
                         <div class="card-body">
@@ -185,7 +197,7 @@
                                 Acesse relatórios analíticos, gráficos históricos de conformidade e as previsões da
                                 inteligência artificial.
                             </p>
-                            <a href="administrador/index.html" class="btn btn-outline-secondary rounded-pill px-4 mt-2">
+                            <a href="administrador/index.php" class="btn btn-outline-secondary rounded-pill px-4 mt-2">
                                 Painel <i class="bi bi-arrow-right ms-1"></i>
                             </a>
                         </div>

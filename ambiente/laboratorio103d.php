@@ -1,10 +1,20 @@
+<?php
+session_start();
+
+// Se não houver ID na sessão, redireciona imediatamente para o Login
+if (!isset($_SESSION['usuario_id'])) {
+    header('Location: ../acesso/login.html'); // Altere para o caminho do seu formulário de login
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inspeção - Sala 104a | Kamishibai</title>
+    <title>Inspeção - Laboratório 103d | Kamishibai</title>
 
     <!-- Bootstrap 5 + Ícones -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -12,14 +22,14 @@
     <!-- CSS customizados -->
     <link rel="stylesheet" href="../assets/css/geral.css">
     <link rel="stylesheet" href="../assets/css/acessorios/acessorios.css">
-    <link rel="stylesheet" href="../assets/css/ambiente/sala104a.css">
+    <link rel="stylesheet" href="../assets/css/ambiente/laboratorio103d.css">
 </head>
 
 <body class="bg-light">
-    <!-- Cabeçalho genérico (será carregado via JS) -->
+    <!-- Cabeçalho genérico -->
     <div id="header"></div>
 
-    <!-- Botão de logout específico da página -->
+    <!-- Botão de logout -->
     <div class="container d-flex justify-content-end mt-3">
         <a href="../acesso/api/logout.php" class="btn btn-outline-danger btn-sm rounded-pill">
             <i class="bi bi-box-arrow-right me-1"></i>Sair
@@ -48,7 +58,7 @@
                     </div>
 
                     <div class="mapa-sala-container mb-4">
-                        <img src="../assets/images/104a.jpeg" alt="Mapa da Sala 104a" class="mapa-sala img-fluid">
+                        <img src="../assets/images/103d.jpeg" alt="Mapa da Sala 104a" class="mapa-sala img-fluid">
                     </div>
 
                     <!-- Container das perguntas -->
@@ -89,7 +99,7 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/acessorios/componentes.js"></script>
-    <script src="../assets/js/ambiente/sala104a.js"></script>
+    <script src="../assets/js/ambiente/laboratorio103d.js"></script>
     <script src="../assets/js/acesso/verificar_sessao_ambiente.js"></script>
 </body>
 

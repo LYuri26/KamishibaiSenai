@@ -6,7 +6,7 @@ const sala = urlParams.get("sala");
 // Validação obrigatória
 if (!id || !sala) {
   alert("ID ou sala não fornecidos");
-  window.location.href = "index.html";
+  window.location.href = "index.php";
 }
 
 async function carregarInspecao() {

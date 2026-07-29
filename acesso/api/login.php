@@ -32,8 +32,9 @@ if ($usuario && password_verify($senha, $usuario['senha'])) {
 
     echo json_encode([
         'sucesso' => true,
+        'nome' => $usuario['nome'],
         'cargo' => $usuario['cargo'],
-        'nome' => $usuario['nome'] . ' ' . $usuario['sobrenome']
+        'mensagem' => 'Login realizado com sucesso!'
     ]);
 } else {
     echo json_encode(['sucesso' => false, 'erro' => 'E-mail ou senha inválidos']);

@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+// Acesso permitido EXCLUSIVAMENTE para o cargo 'lider'
+if (!isset($_SESSION['usuario_id']) || ($_SESSION['usuario_cargo'] ?? '') !== 'lider') {
+    header('Location: ../acesso/login.html');
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -46,7 +55,6 @@
             </div>
 
             <div class="card-body">
-                <!-- Wrapper customizado para ativar comportamento do CSS de cartões e cabeçalho fixo -->
                 <div class="table-responsive" id="tabelaUsuariosWrapper">
                     <table class="table table-hover align-middle" id="tabelaUsuarios">
                         <thead>
@@ -63,7 +71,6 @@
                         </thead>
 
                         <tbody id="listaUsuarios">
-                            <!-- Preenchimento dinâmico via JS -->
                             <tr>
                                 <td colspan="8" class="text-center text-secondary py-5">
                                     <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
@@ -78,7 +85,7 @@
 
         <!-- Botão Voltar Rodapé -->
         <div class="mt-4">
-            <a href="index.html" class="btn btn-outline-secondary rounded-pill">
+            <a href="index.php" class="btn btn-outline-secondary rounded-pill">
                 <i class="bi bi-arrow-left me-1"></i>Voltar para listagem
             </a>
         </div>

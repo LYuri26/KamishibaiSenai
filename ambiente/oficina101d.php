@@ -1,25 +1,36 @@
+<?php
+session_start();
+
+// Se não houver ID na sessão, redireciona imediatamente para o Login
+if (!isset($_SESSION['usuario_id'])) {
+    header('Location: ../acesso/login.html'); // Altere para o caminho do seu formulário de login
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inspeção - Laboratório 103d | Kamishibai</title>
+    <title>Inspeção - Oficina 101D (Microdestilaria) | Kamishibai</title>
 
     <!-- Bootstrap 5 + Ícones -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <!-- CSS customizados -->
+
+    <!-- CSS Customizados -->
     <link rel="stylesheet" href="../assets/css/geral.css">
     <link rel="stylesheet" href="../assets/css/acessorios/acessorios.css">
-    <link rel="stylesheet" href="../assets/css/ambiente/laboratorio103d.css">
+    <link rel="stylesheet" href="../assets/css/ambiente/oficina101d.css">
 </head>
 
 <body class="bg-light">
-    <!-- Cabeçalho genérico -->
+    <!-- Cabeçalho Dinâmico -->
     <div id="header"></div>
 
-    <!-- Botão de logout -->
+    <!-- Botão de Sair -->
     <div class="container d-flex justify-content-end mt-3">
         <a href="../acesso/api/logout.php" class="btn btn-outline-danger btn-sm rounded-pill">
             <i class="bi bi-box-arrow-right me-1"></i>Sair
@@ -29,41 +40,47 @@
     <main class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
+                <!-- Status Geral da Planta -->
                 <div class="d-flex align-items-center mb-3 status-container">
-                    <span class="me-2 fw-semibold">Status da Sala:</span>
+                    <span class="me-2 fw-semibold">Status da Microdestilaria 101D:</span>
                     <span id="statusLuz" class="badge bg-success">Conforme</span>
                 </div>
-                <!-- Barra de progresso -->
+
+                <!-- Barra de Progresso da Inspeção -->
                 <div class="progress mb-4" style="height: 0.75rem;">
                     <div class="progress-bar bg-primary" role="progressbar" style="width: 0%;" id="progressBar">0%</div>
                 </div>
 
-                <!-- Formulário -->
+                <!-- Formulário do Checklist -->
                 <form id="checklistForm" class="bg-white rounded-4 shadow-sm p-4 p-md-5">
-                    <!-- Nome do instrutor -->
+
+                    <!-- Campo: Nome do Inspetor/Instrutor -->
                     <div class="mb-4">
                         <label for="nome" class="form-label fw-semibold">Nome do Instrutor</label>
                         <input type="text" class="form-control form-control-lg rounded-pill" id="nome" name="nome"
                             required placeholder="Digite seu nome completo">
                     </div>
 
-                    <div class="mapa-sala-container mb-4">
-                        <img src="../assets/images/103d.jpeg" alt="Mapa da Sala 104a" class="mapa-sala img-fluid">
+                    <!-- Representação Visual da Microdestilaria -->
+                    <div class="mapa-sala-container mb-4 text-center">
+                        <img src="../assets/images/101d.jpeg" alt="Layout da Oficina de Processos 101D"
+                            class="mapa-sala img-fluid rounded-3 shadow-xs">
                     </div>
 
-                    <!-- Container das perguntas -->
+                    <!-- Container de Perguntas Injetadas por Etapa -->
                     <div id="questionsContainer"></div>
 
-                    <!-- Bloco de perguntas extras (inicialmente oculto) -->
+                    <!-- Bloco de perguntas adicionais para verificações de encerramento semanal (Sexta-feira) -->
                     <div id="extra-questions"
-                        style="display: none; margin-top: 2rem; border-top: 2px dashed #ccc; padding-top: 1rem;">
-                        <h3>Verificação de Sexta-feira (Responsável)</h3>
-                        <div id="extra-fields-container">
-                            <!-- As perguntas serão injetadas via JS -->
+                        style="display: none; margin-top: 2rem; border-top: 2px dashed #ccc; padding-top: 1.5rem;">
+                        <h3 class="h5 text-primary mb-3"><i class="bi bi-calendar-week me-1"></i>Verificação de
+                            Sexta-feira</h3>
+                        <div id="extra-fields-container" class="row g-3">
+                            <!-- Injetado dinamicamente via JS -->
                         </div>
                     </div>
 
-                    <!-- Botões de navegação -->
+                    <!-- Botões de Navegação -->
                     <div class="d-flex flex-column flex-sm-row justify-content-between gap-3 mt-4">
                         <button type="button" id="prevBtn" class="btn btn-outline-secondary rounded-pill px-4" disabled>
                             <i class="bi bi-arrow-left me-1"></i>Anterior
@@ -77,19 +94,19 @@
                     </div>
                 </form>
 
-                <!-- Mensagens -->
+                <!-- Feedback Visual do Envio -->
                 <div id="mensagem" class="mt-4"></div>
             </div>
         </div>
     </main>
 
-    <!-- Rodapé genérico -->
+    <!-- Rodapé Dinâmico -->
     <div id="footer"></div>
 
-    <!-- Scripts -->
+    <!-- Scripts de Dependências -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/acessorios/componentes.js"></script>
-    <script src="../assets/js/ambiente/laboratorio103d.js"></script>
+    <script src="../assets/js/ambiente/oficina101d.js"></script>
     <script src="../assets/js/acesso/verificar_sessao_ambiente.js"></script>
 </body>
 
