@@ -330,6 +330,7 @@ canvas {
     height: auto !important;
     page-break-inside: avoid;
     break-inside: avoid;
+    aspect-ratio: auto !important; /* Remove restrições de proporção na impressão */
   }
 
   /* Removendo restrições dinâmicas de proporção ao imprimir */
