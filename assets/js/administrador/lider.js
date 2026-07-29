@@ -1,10 +1,16 @@
+/**
+ * lider.js - Gestão e Vínculo de Líderes de Ambientes
+ * Mapeia os 5 ambientes técnicos e gerencia atribuições de responsabilidade.
+ */
+
 document.addEventListener("DOMContentLoaded", () => {
   carregarAmbientesEResponsaveis();
 });
 
 async function carregarAmbientesEResponsaveis() {
   try {
-    const response = await fetch("/administrador/api/lider.php?action=listar");
+    // Uso de caminhos relativos para garantir estabilidade em subdiretórios
+    const response = await fetch("api/lider.php?action=listar");
     const data = await response.json();
     if (data.sucesso) {
       renderizarCards(data.ambientes, data.usuarios);
@@ -12,11 +18,11 @@ async function carregarAmbientesEResponsaveis() {
       mostrarMensagem("Erro ao carregar dados: " + data.erro, "error");
     }
   } catch (error) {
-    mostrarMensagem("Erro de conexão: " + error.message, "error");
+    mostrarMensagem("Erro de conexão com a API: " + error.message, "error");
   }
 }
 
-// Função renderizarCards – versão atualizada com novo layout
+// Renderiza a grade de ambientes com os respectivos dropdowns de atribuição
 function renderizarCards(ambientes, usuarios) {
   const container = document.getElementById("responsaveis-list");
   container.innerHTML = "";
@@ -25,87 +31,102 @@ function renderizarCards(ambientes, usuarios) {
     const card = document.createElement("div");
     card.className = "card-responsavel";
 
-    // Ícone baseado no nome da sala
+    // Mapeamento visual estrito para cada um dos 5 ambientes de rota do Kamishibai
     const icone = ambiente.includes("104a")
       ? "bi-tv"
       : ambiente.includes("103d")
         ? "bi-pc-display"
         : ambiente.includes("102c")
           ? "bi-tools"
-          : "bi-building";
+          : ambiente.includes("102d")
+            ? "bi-eyedropper" // Pipeta para o Lab de Química/Meio Ambiente
+            : ambiente.includes("101d")
+              ? "bi-droplet-half" // Gota de processo para a Microdestilaria
+              : "bi-building";
 
-    // Cria o conteúdo HTML do card
+    // Capitalização de string para o nome do ambiente técnico
+    const nomeAmbienteFormatado = ambiente.toUpperCase();
+
+    // Cria o conteúdo HTML estruturado do card com suporte a data-label no mobile
     card.innerHTML = `
       <div class="card-header-custom">
         <div class="sala-icon"><i class="bi ${icone}"></i></div>
-        <h3>${ambiente}</h3>
+        <h3>Ambiente ${nomeAmbienteFormatado}</h3>
       </div>
       <div class="responsavel-atual">
         <i class="bi bi-person-circle"></i>
         <span>Responsável:</span>
         <span class="nome ${!responsavelAtual ? "vazio" : ""}">
-          ${responsavelAtual ? responsavelAtual.nome : "Nenhum"}
+          ${responsavelAtual ? responsavelAtual.nome + " " + (responsavelAtual.sobrenome || "") : "Nenhum atribuído"}
         </span>
       </div>
-      <select id="select-${ambiente}" data-ambiente="${ambiente}">
-        <option value="">-- Selecione --</option>
+      <select id="select-${ambiente}" data-ambiente="${ambiente}" aria-label="Selecione o líder para o ambiente ${ambiente}">
+        <option value="">-- Atribuir Líder Coordenador --</option>
         ${usuarios
-          .map(
-            (u) => `
-          <option value="${u.id}" ${responsavelAtual && responsavelAtual.id == u.id ? "selected" : ""}>
-            ${u.nome} ${u.sobrenome} (${u.cargo})
-          </option>
-        `,
-          )
+          .map((u) => {
+            const cargoFormatado =
+              u.cargo.charAt(0).toUpperCase() + u.cargo.slice(1);
+            const selected =
+              responsavelAtual && responsavelAtual.id == u.id ? "selected" : "";
+            return `
+                <option value="${u.id}" ${selected}>
+                  ${u.nome} ${u.sobrenome} (${cargoFormatado})
+                </option>
+              `;
+          })
           .join("")}
       </select>
       <button class="btn-salvar" onclick="atribuirResponsavel('${ambiente}')">
-        <i class="bi bi-check2-circle"></i> Salvar
+        <i class="bi bi-check2-circle-fill"></i> Salvar Atribuição
       </button>
     `;
     container.appendChild(card);
   }
 }
 
-// Função atribuirResponsavel – agora global
+// Função de salvamento de responsabilidade (Ativa no escopo global)
 window.atribuirResponsavel = async function (ambiente) {
   const select = document.querySelector(`#select-${ambiente}`);
   const usuarioId = select.value;
+
   if (!usuarioId) {
-    mostrarMensagem("Selecione um usuário antes de salvar.", "error");
+    mostrarMensagem(
+      "Por favor, selecione um usuário na lista antes de salvar.",
+      "error",
+    );
     return;
   }
+
   try {
-    const response = await fetch(
-      "/administrador/api/lider.php?action=atribuir",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ambiente, usuario_id: usuarioId }),
-      },
-    );
+    const response = await fetch("api/lider.php?action=atribuir", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ambiente, usuario_id: usuarioId }),
+    });
     const data = await response.json();
     if (data.sucesso) {
       mostrarMensagem(
-        `Responsável por ${ambiente} atualizado com sucesso!`,
+        `Coordenador de ${ambiente.toUpperCase()} atualizado com sucesso!`,
         "success",
       );
-      carregarAmbientesEResponsaveis(); // recarrega a lista
+      carregarAmbientesEResponsaveis(); // Recarrega a grade em tempo real
     } else {
-      mostrarMensagem("Erro: " + data.erro, "error");
+      mostrarMensagem("Erro ao processar: " + data.erro, "error");
     }
   } catch (error) {
-    mostrarMensagem("Erro ao salvar: " + error.message, "error");
+    mostrarMensagem("Falha crítica de envio: " + error.message, "error");
   }
 };
 
-// Função mostrarMensagem – aprimorada para usar o container com classe correta
+// Exibe feedbacks visuais temporizados de ação
 function mostrarMensagem(msg, tipo) {
   const div = document.getElementById("message");
-  // Limpa conteúdo anterior e define a mensagem
+  if (!div) return;
+
   div.textContent = msg;
   div.className = `message ${tipo}`;
-  // Remove automaticamente após 4 segundos
+
+  // Limpa agendamento prévio se houver cliques sequenciais rápidos
   clearTimeout(div._timeout);
   div._timeout = setTimeout(() => {
     div.textContent = "";

@@ -1,37 +1,45 @@
 <?php
+/**
+ * verificar_alertas.php - API de Alertas de Rotas Não Inspecionadas
+ * Varre os ambientes em tempo real comparando horários letivos com vistorias registradas hoje.
+ */
+
 ob_start();
 session_start();
 
-header('Content-Type: application/json');
-error_reporting(0);
+header('Content-Type: application/json; charset=utf-8');
+
+// Desativa exibição direta de erros PHP
 ini_set('display_errors', 0);
+error_reporting(0);
 
 require_once __DIR__ . '/../../config/database.php';
 
 date_default_timezone_set('America/Sao_Paulo');
 
-// ================= VALIDAÇÃO PDO =================
-if (!isset($pdo)) {
+// ================= VALIDAÇÃO DE CONEXÃO =================
+if (!isset($pdo) || !($pdo instanceof PDO)) {
     ob_clean();
-    echo json_encode(['erro' => 'Falha na conexão com banco']);
+    echo json_encode(['erro' => 'Falha na conexão interna com o banco de dados.']);
     exit;
 }
 
-// ================= HORÁRIO ATUAL =================
+// ================= HORÁRIO ATUAL (EM MINUTOS) =================
 $agora = time();
 $hora = (int) date('H', $agora);
 $min = (int) date('i', $agora);
 $minutos = $hora * 60 + $min;
 
-// ================= PERÍODOS =================
+// ================= INTERVALOS DOS PERÍODOS LETIVOS (MINUTOS) =================
 $periodos = [
-    'manha' => ['inicio' => 480, 'fim' => 690],
-    'tarde' => ['inicio' => 810, 'fim' => 1050],
-    'noite' => ['inicio' => 1110, 'fim' => 1350]
+    'manha' => ['inicio' => 480, 'fim' => 690],   // 08:00 às 11:30 (meio-dia letivo)
+    'tarde' => ['inicio' => 810, 'fim' => 1050],  // 13:30 às 17:30
+    'noite' => ['inicio' => 1110, 'fim' => 1350]  // 18:30 às 22:30
 ];
 
-// ================= IDENTIFICA PERÍODO =================
-function getPeriodoAtual($minutos, $periodos) {
+// ================= IDENTIFICA O PERÍODO ATUAL =================
+function getPeriodoAtual($minutos, $periodos)
+{
     foreach ($periodos as $nome => $p) {
         if ($minutos >= $p['inicio'] && $minutos <= $p['fim']) {
             return $nome;
@@ -42,18 +50,18 @@ function getPeriodoAtual($minutos, $periodos) {
 
 $periodoAtual = getPeriodoAtual($minutos, $periodos);
 
-// Fora do horário → sem alerta
+// Se estiver fora de um horário de aula regular, não gera alertas
 if (!$periodoAtual) {
     ob_clean();
     echo json_encode([]);
     exit;
 }
 
-// ================= DEFINE MOMENTO =================
+// ================= DEFINE O MOMENTO OPERACIONAL (INÍCIO / FIM) =================
 $meio = ($periodos[$periodoAtual]['inicio'] + $periodos[$periodoAtual]['fim']) / 2;
 $momentoAtual = ($minutos > $meio) ? 'fim' : 'inicio';
 
-// ================= SALAS DINÂMICAS =================
+// ================= MAPEAMENTO DE AMBIENTES ATIVOS =================
 try {
     $stmtSalas = $pdo->query("SELECT DISTINCT sala FROM relatorios");
     $salas = $stmtSalas ? $stmtSalas->fetchAll(PDO::FETCH_COLUMN) : [];
@@ -61,27 +69,23 @@ try {
     $salas = [];
 }
 
-// fallback seguro
+// Fallback preventivo de ambientes para instalações novas ou limpas
 if (empty($salas)) {
-    $salas = ['102c', '103d', '104a'];
+    $salas = ['101d', '102c', '102d', '103d', '104a'];
 }
 
-// ================= DATA =================
+// ================= FILTRAGEM TEMPORAL =================
 $dataHoje = date('Y-m-d');
-
-// ================= PROCESSAMENTO =================
 $alertas = [];
 
 foreach ($salas as $sala) {
-
+    // Se o turno atual estiver na segunda metade ('fim'), o sistema verifica tanto o 'inicio' quanto o 'fim'
     $momentosParaVerificar = ['inicio'];
-
     if ($momentoAtual === 'fim') {
         $momentosParaVerificar[] = 'fim';
     }
 
     foreach ($momentosParaVerificar as $momento) {
-
         try {
             $stmt = $pdo->prepare("
                 SELECT COUNT(*) 
@@ -93,23 +97,25 @@ foreach ($salas as $sala) {
             ");
 
             $stmt->execute([$sala, $dataHoje, $periodoAtual, $momento]);
-
             $existe = $stmt->fetchColumn();
 
+            // Se não encontrar nenhuma auditoria correspondente, dispara o alerta
             if (!$existe) {
+                $momentoLegivel = $momento === 'inicio' ? "Início" : "Fim";
+                $periodoLegivel = ucfirst($periodoAtual);
                 $alertas[] = [
-                    'mensagem' => "Sala {$sala} - {$periodoAtual} ({$momento}) sem inspeção"
+                    'mensagem' => "Sala {$sala} - Turno {$periodoLegivel} ({$momentoLegivel}) sem inspeção registrada."
                 ];
             }
 
         } catch (Exception $e) {
-            // falha isolada não derruba o sistema
+            // Falha isolada de consulta em um laço não compromete o fluxo principal
             continue;
         }
     }
 }
 
-// ================= SAÍDA LIMPA =================
+// ================= RETORNO DE SINALIZAÇÃO DOS ALERTAS =================
 ob_clean();
 echo json_encode($alertas);
 exit;

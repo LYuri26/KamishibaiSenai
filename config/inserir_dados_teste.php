@@ -5,9 +5,11 @@
 
 require_once __DIR__ . '/database.php';
 
-// Aumentando o limite de tempo e memória caso gere muitos dados
+// Configurando limites razoáveis de tempo e memória
 set_time_limit(300);
-ini_set('memory_limit', '256M');
+ini_set('memory_limit', '512M');
+
+header('Content-Type: text/html; charset=utf-8');
 
 // =====================================================
 // LIMPAR TABELAS (RESET COMPLETO DOS DADOS DE TESTE)
@@ -25,6 +27,8 @@ try {
     $pdo->exec("TRUNCATE TABLE `104a`");
     $pdo->exec("TRUNCATE TABLE `103d`");
     $pdo->exec("TRUNCATE TABLE `102c`");
+    $pdo->exec("TRUNCATE TABLE `102d`");
+    $pdo->exec("TRUNCATE TABLE `101d`"); // Limpar a nova tabela 101d
 
     $pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
 
@@ -38,12 +42,13 @@ try {
 // GERAR USUÁRIOS E RESPONSÁVEIS
 // =====================================================
 
-// Lista de usuários fictícios (3 líderes para 3 salas + vários instrutores)
 $usuariosSistema = [
     // Lideres (Coordenadores/Supervisores)
     ['Lenon', 'Yuri', 'lider'],
     ['José', 'Ferreira', 'lider'],
     ['Patrícia', 'Mendes', 'lider'],
+    ['Gisele', 'Nunes', 'lider'],       // Líder responsável pelo Lab 102D
+    ['Alexandre', 'Barbosa', 'lider'],   // Novo líder responsável pela Microdestilaria 101D
 
     // Instrutores
     ['Carlos', 'Silva', 'instrutor'],
@@ -96,16 +101,18 @@ foreach ($usuariosSistema as $usuario) {
     }
 }
 
-// Atribuir responsáveis aos ambientes
+// Atribuir responsáveis aos respectivos ambientes
 $stmtResponsavel = $pdo->prepare("INSERT INTO responsaveis (usuario_id, ambiente, data_atribuicao) VALUES (?, ?, NOW())");
 $stmtResponsavel->execute([$lideres[0], '104a']);
 $stmtResponsavel->execute([$lideres[1], '103d']);
 $stmtResponsavel->execute([$lideres[2], '102c']);
+$stmtResponsavel->execute([$lideres[3], '102d']);
+$stmtResponsavel->execute([$lideres[4], '101d']); // Alexandre responsável pela Oficina 101D
 
-echo "Usuários e Responsáveis criados.<br>";
+echo "Usuários e Responsáveis vinculados com sucesso.<br>";
 
 // =====================================================
-// DEFINIÇÃO DAS SALAS E SEUS CAMPOS 
+// DEFINIÇÃO DAS SALAS E SEUS RESPECTIVOS CAMPOS 
 // =====================================================
 
 $camposPorSala = [
@@ -188,116 +195,189 @@ $camposPorSala = [
         'equipamentos_local',
         'macarico_ok',
         'estufa_ok'
+    ],
+    '102d' => [
+        'porta_janelas_ok',
+        'ar_condicionado_ok',
+        'bancadas_limpas',
+        'tomadas_fios_ok',
+        'microscopios_b1_quantidade',
+        'microscopios_b1_integros',
+        'estufa_incubadora_b2_ok',
+        'blocos_digestores_b2_ok',
+        'balancas_analiticas_b3_ok',
+        'centrifugas_extracao_b3_ok',
+        'destilador_b4_ok',
+        'cabine_seguranca_csb_ok',
+        'microscopio_camera_desktop_ok',
+        'rotaevaporador_gerber_vortex_ok',
+        'estufas_forno_mufla_ok',
+        'refrigerador_microondas_ok',
+        'armario1_medidores_agua_ok',
+        'armario2_3_phgametros_banhos_ok',
+        'armario5_6_aquecimento_agitacao_ok',
+        'armario7_medidores_campo_ok',
+        'epis_seguranca_ok',
+        'descarte_residuos_ok'
+    ],
+    '101d' => [
+        'porta_janelas_ok',
+        'ar_condicionado_ok',
+        'bancadas_limpas',
+        'tomadas_fios_ok',
+        'microscopios_b1_quantidade',
+        'microscopios_b1_integros',
+        'estufa_incubadora_b2_ok',
+        'blocos_digestores_b2_ok',
+        'balancas_analiticas_b3_ok',
+        'centrifugas_extracao_b3_ok',
+        'destilador_b4_ok',
+        'cabine_seguranca_csb_ok',
+        'microscopio_camera_desktop_ok',
+        'rotaevaporador_gerber_vortex_ok',
+        'estufas_forno_mufla_ok',
+        'refrigerador_microondas_ok',
+        'armario1_medidores_agua_ok',
+        'armario2_3_phgametros_banhos_ok',
+        'armario5_6_aquecimento_agitacao_ok',
+        'armario7_medidores_campo_ok',
+        'epis_seguranca_ok',
+        'descarte_residuos_ok'
     ]
 ];
 
-// Horários realistas de SENAI/Escola
+// Horários pedagógicos do SENAI
 $horariosPorPeriodo = [
     'manha' => ['inicio' => '07:30:00', 'fim' => '11:30:00'],
     'tarde' => ['inicio' => '13:30:00', 'fim' => '17:30:00'],
     'noite' => ['inicio' => '19:00:00', 'fim' => '22:30:00']
 ];
 
+// Função que modela sazonalidade e tendências para alimentar previsões estatísticas
 function getProbabilidadeProblema($ano, $mes)
 {
-    $sazonal = 0.25 * (1 + cos(2 * M_PI * ($mes - 1) / 12));
-    $tendencia = 0.02 * ($ano - 2022);
-    $base = 0.12 + $tendencia + $sazonal;
-    return min(0.75, max(0.05, $base));
+    // Sazonalidade: Elevação de problemas em épocas quentes ou finais de semestre (Dezembro e Junho)
+    $sazonal = 0.20 * (1 + cos(2 * M_PI * ($mes - 6) / 12));
+
+    // Tendência: Lenta diminuição de ocorrências ao longo dos anos devido a ações preventivas da coordenação
+    $tendencia = -0.015 * ($ano - 2022);
+
+    $base = 0.15 + $tendencia + $sazonal;
+    return min(0.60, max(0.04, $base));
 }
 
 $anoAtual = (int) date('Y');
 $mesAtual = (int) date('m');
 $totalInsercoes = 0;
 
-echo "Gerando dados de histórico (2022 até $anoAtual-$mesAtual)... Isso pode levar alguns segundos.<br><br>";
+echo "Gerando dados históricos estruturados de 2022 até $anoAtual-$mesAtual...<br>";
 
 // =====================================================
-// LOOP DE GERAÇÃO DE DADOS
+// INÍCIO DA TRANSAÇÃO PARA OTIMIZAÇÃO DE PERFORMANCE
 // =====================================================
+try {
+    $pdo->beginTransaction();
 
-for ($ano = 2022; $ano <= $anoAtual; $ano++) {
-    $mesInicio = ($ano == 2022) ? 1 : 1;
-    $mesFim = ($ano == $anoAtual) ? $mesAtual : 12;
+    for ($ano = 2022; $ano <= $anoAtual; $ano++) {
+        $mesFim = ($ano == $anoAtual) ? $mesAtual : 12;
 
-    for ($mes = $mesInicio; $mes <= $mesFim; $mes++) {
-        $prob = getProbabilidadeProblema($ano, $mes);
-        $mesStr = sprintf('%02d', $mes);
+        for ($mes = 1; $mes <= $mesFim; $mes++) {
+            $prob = getProbabilidadeProblema($ano, $mes);
+            $mesStr = sprintf('%02d', $mes);
 
-        // Gera duas datas representativas no mês para evitar sobrecarga excessiva de DB
-        // Usamos strtotime para pegar dias reais de semana, forçando pelo menos uma sexta-feira no mês
-        $datasBase = [
-            date('Y-m-d', strtotime("first friday of $ano-$mesStr")),
-            date('Y-m-d', strtotime("third wednesday of $ano-$mesStr"))
-        ];
+            // Coleta datas representativas para evitar inflar desnecessariamente o banco
+            $datasBase = [
+                date('Y-m-d', strtotime("first friday of $ano-$mesStr")),
+                date('Y-m-d', strtotime("third wednesday of $ano-$mesStr"))
+            ];
 
-        foreach ($datasBase as $dataBase) {
-            $isSexta = (date('N', strtotime($dataBase)) == 5); // 5 = Sexta-feira
+            foreach ($datasBase as $dataBase) {
+                // Se a conversão falhar ou retornar fora do intervalo, ignora
+                if (empty($dataBase) || strpos($dataBase, "$ano-$mesStr") === false) {
+                    continue;
+                }
 
-            foreach (['104a', '103d', '102c'] as $sala) {
-                $campos = $camposPorSala[$sala];
+                $isSexta = (date('N', strtotime($dataBase)) == 5);
 
-                foreach (['manha', 'tarde', 'noite'] as $periodo) {
+                foreach (['104a', '103d', '102c', '102d', '101d'] as $sala) {
+                    $campos = $camposPorSala[$sala];
 
-                    foreach (['inicio', 'fim'] as $momento) {
-                        $hora = $horariosPorPeriodo[$periodo][$momento];
-                        $dataStr = "$dataBase $hora";
+                    foreach (['manha', 'tarde', 'noite'] as $periodo) {
+                        foreach (['inicio', 'fim'] as $momento) {
+                            $hora = $horariosPorPeriodo[$periodo][$momento];
+                            $dataStr = "$dataBase $hora";
 
-                        $valores = [];
-                        $problemas = [];
+                            $valores = [];
+                            $problemas = [];
 
-                        // Preencher "sim" ou "nao"
-                        foreach ($campos as $campo) {
-                            $var = mt_rand(-10, 10) / 100;
-                            $probCampo = max(0.02, min(0.98, $prob + $var));
-                            $resultado = (mt_rand(1, 100) <= $probCampo * 100) ? 'nao' : 'sim';
-                            $valores[$campo] = $resultado;
+                            // Definição das conformidades
+                            foreach ($campos as $campo) {
+                                $var = mt_rand(-12, 12) / 100;
+                                $probCampo = max(0.01, min(0.99, $prob + $var));
 
-                            if ($resultado === 'nao') {
-                                $problemas[] = $campo;
+                                // 'sim' = Sem problemas, 'nao' = Não conformidade
+                                $resultado = (mt_rand(1, 100) <= $probCampo * 100) ? 'nao' : 'sim';
+                                $valores[$campo] = $resultado;
+
+                                if ($resultado === 'nao') {
+                                    $problemas[] = $campo;
+                                }
                             }
+
+                            // Texto descritivo das observações
+                            $observacao = (count($problemas) > 0)
+                                ? "Não conformidades apontadas: " . implode(', ', $problemas)
+                                : "Inspeção realizada com sucesso. Nada a declarar.";
+
+                            // Verificação estruturada de Sexta-feira
+                            $verificacaoSexta = null;
+                            if ($isSexta && $momento === 'fim') {
+                                $verificacaoSexta = json_encode([
+                                    'limpeza_pesada_realizada' => (mt_rand(1, 10) <= 9) ? 'sim' : 'nao',
+                                    'equipamentos_desligados_fds' => (mt_rand(1, 10) <= 8) ? 'sim' : 'nao'
+                                ]);
+                            }
+
+                            // Montagem dinâmica da instrução preparada
+                            $camposList = implode(', ', array_keys($valores));
+                            $placeholders = implode(', ', array_fill(0, count($valores), '?'));
+                            $sql = "INSERT INTO `$sala` (nome, data, momento, observacoes, verificacao_sexta, $camposList) 
+                                    VALUES (?, ?, ?, ?, ?, $placeholders)";
+
+                            $stmt = $pdo->prepare($sql);
+                            $nomeInstrutor = $instrutores[array_rand($instrutores)];
+
+                            $params = array_merge(
+                                [$nomeInstrutor, $dataStr, $momento, $observacao, $verificacaoSexta],
+                                array_values($valores)
+                            );
+
+                            $stmt->execute($params);
+                            $inspecao_id = $pdo->lastInsertId();
+
+                            // Registro complementar na central de relatórios
+                            $sqlRel = "INSERT INTO relatorios (inspecao_id, sala, data, periodo, momento, observacoes, data_geracao) 
+                                       VALUES (?, ?, ?, ?, ?, ?, NOW())";
+                            $stmtRel = $pdo->prepare($sqlRel);
+                            $stmtRel->execute([$inspecao_id, $sala, $dataBase, $periodo, $momento, $observacao]);
+
+                            $totalInsercoes++;
                         }
-
-                        // Observações
-                        $observacao = (count($problemas) > 0)
-                            ? "Não conformidades encontradas: " . implode(', ', $problemas)
-                            : "Ambiente inspecionado sem não conformidades.";
-
-                        // Verificação de Sexta (JSON)
-                        $verificacaoSexta = null;
-                        if ($isSexta && $momento === 'fim') {
-                            $verificacaoSexta = json_encode([
-                                'limpeza_pesada_realizada' => (mt_rand(1, 10) <= 9) ? 'sim' : 'nao',
-                                'equipamentos_desligados_fds' => (mt_rand(1, 10) <= 8) ? 'sim' : 'nao'
-                            ]);
-                        }
-
-                        // SQL Dinâmico para inserção
-                        $camposList = implode(', ', array_keys($valores));
-                        $placeholders = implode(', ', array_fill(0, count($valores), '?'));
-                        $sql = "INSERT INTO `$sala` (nome, data, momento, observacoes, verificacao_sexta, $camposList) 
-                                VALUES (?, ?, ?, ?, ?, $placeholders)";
-
-                        $stmt = $pdo->prepare($sql);
-                        $nomeInstrutor = $instrutores[array_rand($instrutores)];
-
-                        $params = array_merge([$nomeInstrutor, $dataStr, $momento, $observacao, $verificacaoSexta], array_values($valores));
-                        $stmt->execute($params);
-                        $inspecao_id = $pdo->lastInsertId();
-
-                        // Inserir Relatório
-                        $sqlRel = "INSERT INTO relatorios (inspecao_id, sala, data, periodo, momento, observacoes, data_geracao) 
-                                   VALUES (?, ?, ?, ?, ?, ?, NOW())";
-                        $stmtRel = $pdo->prepare($sqlRel);
-                        $stmtRel->execute([$inspecao_id, $sala, $dataBase, $periodo, $momento, $observacao]);
-
-                        $totalInsercoes++;
                     }
                 }
             }
         }
     }
-}
 
-echo "<hr><strong>Inserção concluída com sucesso!</strong> Total de registros: $totalInsercoes inspeções.";
+    // Comita tudo em lote
+    $pdo->commit();
+    echo "<hr><strong>Processamento concluído com sucesso!</strong> Foram inseridos $totalInsercoes registros no banco de dados.";
+
+} catch (Exception $e) {
+    // Desfaz alterações em caso de falha crítica
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+    echo "<hr><strong>Falha crítica ao preencher lote:</strong> " . $e->getMessage();
+}
 ?>
