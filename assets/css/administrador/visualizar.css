@@ -1,94 +1,366 @@
-/* ===== ADMINISTRADOR - VISUALIZAÇÃO DETALHADA ===== */
+/* =====================================================
+   ADMINISTRADOR - VISUALIZAÇÃO DETALHADA DA INSPEÇÃO
+   ===================================================== */
 
-/* Card principal */
-#detalhesInspecao {
-  background: white;
-  border-radius: 1.5rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+/* ===== VARIÁVEIS DE TEMA E CORES ===== */
+:root {
+  --primary-gradient: linear-gradient(135deg, #2563eb, #1d4ed8);
+  --success-gradient: linear-gradient(135deg, #059669, #047857);
+  --danger-gradient: linear-gradient(135deg, #e11d48, #be123c);
+  --warning-gradient: linear-gradient(135deg, #f59e0b, #d97706);
+
+  --success-light: #d1fae5;
+  --success-text: #065f46;
+  --danger-light: #ffe4e6;
+  --danger-text: #9f1239;
+
+  --text-main: #0f172a; /* Slate 900 */
+  --text-muted: #475569; /* Slate 600 */
+  --border-color: #e2e8f0; /* Slate 200 */
+
+  --shadow-normal: 0 10px 25px -5px rgba(15, 23, 42, 0.04);
+  --shadow-glow: 0 20px 35px -12px rgba(15, 23, 42, 0.12);
+  --transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  --radius-card: 1.5rem;
 }
 
-/* Cabeçalho da inspeção */
+/* ===== CARD PRINCIPAL DO RELATÓRIO ===== */
+#detalhesInspecao {
+  background: #ffffff;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-normal);
+  border: 1px solid rgba(15, 23, 42, 0.04);
+  transition: var(--transition);
+  animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  overflow: hidden;
+}
+
+#detalhesInspecao:hover {
+  box-shadow: var(--shadow-glow);
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== CABEÇALHO HERO DA INSPEÇÃO ===== */
 .inspecao-header {
-  background: linear-gradient(135deg, #2563eb, #1e40af);
-  color: white;
-  padding: 2rem;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #ffffff;
+  padding: 2.5rem;
   border-radius: 1.25rem;
   margin-bottom: 2rem;
-  box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 12px 24px -6px rgba(15, 23, 42, 0.15);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
+
+/* Efeito sutil de brilho no fundo do cabeçalho */
+.inspecao-header::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 350px;
+  height: 350px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(37, 99, 235, 0.15) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
 .inspecao-header h2 {
-  color: white;
-  font-size: 1.8rem;
-  margin-bottom: 0.5rem;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.03em;
 }
+
 .inspecao-header .data {
-  opacity: 0.9;
+  opacity: 0.95;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.92rem;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.4rem 1rem;
+  border-radius: 3rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 1rem;
+}
+
+.inspecao-header p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  color: #cbd5e1; /* Slate 300 */
+}
+
+.inspecao-header strong {
+  font-weight: 700;
+  color: #f59e0b; /* Ambar para destacar metadados como Turno/Instrutor */
+}
+
+/* ===== SEÇÃO DE ITENS COM AVARIAS / FALHAS ===== */
+.itens-avariados h4 {
+  color: var(--danger-text);
+  font-weight: 800;
+  margin-bottom: 1.25rem;
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
-.inspecao-header p {
-  margin: 0.5rem 0;
-  font-size: 1rem;
-}
-.inspecao-header strong {
-  font-weight: 600;
-  color: #ffd966;
+
+/* Elementos de Lista Modificados (Checklist) */
+.list-group {
+  border-radius: 1.25rem;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  box-shadow: var(--shadow-sm);
 }
 
-/* Lista de itens avariados */
-.itens-avariados h4 {
-  color: #dc2626;
-  font-weight: 700;
-  margin-bottom: 1rem;
-}
-.list-group {
-  border-radius: 1rem;
-  overflow: hidden;
-}
 .list-group-item {
   border: none;
-  border-bottom: 1px solid #e9ecef;
-  padding: 1rem 1.5rem;
-}
-.list-group-item-danger {
-  background: #fee2e2;
-  color: #b91c1c;
-  border-left: 6px solid #ef4444;
-  font-weight: 500;
+  border-bottom: 1px solid #f1f5f9;
+  padding: 1.1rem 1.5rem;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  transition: var(--transition);
+  background: #ffffff;
 }
 
-/* Observações */
-.observacoes-section h4 {
-  color: #0891b2;
-  font-weight: 700;
-  margin-bottom: 1rem;
+.list-group-item:last-child {
+  border-bottom: none;
 }
+
+/* Destaque para Não Conforme (Avarias) */
+.list-group-item-danger {
+  background: var(--danger-light) !important;
+  color: var(--danger-text) !important;
+  border-left: 6px solid var(--danger);
+  font-weight: 600;
+}
+
+/* Destaque Opcional para Conforme (Verde) */
+.list-group-item-success {
+  background: var(--success-light) !important;
+  color: var(--success-text) !important;
+  border-left: 6px solid var(--success);
+  font-weight: 600;
+}
+
+.list-group-item:hover {
+  background-color: #f8fafc;
+  transform: translateX(4px);
+}
+
+/* ===== SEÇÃO DE OBSERVAÇÕES E NOTAS ===== */
+.observacoes-section h4 {
+  color: #0369a1; /* Azul Oceano */
+  font-weight: 800;
+  margin-bottom: 1.25rem;
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Bloco de notas de observação */
 .card {
   background: #f8fafc;
-  border-radius: 1rem;
-  border: 1px solid #e2e8f0;
-  padding: 1.5rem;
+  border-radius: 1.25rem;
+  border: 2px dashed #cbd5e1;
+  padding: 1.75rem;
   white-space: pre-wrap;
-  line-height: 1.6;
+  line-height: 1.7;
+  color: #334155;
+  font-size: 0.95rem;
+  position: relative;
 }
 
-/* Botão voltar */
+/* ===== EVIDÊNCIAS DE IMAGEM DENTRO DO DETALHE ===== */
+.img-evidencia {
+  max-width: 250px;
+  border-radius: 1rem;
+  box-shadow: var(--shadow-sm);
+  border: 2px solid #ffffff;
+  transition: var(--transition);
+  cursor: zoom-in;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.img-evidencia:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-glow);
+}
+
+/* ===== MODAL DE EXIBIÇÃO AMPLIADA (ZOOM) ===== */
+.modal-content.bg-transparent {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+#modalTargetImage {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  animation: zoomReveal 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes zoomReveal {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ===== BOTÕES DE NAVEGAÇÃO / VOLTAR ===== */
 .btn-outline-secondary {
   border-width: 2px;
-  font-weight: 500;
-  transition: all 0.2s;
+  font-weight: 700;
+  padding: 0.55rem 1.75rem;
+  border-color: #cbd5e1;
+  color: var(--text-muted);
+  transition: var(--transition);
 }
+
 .btn-outline-secondary:hover {
+  border-color: var(--secondary-dark);
+  background-color: var(--primary-light);
+  color: var(--primary-dark);
   transform: translateX(-4px);
 }
 
-/* Responsivo */
+/* ===== RESPONSIVIDADE COMPLETA ===== */
+
+/* Tablets */
 @media (max-width: 768px) {
   .inspecao-header {
-    padding: 1.5rem;
+    padding: 1.75rem;
   }
   .inspecao-header h2 {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
+  }
+  .inspecao-header p {
+    font-size: 0.95rem;
+  }
+  .list-group-item {
+    padding: 0.9rem 1.25rem;
+    font-size: 0.88rem;
+  }
+}
+
+/* Smartphones */
+@media (max-width: 480px) {
+  .inspecao-header {
+    padding: 1.5rem 1.1rem;
+    border-radius: 1rem;
+  }
+  .inspecao-header h2 {
+    font-size: 1.35rem;
+  }
+  .inspecao-header p {
+    font-size: 0.88rem;
+  }
+  .inspecao-header .data {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.85rem;
+  }
+  .card {
+    padding: 1.25rem 1rem;
+    font-size: 0.88rem;
+  }
+  .img-evidencia {
+    max-width: 100%; /* Ocupa largura total em telas compactas */
+  }
+  .btn-outline-secondary:hover {
+    transform: none; /* Desativa deslocamento em mobile para toque limpo */
+  }
+}
+
+/* ===== CONFIGURAÇÃO DE IMPRESSÃO (RELATÓRIOS FÍSICOS) ===== */
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  #detalhesInspecao {
+    box-shadow: none !important;
+    border: none !important;
+    transform: none !important;
+  }
+
+  .inspecao-header {
+    background: #f1f5f9 !important;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+  }
+
+  .inspecao-header h2 {
+    color: #0f172a !important;
+  }
+
+  .inspecao-header p {
+    color: #334155 !important;
+  }
+
+  .inspecao-header strong {
+    color: #0284c7 !important;
+  }
+
+  .list-group {
+    box-shadow: none !important;
+    border: 1px solid #cbd5e1 !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .list-group-item {
+    border-bottom: 1px solid #cbd5e1 !important;
+  }
+
+  .list-group-item-danger {
+    background-color: #ffe4e6 !important;
+    color: #9f1239 !important;
+    border-left: 6px solid #e11d48 !important;
+  }
+
+  .card {
+    border: 2px dashed #94a3b8 !important;
+    background: #f8fafc !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
   }
 }

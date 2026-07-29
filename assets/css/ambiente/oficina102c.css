@@ -1,29 +1,54 @@
-/* ===== ESTILOS ESPECÍFICOS PARA SALA 104a ===== */
+/* =====================================================
+   ESTILOS ESPECÍFICOS - LABORATÓRIO 102D & OFICINA 101D
+   ===================================================== */
+
+/* ===== VARIÁVEIS E TOKENS DE DESIGN ===== */
 :root {
-  --primary-light: #e8f0fe;
-  --card-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.12);
-  --transition-default: all 0.3s ease;
+  /* Paleta Cromática Laboratorial */
+  --primary: #2563eb; /* Azul Clínico */
+  --primary-glow: rgba(37, 99, 235, 0.15);
+  --success: #059669; /* Verde Esmeralda (Conforme) */
+  --success-glow: rgba(5, 150, 105, 0.2);
+  --danger: #e11d48; /* Carmim Rosado (Não Conforme) */
+  --danger-glow: rgba(225, 29, 72, 0.2);
+  --warning-bg: #fffbeb; /* Fundo Âmbar Suave para Alertas */
+  --warning-border: #fbbf24; /* Borda de Atenção */
+  --warning-text: #b45309; /* Texto de Alerta */
+
+  /* Textos e Superfícies */
+  --text-dark: #0f172a; /* Slate 900 */
+  --text-muted: #475569; /* Slate 600 */
+  --border-light: #e2e8f0; /* Slate 200 */
+
+  /* Profundidade Física (Sombras) */
+  --shadow-normal: 0 12px 24px -10px rgba(15, 23, 42, 0.08);
+  --shadow-hover: 0 20px 35px -12px rgba(15, 23, 42, 0.15);
+
+  /* Movimento */
+  --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* ===== CARDS DE PERGUNTAS (CHECKLIST MULTI-ETAPAS) ===== */
 .question-card {
   background: #ffffff;
-  border-radius: 2rem;
-  padding: 2rem 1.5rem;
-  margin: 1.5rem 0;
-  border: 1px solid rgba(0, 0, 0, 0.03);
-  box-shadow: var(--card-shadow);
-  transition: var(--transition-default);
-  animation: fadeSlide 0.4s ease-out;
+  border-radius: 1.75rem;
+  padding: 2.25rem 1.75rem;
+  margin: 1.75rem 0;
+  border: 1px solid rgba(15, 23, 42, 0.04);
+  box-shadow: var(--shadow-normal);
+  transition: var(--transition);
+  animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .question-card:hover {
-  box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.18);
+  box-shadow: var(--shadow-hover);
+  border-color: rgba(15, 23, 42, 0.08);
 }
 
-@keyframes fadeSlide {
+@keyframes fadeSlideUp {
   from {
     opacity: 0;
-    transform: translateY(15px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -32,160 +57,207 @@
 }
 
 .question-card h5 {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin-bottom: 1.2rem;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  line-height: 1.5;
+  margin-bottom: 1.4rem;
   border-bottom: 2px solid #f1f5f9;
-  padding-bottom: 0.75rem;
+  padding-bottom: 0.85rem;
+  letter-spacing: -0.01em;
 }
 
+/* ===== DUAL BUTTON GROUP (SIM / NÃO) ===== */
 .btn-group {
   display: flex;
-  gap: 0.75rem;
+  gap: 0.85rem;
 }
 
 .btn-group .btn {
-  font-size: 1.1rem;
-  padding: 0.9rem 0.5rem;
+  font-size: 1.05rem;
+  padding: 1rem 0.5rem;
   border-radius: 3rem !important;
   border-width: 2px;
-  font-weight: 600;
-  transition: var(--transition-default);
+  font-weight: 700;
+  transition: var(--transition);
   flex: 1;
 }
 
-.btn-group .btn.active {
-  transform: scale(1.02);
-  box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.3);
+/* Estados de Foco e Click nos Botões */
+.btn-group .btn:active {
+  transform: scale(0.97);
 }
 
+/* Estilo Individual: SIM (Conforme) */
+.btn-outline-primary {
+  border-color: var(--border-light);
+  color: var(--text-muted);
+  background: transparent;
+}
+.btn-outline-primary:hover,
 .btn-primary.active {
-  background: #10b981;
-  border-color: #059669;
+  background: var(--success) !important;
+  border-color: var(--success-dark) !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 20px var(--success-glow);
 }
 
+/* Estilo Individual: NÃO (Não Conforme) */
+.btn-outline-secondary {
+  border-color: var(--border-light);
+  color: var(--text-muted);
+  background: transparent;
+}
+.btn-outline-secondary:hover,
 .btn-secondary.active {
-  background: #ef4444;
-  border-color: #dc2626;
+  background: var(--danger) !important;
+  border-color: #be123c !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 20px var(--danger-glow);
 }
 
+/* ===== PAINEL DE OBSERVAÇÕES E CARREGAMENTO DE FOTOS ===== */
 .observacao-field {
-  margin-top: 1.5rem;
-  padding: 1.5rem;
-  background: #fffbeb;
-  border-left: 6px solid #fbbf24;
+  margin-top: 1.75rem;
+  padding: 1.75rem;
+  background: var(--warning-bg);
+  border-left: 6px solid var(--warning-border);
   border-radius: 1.5rem;
-  animation: fadeIn 0.3s ease;
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.01);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .observacao-field label {
   font-weight: 700;
-  color: #b45309;
+  color: var(--warning-text);
   margin-bottom: 0.75rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  font-size: 0.95rem;
 }
 
 .observacao-field textarea {
   width: 100%;
   padding: 1rem;
   border: 2px solid #fde68a;
-  border-radius: 1.5rem;
-  background: white;
+  border-radius: 1.25rem;
+  background: #ffffff;
   resize: vertical;
-  min-height: 120px;
-  font-size: 1rem;
-  transition: var(--transition-default);
+  min-height: 110px;
+  font-size: 0.95rem;
+  transition: var(--transition);
+  color: var(--text-dark);
 }
 
 .observacao-field textarea:focus {
   border-color: #f59e0b;
-  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2);
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
   outline: none;
 }
 
-.progress {
-  height: 1.2rem !important;
+/* Botão Personalizado de Câmera (File Upload) */
+.custom-file-upload {
+  position: relative;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+.custom-file-upload label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  transition: var(--transition);
   border-radius: 3rem;
-  background: #e9eef2;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  background: transparent;
+}
+
+.custom-file-upload label:hover {
+  background: var(--primary-light);
+  box-shadow: 0 6px 15px var(--primary-glow);
+  transform: translateY(-1px);
+}
+
+.custom-file-upload label:active {
+  transform: translateY(1px);
+}
+
+/* ===== BARRA DE PROGRESSO DE FLUIDO QUÍMICO ===== */
+.progress {
+  height: 1.1rem !important;
+  border-radius: 3rem;
+  background: #e2e8f0;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
 }
 
 .progress-bar {
-  background: linear-gradient(90deg, #2563eb, #7c3aed);
+  background: linear-gradient(90deg, #3b82f6 0%, #6366f1 50%, #8b5cf6 100%);
   border-radius: 3rem;
-  transition: width 0.4s ease;
-  font-weight: 600;
-  font-size: 0.85rem;
-  line-height: 1.2rem;
+  transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  font-weight: 700;
+  font-size: 0.8rem;
+  line-height: 1.1rem;
+  position: relative;
 }
 
+/* Detalhe luminoso de reflexo na barra */
+.progress-bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0) 60%
+  );
+  pointer-events: none;
+}
+
+/* ===== INPUTS DO NOME DO INSTRUTOR ===== */
 #nome {
-  border: 2px solid #e9eef2;
+  border: 2px solid #cbd5e1;
   border-radius: 3rem;
   padding: 1rem 1.5rem;
-  transition: var(--transition-default);
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--text-dark);
+  transition: var(--transition);
 }
 
 #nome:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 5px var(--primary-glow);
+  outline: none;
 }
 
-#checklistForm {
-  border-radius: 2.5rem;
-  box-shadow: 0 25px 40px -15px rgba(0, 0, 0, 0.15);
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-  .question-card {
-    padding: 1.5rem 1rem;
-  }
-  .btn-group .btn {
-    font-size: 1rem;
-    padding: 0.8rem 0.25rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .question-card h5 {
-    font-size: 1.1rem;
-  }
-  .btn-group .btn {
-    font-size: 0.95rem;
-    padding: 0.7rem 0.1rem;
-  }
-  .observacao-field {
-    padding: 1rem;
-  }
-  .observacao-field textarea {
-    min-height: 100px;
-    font-size: 0.95rem;
-  }
-  .progress {
-    height: 1rem !important;
-  }
-}
-
-@media (max-width: 360px) {
-  .btn-group {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  .btn-group .btn {
-    width: 100% !important;
-  }
-}
-
-/* ===== MAPA DA SALA ===== */
+/* ===== MAPA / LAYOUT DO AMBIENTE ===== */
 .mapa-sala-container {
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .mapa-sala {
@@ -193,108 +265,68 @@
   max-width: 900px;
   height: auto;
   border-radius: 1.5rem;
-  box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+  box-shadow: 0 15px 35px -10px rgba(15, 23, 42, 0.2);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  transition: var(--transition);
   object-fit: cover;
 }
 
-/* Hover controlado */
 .mapa-sala:hover {
-  transform: scale(1.01);
+  transform: scale(1.015);
+  box-shadow: 0 20px 45px -12px rgba(15, 23, 42, 0.28);
 }
 
-/* Tablet */
-@media (max-width: 768px) {
-  .mapa-sala {
-    max-width: 100%;
-    border-radius: 1.2rem;
-  }
-}
-
-/* Mobile */
-@media (max-width: 480px) {
-  .mapa-sala {
-    border-radius: 1rem;
-    box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.2);
-  }
-
-  .mapa-sala-container {
-    margin-bottom: 1rem;
-  }
-}
-
-/* Mobile crítico */
-@media (max-width: 360px) {
-  .mapa-sala {
-    border-radius: 0.8rem;
-  }
-}
-
-.custom-file-upload label {
-  cursor: pointer;
-}
-
-/* ===== ALERTA CRÍTICO ===== */
+/* ===== INDICADORES DINÂMICOS DE STATUS (60 FPS) ===== */
 .status-container {
-  transition: all 0.3s ease;
+  transition: var(--transition);
 }
 
-.status-critico {
-  animation: pulsarAlerta 0.8s infinite;
-}
-
+/* Badge: NÃO CONFORME (⚠️ ATENÇÃO / ALERTA) */
 #statusLuz.bg-warning {
-  background: #dc2626 !important;
-  color: white;
+  background: var(--danger) !important;
+  color: #ffffff;
   font-weight: 800;
-  font-size: 1rem;
-  padding: 0.6rem 1.2rem;
-  box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
-  animation: pulseBadge 1s infinite;
+  font-size: 0.95rem;
+  padding: 0.6rem 1.4rem;
+  border-radius: 3rem;
+  letter-spacing: 0.02em;
+  will-change: transform;
+  animation: pulseWarningBadge 1.2s infinite ease-in-out;
 }
 
-/* Pulso externo */
-@keyframes pulsarAlerta {
-  0% {
-    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.5);
-  }
-  70% {
-    box-shadow: 0 0 0 12px rgba(220, 38, 38, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
-  }
+/* Badge: CONFORME (✅ EXCELENTE) */
+#statusLuz.bg-success {
+  background: var(--success) !important;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.95rem;
+  padding: 0.6rem 1.4rem;
+  border-radius: 3rem;
+  letter-spacing: 0.02em;
+  will-change: transform;
+  animation: pulseSuccessBadge 2s infinite ease-in-out;
 }
 
-/* Pulso do badge */
-@keyframes pulseBadge {
+/* Animações Otimizadas por Hardware */
+@keyframes pulseWarningBadge {
   0% {
     transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.6);
   }
   50% {
-    transform: scale(1.08);
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(225, 29, 72, 0);
   }
   100% {
     transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(225, 29, 72, 0);
   }
 }
 
-/* ===== STATUS CONFORME (ATIVO) ===== */
-#statusLuz.bg-success {
-  background: #059669 !important;
-  color: white;
-  font-weight: 800;
-  font-size: 1rem;
-  padding: 0.6rem 1.2rem;
-  animation: pulseSuave 2s infinite;
-}
-
-/* Pulso leve (confirmação visual) */
-@keyframes pulseSuave {
+@keyframes pulseSuccessBadge {
   0% {
     transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.4);
+    box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.5);
   }
   70% {
     transform: scale(1.03);
@@ -303,5 +335,85 @@
   100% {
     transform: scale(1);
     box-shadow: 0 0 0 0 rgba(5, 150, 105, 0);
+  }
+}
+
+/* ===== REGRAS DE ADAPTABILIDADE (RESPONSIVIDADE COMPLETA) ===== */
+
+/* Tablets (Telas Médias) */
+@media (max-width: 768px) {
+  .question-card {
+    padding: 1.75rem 1.25rem;
+    margin: 1.5rem 0;
+  }
+  .question-card h5 {
+    font-size: 1.15rem;
+    margin-bottom: 1.2rem;
+  }
+  .btn-group .btn {
+    font-size: 0.98rem;
+    padding: 0.85rem 0.4rem;
+  }
+  .mapa-sala {
+    border-radius: 1.25rem;
+  }
+}
+
+/* Smartphones (Telas Pequenas) */
+@media (max-width: 480px) {
+  .question-card h5 {
+    font-size: 1.1rem;
+    line-height: 1.4;
+  }
+  .btn-group .btn {
+    font-size: 0.95rem;
+    padding: 0.8rem 0.2rem;
+  }
+  .observacao-field {
+    padding: 1.25rem;
+    margin-top: 1.5rem;
+  }
+  .observacao-field textarea {
+    min-height: 90px;
+    font-size: 0.9rem;
+    border-radius: 1rem;
+  }
+  .progress {
+    height: 0.9rem !important;
+  }
+  .progress-bar {
+    font-size: 0.7rem;
+    line-height: 0.9rem;
+  }
+  .mapa-sala {
+    border-radius: 1rem;
+    box-shadow: 0 8px 24px -8px rgba(15, 23, 42, 0.18);
+  }
+  .mapa-sala-container {
+    margin-bottom: 1.5rem;
+  }
+  #nome {
+    padding: 0.85rem 1.25rem;
+    font-size: 0.98rem;
+  }
+}
+
+/* Smartphones Compactos e Dispositivos Micro */
+@media (max-width: 360px) {
+  .btn-group {
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .btn-group .btn {
+    width: 100% !important;
+    border-radius: 2rem !important;
+    padding: 0.75rem 0.5rem;
+  }
+  .question-card {
+    border-radius: 1.25rem;
+    padding: 1.25rem 1rem;
+  }
+  .mapa-sala {
+    border-radius: 0.75rem;
   }
 }

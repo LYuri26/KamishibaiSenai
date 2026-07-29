@@ -1,95 +1,191 @@
-/* ===== ADMINISTRADOR - RELATÓRIOS CONSOLIDADOS ===== */
+/* =====================================================
+   ADMINISTRADOR - RELATÓRIOS CONSOLIDADOS (ESTILO PREMIUM)
+   ===================================================== */
 
-/* Filtro e botões */
-#filtroData {
-  border: 1px solid #cbd5e1;
-  border-radius: 2rem;
-  padding: 0.5rem 1rem;
-  background: white;
-  transition:
-    border-color 0.2s,
-    box-shadow 0.2s;
+/* ===== VARIÁVEIS E TOKENS DE DESIGN ===== */
+:root {
+  --primary: #2563eb; /* Azul Clínico */
+  --primary-dark: #1d4ed8;
+  --primary-glow: rgba(37, 99, 235, 0.15);
+
+  --success: #059669; /* Verde Esmeralda (Vistoriada Completa) */
+  --success-light: #d1fae5;
+  --success-text: #065f46;
+
+  --danger: #e11d48; /* Carmim (Não Vistoriada) */
+  --danger-light: #ffe4e6;
+  --danger-text: #9f1239;
+
+  --warning: #f59e0b; /* Ambar (Vistoriada Parcial) */
+  --warning-light: #fef3c7;
+  --warning-text: #92400e;
+
+  --text-main: #0f172a; /* Slate 900 */
+  --text-muted: #475569; /* Slate 600 */
+  --border-light: #e2e8f0; /* Slate 200 */
+
+  --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  --radius-card: 1.5rem;
+  --shadow-normal: 0 10px 25px -5px rgba(15, 23, 42, 0.04);
+  --shadow-hover: 0 20px 35px -12px rgba(15, 23, 42, 0.12);
 }
-#filtroData:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+
+/* ===== CONTROLES DE FILTRO (BARRA SUPERIOR) ===== */
+#filtroData,
+#filtroSala {
+  border: 2px solid var(--border-light);
+  border-radius: 3rem;
+  padding: 0.55rem 1.25rem;
+  background: #ffffff;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: var(--transition);
+}
+
+#filtroData:focus,
+#filtroSala:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-glow);
   outline: none;
 }
 
 #btnFiltrar {
-  background: #2563eb;
+  background: var(--primary);
   border: none;
-  font-weight: 600;
-  transition: all 0.2s;
-}
-#btnFiltrar:hover {
-  background: #1d4ed8;
-  transform: scale(1.02);
+  font-weight: 700;
+  padding: 0.6rem 1.75rem;
+  border-radius: 3rem;
+  color: #ffffff;
+  box-shadow: 0 4px 12px var(--primary-glow);
+  transition: var(--transition);
 }
 
-/* ===== CONTAINER COM BARRA DE ROLAGEM ===== */
+#btnFiltrar:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+}
+
+#btnFiltrar:active {
+  transform: scale(0.97);
+}
+
+/* ===== CONTÊINER CENTRAL DE RELATÓRIOS (PLANILHA) ===== */
 #relatoriosContainer {
-  background: white;
-  border-radius: 1.5rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  background: #ffffff;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-normal);
   max-height: 600px;
   overflow-y: auto;
-  padding: 0 !important; /* remove padding interno para a tabela ocupar toda a largura */
+  border: 1px solid rgba(15, 23, 42, 0.04);
+  padding: 0 !important; /* Remove preenchimento interno para tabela ocupar as bordas */
+  transition: var(--transition);
 }
 
-/* Ajuste para o conteúdo interno */
+#relatoriosContainer:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+/* Ajuste de elementos herdados */
 #relatoriosContainer > * {
   margin: 0;
   border-radius: 0;
 }
 
-/* Tabela responsiva com cabeçalho fixo */
+/* ===== AJUSTES DE TABELAS E VISUALIZAÇÃO ===== */
 .table {
   margin-bottom: 0;
+  font-size: 0.92rem;
+  width: 100%;
+  border-collapse: collapse;
 }
+
+/* Cabeçalho Sticky com Sombra Interna */
 .table th {
   background: #f8fafc;
-  color: #1e293b;
-  font-weight: 600;
+  color: var(--text-main);
+  font-weight: 800;
   text-transform: uppercase;
-  font-size: 0.8rem;
-  letter-spacing: 0.5px;
-  padding: 1rem;
-  border-bottom: 2px solid #e2e8f0;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  padding: 1.1rem 1rem;
+  border-bottom: 2px solid var(--border-light);
   position: sticky;
   top: 0;
   z-index: 10;
+  box-shadow: inset 0 -1px 0 var(--border-light);
 }
+
 .table td {
   padding: 1rem;
   vertical-align: middle;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+  background-color: #ffffff;
+  transition: var(--transition);
 }
 
-/* Cores de status (opcional) */
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Zebra Striping Suave */
+.table tbody tr:nth-of-type(even) td {
+  background-color: #fafbfc;
+}
+
+/* Realce dinâmico ao passar o mouse */
+.table tbody tr:hover td {
+  background-color: var(--primary-light) !important;
+  color: var(--primary-dark);
+}
+
+/* ===== BADGES DE STATUS DE VISTORIA DE ALTO CONTRASTE ===== */
+.status-pill {
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 0.4rem 1rem;
+  border-radius: 3rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
 .status-nao_vistoriada {
-  background-color: #fee2e2;
-  color: #b91c1c;
+  background-color: var(--danger-light) !important;
+  color: var(--danger-text) !important;
+  border: 1px solid #fecdd3;
 }
+
 .status-vistoriada_inicio_fim {
-  background-color: #dff0e6;
-  color: #0a5c2e;
+  background-color: var(--success-light) !important;
+  color: var(--success-text) !important;
+  border: 1px solid #a7f3d0;
 }
+
 .status-vistoriada_inicio_apenas,
 .status-vistoriada_fim_apenas {
-  background-color: #fff3cd;
-  color: #856404;
+  background-color: var(--warning-light) !important;
+  color: var(--warning-text) !important;
+  border: 1px solid #fde68a;
 }
 
-/* Responsivo mobile (mantido) */
+/* ===== ADAPTABILIDADE EM SMARTPHONES (CARD-BASED COLLAPSE) ===== */
 @media (max-width: 768px) {
   #relatoriosContainer {
-    max-height: 400px;
+    max-height: 450px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
   }
+
   .table thead {
-    position: static;
-    display: none;
+    display: none; /* Oculta colunas horizontais */
   }
+
   .table,
   .table tbody,
   .table tr,
@@ -97,74 +193,129 @@
     display: block;
     width: 100%;
   }
+
+  /* Linhas transformadas em cartões com sombra */
   .table tr {
-    margin-bottom: 1rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 1rem;
-    padding: 0.5rem;
-    background: white;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-card);
+    padding: 1.25rem 1rem;
+    background: #ffffff !important;
+    box-shadow: var(--shadow-normal);
+    transition: var(--transition);
   }
+
+  .table tr:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+    border-color: #cbd5e1;
+  }
+
+  /* Células individuais empilhadas em linhas */
   .table td {
     display: flex;
     justify-content: space-between;
     align-items: center;
     border: none;
-    border-bottom: 1px solid #e9ecef;
-    padding: 0.75rem;
+    border-bottom: 1px solid #f1f5f9;
+    padding: 0.8rem 0.25rem;
+    background: transparent !important;
   }
+
   .table td:last-child {
     border-bottom: none;
+    padding-top: 1.1rem;
+    justify-content: flex-end;
   }
+
+  /* Injeção de Rótulos em uppercase à esquerda */
   .table td::before {
     content: attr(data-label);
-    font-weight: 600;
-    color: #2563eb;
-    width: 40%;
+    font-weight: 800;
+    color: var(--primary);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    width: 38%;
+    flex-shrink: 0;
+    text-align: left;
+  }
+
+  /* Ajuste de largura para os elementos filhos */
+  .table td > * {
+    max-width: 60%;
+    text-align: right;
+  }
+
+  .table td:last-child::before {
+    content: "Ações";
+    width: auto;
+    margin-right: auto;
   }
 }
 
-/* ===== MODAL DE IMAGENS ===== */
+/* ===== MODAL DE IMAGENS E GALERIA ===== */
 #modalImagens .modal-content {
-  border-radius: 1.5rem;
+  border-radius: 1.75rem;
   border: none;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-glow);
 }
+
 #modalImagens .modal-header {
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border-light);
   background: #f8fafc;
-  border-top-left-radius: 1.5rem;
-  border-top-right-radius: 1.5rem;
+  border-top-left-radius: 1.75rem;
+  border-top-right-radius: 1.75rem;
+  padding: 1.25rem 1.5rem;
 }
+
 #modalImagens .modal-title {
-  font-weight: 600;
-  color: #1e293b;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.025em;
 }
+
 #modalImagens .modal-body {
   max-height: 70vh;
   overflow-y: auto;
-  padding: 1.5rem;
+  padding: 1.75rem;
 }
+
 #modalImagensContainer {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
+  gap: 1.25rem;
 }
+
 #modalImagensContainer img {
   width: 100%;
   height: auto;
-  border-radius: 0.75rem;
-  border: 1px solid #e2e8f0;
-  transition:
-    transform 0.2s,
-    box-shadow 0.2s;
+  border-radius: 1rem;
+  border: 3px solid #ffffff;
+  box-shadow: var(--shadow-normal);
+  transition: var(--transition);
   cursor: zoom-in;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
 }
+
 #modalImagensContainer img:hover {
-  transform: scale(1.03);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  transform: scale(1.05) rotate(-1deg);
+  box-shadow: var(--shadow-glow);
 }
+
+/* Efeito de zoom nativo sutil */
+#modalImagensContainer img.zoomed {
+  transform: scale(1.4) rotate(0deg);
+  cursor: zoom-out;
+  z-index: 10;
+  position: relative;
+  box-shadow: var(--shadow-lg);
+}
+
+/* Scrollbar do modal */
 #modalImagens .modal-body::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 #modalImagens .modal-body::-webkit-scrollbar-thumb {
   background: #cbd5e1;
@@ -173,6 +324,7 @@
 #modalImagens .modal-body::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
 @media (max-width: 768px) {
   #modalImagens .modal-body {
     max-height: 80vh;
@@ -181,24 +333,40 @@
     grid-template-columns: 1fr;
   }
 }
-#modalImagensContainer img.zoomed {
-  transform: scale(1.6);
-  cursor: zoom-out;
-  z-index: 10;
+
+/* ===== BOTÃO DE ANÁLISE PREDITIVA (CTA) ===== */
+.btn-analise-ia {
+  background: var(--primary-gradient);
+  border: none;
+  font-weight: 700;
+  padding: 0.65rem 1.75rem;
+  box-shadow: 0 4px 12px var(--primary-glow);
+  transition: var(--transition);
 }
 
-/* Botão de Análise Preditiva (IA) */
-.btn-analise-ia {
-  background: linear-gradient(135deg, #0d6efd, #0b5ed7);
-  border: none;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
 .btn-analise-ia:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
-  background: linear-gradient(135deg, #0b5ed7, #0a58ca);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
 }
+
 .btn-analise-ia:active {
   transform: translateY(0);
+}
+
+/* ===== ROLAGEM GERAL DA CONSOLIDAÇÃO ===== */
+#relatoriosContainer::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+#relatoriosContainer::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+#relatoriosContainer::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+#relatoriosContainer::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }

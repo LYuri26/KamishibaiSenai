@@ -1,7 +1,7 @@
 <?php
 /**
  * install.php - Script de instalação/atualização do banco de dados
- * Agora com retorno JSON e diagnóstico claro.
+ * Agora com suporte ao Laboratório 102D, Oficina 101D, retorno JSON e diagnóstico claro.
  */
 
 // Ativa exibição de erros para depuração (remova em produção)
@@ -55,10 +55,8 @@ function tableExists(PDO $pdo, string $table): bool
 try {
     // Opcional: tentar criar o banco de dados se ele não existir (requer privilégio)
     // Nota: O nome do banco deve ser o mesmo usado no DSN do database.php
-    // Para evitar complexidade, assumimos que o DSN já aponta para o banco correto.
-    // Se quiser tentar criar o banco automaticamente, descomente as linhas abaixo:
     /*
-    $dbname = 'u196097154_kamishibai';
+    $dbname = 'kamishibai';
     $pdo->exec("CREATE DATABASE IF NOT EXISTS `$dbname` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
     $pdo->exec("USE `$dbname`");
     */
@@ -134,6 +132,7 @@ try {
         `instrutor_epi` ENUM('sim','nao') NOT NULL,
         `box1_epi_completo` ENUM('sim','nao') NOT NULL,
         `box1_ferramentas_ok` ENUM('sim','nao') NOT NULL,
+        `box1_box1_organizacao` ENUM('sim','nao') NULL, -- Evita falhas caso queira manter exatamente igual ao dump
         `box1_organizacao` ENUM('sim','nao') NOT NULL,
         `box2_epi_completo` ENUM('sim','nao') NOT NULL,
         `box2_ferramentas_ok` ENUM('sim','nao') NOT NULL,
@@ -169,6 +168,108 @@ try {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
     $pdo->exec($sql102c);
     addColumnIfNotExists($pdo, '102c', 'verificacao_sexta', 'JSON NULL');
+
+    // ==================== TABELA 102d (Lab Química / Meio Ambiente) ====================
+    $sql102d = "CREATE TABLE IF NOT EXISTS `102d` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `nome` VARCHAR(100) NOT NULL,
+        `data` DATETIME NOT NULL,
+        `momento` ENUM('inicio','fim') NOT NULL,
+        `observacoes` TEXT,
+        
+        -- Infraestrutura e Geral
+        `porta_janelas_ok` ENUM('sim','nao') NOT NULL,
+        `ar_condicionado_ok` ENUM('sim','nao') NOT NULL,
+        `bancadas_limpas` ENUM('sim','nao') NOT NULL,
+        `tomadas_fios_ok` ENUM('sim','nao') NOT NULL,
+        
+        -- Bancada 01 (Microscopia)
+        `microscopios_b1_quantidade` ENUM('sim','nao') NOT NULL,
+        `microscopios_b1_integros` ENUM('sim','nao') NOT NULL,
+        
+        -- Bancada 02 (Digestão e Incubação)
+        `estufa_incubadora_b2_ok` ENUM('sim','nao') NOT NULL,
+        `blocos_digestores_b2_ok` ENUM('sim','nao') NOT NULL,
+        
+        -- Bancada 03 (Pesagem, Extração e Centrifugação)
+        `balancas_analiticas_b3_ok` ENUM('sim','nao') NOT NULL,
+        `centrifugas_extracao_b3_ok` ENUM('sim','nao') NOT NULL,
+        
+        -- Bancada 04 & Bancada B
+        `destilador_b4_ok` ENUM('sim','nao') NOT NULL,
+        `cabine_seguranca_csb_ok` ENUM('sim','nao') NOT NULL,
+        
+        -- Bancada D (Avançados e TI)
+        `microscopio_camera_desktop_ok` ENUM('sim','nao') NOT NULL,
+        `rotaevaporador_gerber_vortex_ok` ENUM('sim','nao') NOT NULL,
+        
+        -- Espaço X & Espaço D (Térmicos e Frio)
+        `estufas_forno_mufla_ok` ENUM('sim','nao') NOT NULL,
+        `refrigerador_microondas_ok` ENUM('sim','nao') NOT NULL,
+        
+        -- Armários (Instrumentação)
+        `armario1_medidores_agua_ok` ENUM('sim','nao') NOT NULL,
+        `armario2_3_phgametros_banhos_ok` ENUM('sim','nao') NOT NULL,
+        `armario5_6_aquecimento_agitacao_ok` ENUM('sim','nao') NOT NULL,
+        `armario7_medidores_campo_ok` ENUM('sim','nao') NOT NULL,
+        
+        -- Segurança e Descarte (EPI/EPC)
+        `epis_seguranca_ok` ENUM('sim','nao') NOT NULL,
+        `descarte_residuos_ok` ENUM('sim','nao') NOT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+    $pdo->exec($sql102d);
+    addColumnIfNotExists($pdo, '102d', 'verificacao_sexta', 'JSON NULL');
+
+    // ==================== TABELA 101d (Novo Ambiente - Microdestilaria) ====================
+    $sql101d = "CREATE TABLE IF NOT EXISTS `101d` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `nome` VARCHAR(100) NOT NULL,
+        `data` DATETIME NOT NULL,
+        `momento` ENUM('inicio','fim') NOT NULL,
+        `observacoes` TEXT,
+        
+        -- Infraestrutura e Geral
+        `porta_janelas_ok` ENUM('sim','nao') NOT NULL,
+        `ar_condicionado_ok` ENUM('sim','nao') NOT NULL,
+        `bancadas_limpas` ENUM('sim','nao') NOT NULL,
+        `tomadas_fios_ok` ENUM('sim','nao') NOT NULL,
+        
+        -- Bancada 01 (Microscopia)
+        `microscopios_b1_quantidade` ENUM('sim','nao') NOT NULL,
+        `microscopios_b1_integros` ENUM('sim','nao') NOT NULL,
+        
+        -- Bancada 02 (Digestão e Incubação)
+        `estufa_incubadora_b2_ok` ENUM('sim','nao') NOT NULL,
+        `blocos_digestores_b2_ok` ENUM('sim','nao') NOT NULL,
+        
+        -- Bancada 03 (Pesagem, Extração e Centrifugação)
+        `balancas_analiticas_b3_ok` ENUM('sim','nao') NOT NULL,
+        `centrifugas_extracao_b3_ok` ENUM('sim','nao') NOT NULL,
+        
+        -- Bancada 04 & Bancada B
+        `destilador_b4_ok` ENUM('sim','nao') NOT NULL,
+        `cabine_seguranca_csb_ok` ENUM('sim','nao') NOT NULL,
+        
+        -- Bancada D (Avançados e TI)
+        `microscopio_camera_desktop_ok` ENUM('sim','nao') NOT NULL,
+        `rotaevaporador_gerber_vortex_ok` ENUM('sim','nao') NOT NULL,
+        
+        -- Espaço X & Espaço D (Térmicos e Frio)
+        `estufas_forno_mufla_ok` ENUM('sim','nao') NOT NULL,
+        `refrigerador_microondas_ok` ENUM('sim','nao') NOT NULL,
+        
+        -- Armários (Instrumentação)
+        `armario1_medidores_agua_ok` ENUM('sim','nao') NOT NULL,
+        `armario2_3_phgametros_banhos_ok` ENUM('sim','nao') NOT NULL,
+        `armario5_6_aquecimento_agitacao_ok` ENUM('sim','nao') NOT NULL,
+        `armario7_medidores_campo_ok` ENUM('sim','nao') NOT NULL,
+        
+        -- Segurança e Descarte (EPI/EPC)
+        `epis_seguranca_ok` ENUM('sim','nao') NOT NULL,
+        `descarte_residuos_ok` ENUM('sim','nao') NOT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+    $pdo->exec($sql101d);
+    addColumnIfNotExists($pdo, '101d', 'verificacao_sexta', 'JSON NULL');
 
     // ==================== TABELA relatorios ====================
     $sqlRelatorios = "CREATE TABLE IF NOT EXISTS `relatorios` (
@@ -206,7 +307,6 @@ try {
             while ($row = $usuarios->fetch(PDO::FETCH_ASSOC)) {
                 $email = strtolower(trim($row['email']));
                 $hash = hash('sha256', $email);
-                // Fallback de criptografia simples (se a função encryptEmail não existir)
                 if (function_exists('encryptEmail')) {
                     $encrypted = encryptEmail($email);
                 } else {
@@ -221,7 +321,7 @@ try {
             $pdo->exec("ALTER TABLE `usuarios` DROP COLUMN `email`");
         }
     } catch (PDOException $e) {
-        // Ignora erros de migração (coluna já removida, etc.)
+        // Ignora erros de migração
     }
 
     addColumnIfNotExists($pdo, 'usuarios', 'email_hash', 'VARCHAR(64) UNIQUE');
@@ -238,8 +338,8 @@ try {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
     $pdo->exec($sqlResponsaveis);
 
-    // Verifica se as tabelas foram criadas
-    $tabelas = ['104a', '103d', '102c', 'relatorios', 'usuarios', 'responsaveis'];
+    // Verifica se as tabelas foram criadas com sucesso (adicionado '102d' e '101d')
+    $tabelas = ['104a', '103d', '102c', '102d', '101d', 'relatorios', 'usuarios', 'responsaveis'];
     $criadas = [];
     foreach ($tabelas as $tabela) {
         if (tableExists($pdo, $tabela)) {
@@ -247,7 +347,7 @@ try {
         }
     }
 
-    resposta(true, 'Instalação concluída com sucesso.', ['tabelas_criadas_ou_existentes' => $criadas]);
+    resposta(true, 'Instalação e atualização concluídas com sucesso.', ['tabelas_criadas_ou_existentes' => $criadas]);
 
 } catch (PDOException $e) {
     resposta(false, 'Erro ao executar a instalação: ' . $e->getMessage(), [
