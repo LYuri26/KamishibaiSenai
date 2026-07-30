@@ -5,7 +5,7 @@ document.getElementById("formLogin").addEventListener("submit", async (e) => {
   const senha = document.getElementById("senha").value;
 
   try {
-    // 1. AJUSTE CRÍTICO: Aponta para a API em PHP (api/login.php)
+    // Aponta para a API em PHP
     const response = await fetch("api/login.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -18,15 +18,18 @@ document.getElementById("formLogin").addEventListener("submit", async (e) => {
       const nomeUsuario = result.nome ? `, ${result.nome}` : "";
       exibirMensagem(`Bem-vindo${nomeUsuario}! Redirecionando...`, "success");
 
-      const redirect = sessionStorage.getItem("redirectAfterLogin");
+      let redirect = sessionStorage.getItem("redirectAfterLogin");
 
       if (redirect) {
         sessionStorage.removeItem("redirectAfterLogin");
+
+        // CORREÇÃO CRÍTICA: Substitui qualquer referência .html por .php
+        redirect = redirect.replace(/\.html$/i, ".php");
         window.location.href = redirect;
         return;
       }
 
-      // 2. AJUSTE DE ROTA: Redireciona para os arquivos .php com proteção de sessão
+      // REDIRECIONAMENTO PADRÃO APONTANDO PARA .PHP
       if (result.cargo === "lider") {
         window.location.href = "../administrador/index.php";
       } else {
@@ -53,6 +56,15 @@ function exibirMensagem(texto, tipo) {
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
+    // Limpa redirecionamento antigo se for .html residual
+    const redirectSalvo = sessionStorage.getItem("redirectAfterLogin");
+    if (redirectSalvo && redirectSalvo.endsWith(".html")) {
+      sessionStorage.setItem(
+        "redirectAfterLogin",
+        redirectSalvo.replace(/\.html$/i, ".php"),
+      );
+    }
+
     // Executa verificação inicial da estrutura do banco
     const response = await fetch("../config/install.php");
     if (!response.ok) {
