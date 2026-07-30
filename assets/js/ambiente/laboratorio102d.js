@@ -1,65 +1,66 @@
-// Perguntas do checklist para o laboratório 102d (Análises, Meio Ambiente e Química)
+// Perguntas do checklist para o laboratório 102d (Laboratório de Química)
 const perguntas = {
-  // 1. Infraestrutura e Geral
-  porta_janelas_ok: "Porta de acesso e janelas funcionam corretamente?",
-  ar_condicionado_ok: "Ar-condicionado limpo e funcionando?",
-  bancadas_limpas: "Bancadas gerais limpas, desobstruídas e sem resíduos?",
-  tomadas_fios_ok: "Tomadas intactas e sem fiação exposta?",
+  // 1. ORGANIZAÇÃO
+  org_bancadas_limpas: "As bancadas estão limpas?",
+  org_bancadas_organizadas: "As bancadas estão organizadas?",
+  org_cadeiras_organizadas: "As cadeiras estão organizadas?",
+  org_materiais_guardados: "Os materiais estão guardados corretamente?",
+  org_armarios_fechados: "Os armários estão fechados?",
+  org_quadro_limpo: "O quadro está limpo?",
+  org_piso_limpo: "O piso está limpo?",
+  org_corredores_desobstruidos: "Os corredores estão desobstruídos?",
 
-  // 2. Bancada 01 (Microscopia)
-  microscopios_b1_quantidade:
-    "Os 10 Microscópios Ópticos Binoculares estão presentes na Bancada 01?",
-  microscopios_b1_integros:
-    "Microscópios estão íntegros, limpos e com capa de proteção?",
+  // 2. SEGURANÇA
+  seg_extintor_acessivel: "O extintor está acessível?",
+  seg_chuveiro_emergencia_ok:
+    "O chuveiro de emergência está em condições adequadas?",
+  seg_lava_olhos_ok: "O lava-olhos está livre e em condições adequadas?",
+  seg_kit_primeiros_socorros: "O kit de primeiros socorros está disponível?",
+  seg_saidas_emergencia_livres: "As saídas de emergência estão livres?",
+  seg_sinalizacao_visivel: "A sinalização está visível?",
+  seg_produtos_quimicos_identificados:
+    "Os produtos químicos estão identificados?",
+  seg_fispqs_disponiveis: "As FISPQs estão disponíveis?",
 
-  // 3. Bancada 02 (Digestão e Incubação)
-  estufa_incubadora_b2_ok:
-    "Estufa Incubadora (Bancada 02) está íntegra e limpa?",
-  blocos_digestores_b2_ok:
-    "Bloco Digestor DQO e Bloco Microdigestor Kjehdahl estão em bom estado?",
+  // 3. EQUIPAMENTOS
+  eq_balanca_limpa: "A balança está limpa?",
+  eq_balanca_desligada: "A balança está desligada?",
+  eq_phmetro_limpo: "O pHmetro está limpo?",
+  eq_condutivimetro_limpo: "O condutivímetro está limpo?",
+  eq_espectrofotometro_limpo: "O espectrofotômetro está limpo?",
+  eq_estufa_desligada: "A estufa está desligada?",
+  eq_autoclave_desligada: "A autoclave está desligada?",
+  eq_equipamentos_desligados: "Os equipamentos estão desligados?",
+  eq_equipamentos_sem_avarias: "Os equipamentos estão sem avarias?",
 
-  // 4. Bancada 03 (Pesagem, Extração e Centrifugação)
-  balancas_analiticas_b3_ok:
-    "As 3 Balanças Analíticas estão limpas, niveladas e calibradas?",
-  centrifugas_extracao_b3_ok:
-    "Centrífugas de Bancada (2x) e Bateria Sebelin estão desligadas e organizadas?",
+  // 4. VIDRARIAS
+  vid_vidrarias_limpas: "As vidrarias estão limpas?",
+  vid_vidrarias_secas: "As vidrarias estão secas?",
+  vid_vidrarias_guardadas: "As vidrarias estão guardadas corretamente?",
+  vid_existe_vidraria_quebrada: "Existe alguma vidraria quebrada?",
 
-  // 5. Bancada 04 & Bancada B
-  destilador_b4_ok:
-    "Destilador Micro Kjehdahl (Bancada 04) está higienizado e apto?",
-  cabine_seguranca_csb_ok:
-    "Cabine de Segurança Biológica (CSB - Bancada B) está limpa e operacional?",
+  // 5. PRODUTOS QUÍMICOS
+  pq_frascos_identificados: "Os frascos estão identificados?",
+  pq_frascos_fechados: "Os frascos estão fechados?",
+  pq_produtos_armazenados: "Os produtos estão armazenados corretamente?",
+  pq_residuos_descartados: "Os resíduos estão sendo descartados corretamente?",
 
-  // 6. Bancada D (Avançados e TI)
-  microscopio_camera_desktop_ok:
-    "Microscópio com câmera e Desktop (Bancada D) estão ligados e íntegros?",
-  rotaevaporador_gerber_vortex_ok:
-    "Rotaevaporador, Centrífuga Gerber e Agitador Vortex (Bancada D) organizados?",
+  // 6. ENCERRAMENTO DO LABORATÓRIO
+  enc_pia_limpa: "A pia está limpa?",
+  enc_torneiras_fechadas: "As torneiras estão fechadas?",
+  enc_gas_fechado: "O gás está fechado?",
+  enc_agua_fechada: "A água está fechada?",
+  enc_equipamentos_desligados: "Os equipamentos estão desligados?",
+  enc_ar_condicionado_desligado: "O ar-condicionado está desligado?",
+  enc_luzes_apagadas: "As luzes estão apagadas?",
+  enc_porta_trancada: "A porta está trancada?",
+  enc_lixeiras_esvaziadas: "As lixeiras estão esvaziadas?",
 
-  // 7. Espaço X & Espaço D (Térmicos e Frio)
-  estufas_forno_mufla_ok:
-    "Estufas de secagem e Forno Mufla (Espaço X) estão desligados e sem resíduos?",
-  refrigerador_microondas_ok:
-    "Refrigerador e Micro-ondas (Espaço D) limpos e em temperatura correta?",
-
-  // 8. Armários (Instrumentação)
-  armario1_medidores_agua_ok:
-    "Medidores multiparâmetros, Turbidímetros e Colorímetro estão organizados no Armário 01?",
-  armario2_3_phgametros_banhos_ok:
-    "pHgâmetros, Refratômetros, Agitadores Mag. e Banhos-maria organizados nos Armários 02/03?",
-  armario5_6_aquecimento_agitacao_ok:
-    "Mantas, Chapas, Agitadores mecânicos, Viscosímetro e Ultrassônico organizados nos Armários 05/06?",
-  armario7_medidores_campo_ok:
-    "Decibelímetros, GPS, Câmera 20MP e Contadores de colônias organizados no Armário 07?",
-
-  // 9. Segurança e Descarte (EPI/EPC)
-  epis_seguranca_ok:
-    "EPIs (óculos, luvas, jalecos) estão disponíveis e organizados?",
-  descarte_residuos_ok:
-    "Recipientes de descarte químico e biológico estão devidamente identificados?",
+  // 7. NÃO CONFORMIDADES
+  nc_encontrada: "Foi encontrada alguma não conformidade?",
 };
 
-// Perguntas extras para verificação de sexta-feira específica para laboratório químico/quarentena
+// Perguntas extras para verificação de sexta-feira específica para laboratório químico
 const perguntasExtras = {
   lava_olhos_chuveiro:
     "Lava-olhos e chuveiro de emergência foram testados e estão operacionais?",
@@ -86,6 +87,14 @@ let usuarioAtual = null;
 let isResponsavel = false;
 let isSexta = false;
 let respostasExtras = {};
+
+// Auxiliar para identificar se a resposta dada representa uma Não Conformidade (Problema)
+function eProblema(key, valor) {
+  if (key === "vid_existe_vidraria_quebrada" || key === "nc_encontrada") {
+    return valor === "sim"; // Nestas perguntas, responder 'Sim' indica falha/problema
+  }
+  return valor === "nao"; // Nas demais, responder 'Não' indica falha/problema
+}
 
 async function carregarStatusSala() {
   try {
@@ -117,7 +126,9 @@ function atualizarStatusLuz() {
   const statusEl = document.getElementById("statusLuz");
   if (!statusEl) return;
 
-  const possuiProblemaAtual = Object.values(answers).includes("nao");
+  const possuiProblemaAtual = Object.entries(answers).some(([key, val]) =>
+    eProblema(key, val),
+  );
   const problemaFinal = possuiProblemaAtual || statusBackendProblema;
   const container = statusEl.closest(".status-container");
 
@@ -168,8 +179,6 @@ async function verificarResponsavelESexta() {
   if (!usuarioAtual || !usuarioAtual.id) return;
 
   try {
-    const response = await fetch("../administrador/api/listar_relatorios.php"); // Fallback se listar_relatorios possuir dados do lider ou direto do lider.php
-    // Mantendo consistência com chamada lider.php conforme estrutura padrão de endpoints
     const responseLider = await fetch(
       "/administrador/api/lider.php?action=listar",
     );
@@ -244,24 +253,6 @@ function carregarPerguntasExtras() {
   });
 }
 
-// ================= REGISTRO DE RESPOSTA =================
-function registrarResposta(key, valor) {
-  answers[key] = valor;
-
-  if (valor === "sim") {
-    delete observations[key];
-  }
-
-  atualizarStatusLuz();
-
-  if (valor === "sim") {
-    renderQuestion();
-    avancarPergunta();
-  } else {
-    renderQuestion();
-  }
-}
-
 // Avança para a próxima pergunta (com validação)
 function avancarPergunta() {
   const keys = Object.keys(perguntas);
@@ -273,7 +264,10 @@ function avancarPergunta() {
     return false;
   }
 
-  if (answers[currentKey] === "nao" && !observations[currentKey]?.trim()) {
+  if (
+    eProblema(currentKey, answers[currentKey]) &&
+    !observations[currentKey]?.trim()
+  ) {
     alert(
       "Preencha a observação apontando a falha/não conformidade encontrada.",
     );
@@ -285,16 +279,16 @@ function avancarPergunta() {
   return true;
 }
 
-// Renderiza a pergunta ou as orientações finais de laboratório
+// Renderiza a pergunta ou as orientações finais do laboratório de química
 function renderQuestion() {
   const container = document.getElementById("questionsContainer");
   const keys = Object.keys(perguntas);
 
-  // Procedimento Operacional Padrão de Química/Análises (Última Etapa)
+  // Procedimento Operacional Padrão de Química (Última Etapa)
   if (currentQuestion === etapaProcedimento) {
     container.innerHTML = `
       <div class="question-card fade-in">
-        <h5>📋 Manual e Boas Práticas - Laboratório 102D</h5>
+        <h5>📋 Manual e Boas Práticas - Laboratório 102D (Química)</h5>
         <p><strong>Certifique-se do cumprimento das regras de biossegurança química antes de sair:</strong></p>
         <hr>
         <h6>🧥 Vestimentas e Proteção Individual</h6>
@@ -305,21 +299,21 @@ function renderQuestion() {
         </ul>
         <h6>🧪 Manuseio de Reagentes e Vidrarias</h6>
         <ul>
-          <li>Nunca manuseie ácidos concentrados fora da capela de exaustão de gases.</li>
+          <li>Nunca manuseie ácidos concentrados ou solventes voláteis fora da capela de exaustão de gases.</li>
           <li>Descarte vidrarias trincadas ou quebradas na caixa coletora de perfurocortantes.</li>
           <li>Siga criteriosamente o descarte seletivo químico e biológico. Nunca descarte reagentes na pia.</li>
         </ul>
         <h6>🔒 Conservação e Segurança Patrimonial</h6>
         <ul>
           <li>Mantenha as balanças analíticas limpas e as portas protetoras fechadas pós-uso.</li>
-          <li>Desconecte chapas aquecedoras e destiladores após a utilização técnica.</li>
-          <li>Mantenha as portas e janelas fechadas para manter a estabilidade térmica de calibração dos medidores.</li>
+          <li>Desconecte chapas aquecedoras, estufas e autoclaves após a utilização técnica.</li>
+          <li>Mantenha as portas e janelas fechadas para estabilidade dos medidores.</li>
         </ul>
         <h6>🔚 Organização Final</h6>
         <ul>
           <li>Lave todas as vidrarias utilizadas com detergente neutro e água destilada.</li>
-          <li>Limpe e desinfecte a superfície das bancadas utilizadas.</li>
-          <li>Assegure o correto desligamento de equipamentos de refrigeração e segurança elétrica.</li>
+          <li>Limpe e desinfete a superfície das bancadas utilizadas.</li>
+          <li>Garanta que as torneiras, gás, exaustores e luzes estejam devidamente desligados.</li>
         </ul>
       </div>
     `;
@@ -334,7 +328,16 @@ function renderQuestion() {
 
   const key = keys[currentQuestion];
   const pergunta = perguntas[key];
-  const temObservacao = answers[key] === "nao";
+  const temObservacao = eProblema(key, answers[key]);
+
+  // Define rótulos de botão adaptados conforme o tipo de pergunta
+  let rotuloSim = "✅ Sim (ok)";
+  let rotuloNao = "❌ Não (falha)";
+
+  if (key === "vid_existe_vidraria_quebrada" || key === "nc_encontrada") {
+    rotuloSim = "❌ Sim (falha)";
+    rotuloNao = "✅ Não (ok)";
+  }
 
   let html = `
     <div class="question-card fade-in">
@@ -347,11 +350,11 @@ function renderQuestion() {
 
   const simActive =
     answers[key] === "sim" ? "active btn-primary" : "btn-outline-primary";
-  html += `<button type="button" class="btn ${simActive} btn-lg w-50" data-value="sim" data-key="${key}">✅ Sim (ok)</button>`;
+  html += `<button type="button" class="btn ${simActive} btn-lg w-50" data-value="sim" data-key="${key}">${rotuloSim}</button>`;
 
   const naoActive =
     answers[key] === "nao" ? "active btn-secondary" : "btn-outline-secondary";
-  html += `<button type="button" class="btn ${naoActive} btn-lg w-50" data-value="nao" data-key="${key}">❌ Não (falha)</button>`;
+  html += `<button type="button" class="btn ${naoActive} btn-lg w-50" data-value="nao" data-key="${key}">${rotuloNao}</button>`;
   html += `</div>`;
 
   if (temObservacao) {
@@ -381,8 +384,9 @@ function renderQuestion() {
       const valor = e.currentTarget.dataset.value;
       answers[key] = valor;
 
-      if (valor === "sim") {
+      if (!eProblema(key, valor)) {
         delete observations[key];
+        delete images[key];
         renderQuestion();
         avancarPergunta();
       } else {
@@ -391,36 +395,40 @@ function renderQuestion() {
     });
   });
 
-  // Ouvintes para área de texto
+  // Ouvintes para área de texto e imagem
   if (temObservacao) {
-    document.getElementById(`obs_${key}`).addEventListener("input", (e) => {
-      observations[key] = e.target.value;
-    });
+    const obsElem = document.getElementById(`obs_${key}`);
+    if (obsElem) {
+      obsElem.addEventListener("input", (e) => {
+        observations[key] = e.target.value;
+      });
+    }
 
-    document.getElementById(`img_${key}`).addEventListener("change", (e) => {
-      const file = e.target.files[0];
+    const imgElem = document.getElementById(`img_${key}`);
+    if (imgElem) {
+      imgElem.addEventListener("change", (e) => {
+        const file = e.target.files[0];
 
-      // Validação de formato
-      if (file && !file.type.startsWith("image/")) {
-        alert("Formato inválido. Insira apenas arquivos de imagem.");
-        e.target.value = "";
-        return;
-      }
+        if (file && !file.type.startsWith("image/")) {
+          alert("Formato inválido. Insira apenas arquivos de imagem.");
+          e.target.value = "";
+          return;
+        }
 
-      // Validação de limite de tamanho (5MB)
-      if (file && file.size > 5 * 1024 * 1024) {
-        alert("Arquivo muito pesado. O limite de imagem é de 5MB.");
-        e.target.value = "";
-        return;
-      }
+        if (file && file.size > 5 * 1024 * 1024) {
+          alert("Arquivo muito pesado. O limite de imagem é de 5MB.");
+          e.target.value = "";
+          return;
+        }
 
-      images[key] = file;
+        images[key] = file;
 
-      const fileNameEl = document.getElementById(`file_name_${key}`);
-      if (file && fileNameEl) {
-        fileNameEl.textContent = "✓ " + file.name;
-      }
-    });
+        const fileNameEl = document.getElementById(`file_name_${key}`);
+        if (file && fileNameEl) {
+          fileNameEl.textContent = "✓ " + file.name;
+        }
+      });
+    }
   }
 
   atualizarStatusLuz();
@@ -465,13 +473,13 @@ document
         return;
       }
 
-      if (answers[key] === "nao" && !observations[key]?.trim()) {
+      if (eProblema(key, answers[key]) && !observations[key]?.trim()) {
         alert("Descreva o problema encontrado em todas as não conformidades.");
         return;
       }
     }
 
-    // Validação das perguntas extras
+    // Validação das perguntas extras de sexta-feira
     if (isResponsavel && isSexta) {
       for (let key of Object.keys(perguntasExtras)) {
         if (!respostasExtras[key]) {
@@ -495,7 +503,7 @@ document
     const formData = new FormData();
 
     keys.forEach((key) => {
-      if (answers[key] === "nao") {
+      if (eProblema(key, answers[key])) {
         observacoesFinais += `[${perguntas[key]}]: ${observations[key]}\n`;
 
         if (images[key]) {
