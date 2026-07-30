@@ -350,7 +350,7 @@ $usuariosSistema = [
     ['Gisele', 'Nunes', 'lider', 'gisele.nunes@fiemg.com.br'],
     ['Alexandre', 'Barbosa', 'lider', 'alexandre.barbosa@fiemg.com.br'],
 
-    // USUÁRIOS ESPECÍFICOS SOLICITADOS
+    // INSTRUTORAS SOLICITADAS
     ['Bianca', 'Borges', 'instrutor', 'bianca.borges@fiemg.com.br'],
     ['Bruna', 'Fernanda', 'instrutor', 'bfernanda@fiemg.com.br'],
     ['Priscila', 'Vitorino', 'instrutor', 'priscila.vitorino@fiemg.com.br'],
@@ -719,9 +719,9 @@ try {
 
     echo "<b>Credenciais de Acesso de Teste:</b><br>";
     echo "• Líder Exemplo: <code>lenon.yuri@fiemg.com.br</code> | Senha: <code>senai123</code><br>";
-    echo "• Usuário Solicitado 1: <code>bianca.borges@fiemg.com.br</code> | Senha: <code>senai123</code><br>";
-    echo "• Usuário Solicitado 2: <code>bfernanda@fiemg.com.br</code> | Senha: <code>senai123</code><br>";
-    echo "• Usuário Solicitado 3: <code>priscila.vitorino@fiemg.com.br</code> | Senha: <code>senai123</code>";
+    echo "• Instrutora 1: <code>bianca.borges@fiemg.com.br</code> | Senha: <code>senai123</code><br>";
+    echo "• Instrutora 2: <code>bfernanda@fiemg.com.br</code> | Senha: <code>senai123</code><br>";
+    echo "• Instrutora 3: <code>priscila.vitorino@fiemg.com.br</code> | Senha: <code>senai123</code>";
 
 } catch (Exception $e) {
     if ($pdo->inTransaction()) {
