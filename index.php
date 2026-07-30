@@ -133,7 +133,7 @@ if (!isset($_SESSION['usuario_id']) || !in_array($cargo, ['instrutor', 'lider'])
                                 Inspecione microscópios, estufas analíticas, balanças, destiladores, cabine biológica e
                                 reagentes.
                             </p>
-                            <a href="ambiente/laboratorio102d.html" class="btn btn-success rounded-pill px-4 mt-2">
+                            <a href="ambiente/laboratorio102d.php" class="btn btn-success rounded-pill px-4 mt-2">
                                 Acessar <i class="bi bi-arrow-right ms-1"></i>
                             </a>
                         </div>
@@ -152,7 +152,7 @@ if (!isset($_SESSION['usuario_id']) || !in_array($cargo, ['instrutor', 'lider'])
                                 Inspecione a planta piloto de destilação, caldeiras de calor, condensadores, válvulas de
                                 escape e armários de instrumentos.
                             </p>
-                            <a href="ambiente/oficina101d.html" class="btn btn-success rounded-pill px-4 mt-2">
+                            <a href="ambiente/oficina101d.php" class="btn btn-success rounded-pill px-4 mt-2">
                                 Acessar <i class="bi bi-arrow-right ms-1"></i>
                             </a>
                         </div>
@@ -178,7 +178,7 @@ if (!isset($_SESSION['usuario_id']) || !in_array($cargo, ['instrutor', 'lider'])
                             <p class="card-text">
                                 Gerencie atribuições e verifique o andamento de rotinas adicionais de sexta-feira.
                             </p>
-                            <a href="administrador/lider.html" class="btn btn-outline-warning rounded-pill px-4 mt-2">
+                            <a href="administrador/lider.php" class="btn btn-outline-warning rounded-pill px-4 mt-2">
                                 Gerenciar <i class="bi bi-arrow-right ms-1"></i>
                             </a>
                         </div>

@@ -1,10 +1,21 @@
+<?php
+session_start();
+
+// Se não houver ID na sessão, redireciona imediatamente para o Login
+if (!isset($_SESSION['usuario_id'])) {
+    header('Location: ../acesso/login.html'); // Altere para o caminho do seu formulário de login
+    exit();
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inspeção - Oficina 101D (Microdestilaria) | Kamishibai</title>
+    <title>Inspeção - Laboratório 102D | Kamishibai</title>
 
     <!-- Bootstrap 5 + Ícones -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -13,14 +24,14 @@
     <!-- CSS Customizados -->
     <link rel="stylesheet" href="../assets/css/geral.css">
     <link rel="stylesheet" href="../assets/css/acessorios/acessorios.css">
-    <link rel="stylesheet" href="../assets/css/ambiente/oficina101d.css">
+    <link rel="stylesheet" href="../assets/css/ambiente/laboratorio102d.css">
 </head>
 
 <body class="bg-light">
     <!-- Cabeçalho Dinâmico -->
     <div id="header"></div>
 
-    <!-- Botão de Sair -->
+    <!-- Botão de Logout -->
     <div class="container d-flex justify-content-end mt-3">
         <a href="../acesso/api/logout.php" class="btn btn-outline-danger btn-sm rounded-pill">
             <i class="bi bi-box-arrow-right me-1"></i>Sair
@@ -30,9 +41,9 @@
     <main class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <!-- Status Geral da Planta -->
+                <!-- Status Geral da Sala -->
                 <div class="d-flex align-items-center mb-3 status-container">
-                    <span class="me-2 fw-semibold">Status da Microdestilaria 101D:</span>
+                    <span class="me-2 fw-semibold">Status do Laboratório 102D:</span>
                     <span id="statusLuz" class="badge bg-success">Conforme</span>
                 </div>
 
@@ -44,20 +55,20 @@
                 <!-- Formulário do Checklist -->
                 <form id="checklistForm" class="bg-white rounded-4 shadow-sm p-4 p-md-5">
 
-                    <!-- Campo: Nome do Inspetor/Instrutor -->
+                    <!-- Campo: Nome do Instrutor -->
                     <div class="mb-4">
                         <label for="nome" class="form-label fw-semibold">Nome do Instrutor</label>
                         <input type="text" class="form-control form-control-lg rounded-pill" id="nome" name="nome"
                             required placeholder="Digite seu nome completo">
                     </div>
 
-                    <!-- Representação Visual da Microdestilaria -->
+                    <!-- Representação Visual / Layout do Laboratório -->
                     <div class="mapa-sala-container mb-4 text-center">
-                        <img src="../assets/images/101d.jpeg" alt="Layout da Oficina de Processos 101D"
+                        <img src="../assets/images/102d.jpeg" alt="Layout do Laboratório 102D"
                             class="mapa-sala img-fluid rounded-3 shadow-xs">
                     </div>
 
-                    <!-- Container de Perguntas Injetadas por Etapa -->
+                    <!-- Container onde o Javascript injetará as perguntas por etapas (Bancadas/Armários) -->
                     <div id="questionsContainer"></div>
 
                     <!-- Bloco de perguntas adicionais para verificações de encerramento semanal (Sexta-feira) -->
@@ -70,7 +81,7 @@
                         </div>
                     </div>
 
-                    <!-- Botões de Navegação -->
+                    <!-- Botões de Navegação do Checklist Multi-etapas -->
                     <div class="d-flex flex-column flex-sm-row justify-content-between gap-3 mt-4">
                         <button type="button" id="prevBtn" class="btn btn-outline-secondary rounded-pill px-4" disabled>
                             <i class="bi bi-arrow-left me-1"></i>Anterior
@@ -84,7 +95,7 @@
                     </div>
                 </form>
 
-                <!-- Feedback Visual do Envio -->
+                <!-- Feedback Visual de Mensagens do Servidor -->
                 <div id="mensagem" class="mt-4"></div>
             </div>
         </div>
@@ -93,10 +104,13 @@
     <!-- Rodapé Dinâmico -->
     <div id="footer"></div>
 
+    <!-- Modais de Upload / Evidências de Não Conformidade -->
+    <!-- (Se o sistema requisitar envio de imagem ao marcar "Não Conforme", o arquivo JS se encarrega de acionar as caixas de upload necessárias) -->
+
     <!-- Scripts de Dependências -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/acessorios/componentes.js"></script>
-    <script src="../assets/js/ambiente/oficina101d.js"></script>
+    <script src="../assets/js/ambiente/laboratorio102d.js"></script>
     <script src="../assets/js/acesso/verificar_sessao_ambiente.js"></script>
 </body>
 
