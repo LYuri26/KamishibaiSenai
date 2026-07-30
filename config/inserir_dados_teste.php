@@ -2,10 +2,19 @@
 // =====================================================
 // INSERIR DADOS COMPLETOS 2022-2026 (KAMISHIBAI)
 // DELETA E RECRIA TODAS AS TABELAS DO BANCO DE DADOS
-// COM USUÁRIOS ESPECÍFICOS SOLICITADOS
+// LIMPA O CACHE DO SISTEMA E DO NAVEGADOR AUTOMATICAMENTE
 // =====================================================
 
 date_default_timezone_set('America/Sao_Paulo');
+
+// -----------------------------------------------------
+// IMPEDE CACHE DO NAVEGADOR / PROXY
+// -----------------------------------------------------
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
+header('Expires: Thu, 01 Jan 1970 00:00:00 GMT');
+header('Content-Type: text/html; charset=utf-8');
 
 // Tenta carregar o banco e a criptografia do sistema
 if (file_exists(__DIR__ . '/../../config/database.php')) {
@@ -25,7 +34,59 @@ if (file_exists(__DIR__ . '/../../config/database.php')) {
 set_time_limit(300);
 ini_set('memory_limit', '512M');
 
-header('Content-Type: text/html; charset=utf-8');
+// =====================================================
+// FUNÇÃO PARA LIMPAR O CACHE DO SISTEMA (OPCACHE / APCu / PASTAS)
+// =====================================================
+function limparCacheSistema()
+{
+    $logs = [];
+
+    // 1. Reseta OPcache do PHP (Bytecode Cache)
+    if (function_exists('opcache_reset')) {
+        if (@opcache_reset()) {
+            $logs[] = "OPcache do PHP resetado com sucesso.";
+        }
+    }
+
+    // 2. Limpa Cache APCu (se ativo)
+    if (function_exists('apcu_clear_cache')) {
+        if (@apcu_clear_cache()) {
+            $logs[] = "Cache APCu limpo com sucesso.";
+        }
+    }
+
+    // 3. Limpa o Realpath Cache do PHP
+    clearstatcache(true);
+    $logs[] = "Cache de estado de arquivos (Realpath) limpo.";
+
+    // 4. Limpa pastas locais de cache temporário (se existirem)
+    $pastasCache = [
+        __DIR__ . '/cache',
+        __DIR__ . '/tmp',
+        __DIR__ . '/../../cache',
+        __DIR__ . '/../cache',
+        __DIR__ . '/../../tmp'
+    ];
+
+    foreach ($pastasCache as $pasta) {
+        if (is_dir($pasta)) {
+            $arquivos = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($pasta, RecursiveDirectoryIterator::SKIP_DOTS),
+                RecursiveIteratorIterator::CHILD_FIRST
+            );
+            foreach ($arquivos as $fileinfo) {
+                $acao = $fileinfo->isDir() ? 'rmdir' : 'unlink';
+                @$acao($fileinfo->getRealPath());
+            }
+            $logs[] = "Arquivos da pasta de cache local ('" . basename($pasta) . "') excluídos.";
+        }
+    }
+
+    return $logs;
+}
+
+// Executa a limpeza do cache
+$logsCache = limparCacheSistema();
 
 // =====================================================
 // 1. DELETAR E RECRIAR TABELAS (RESET COMPLETO DE ESTRUTURA E DADOS)
@@ -647,6 +708,15 @@ try {
     $pdo->commit();
     echo "<hr><strong>🎉 Processamento concluído com sucesso!</strong><br>";
     echo "Foram inseridos <b>$totalInsercoes</b> registros no banco recriado.<br><br>";
+
+    if (!empty($logsCache)) {
+        echo "<b>Status do Cache do Sistema:</b><br>";
+        foreach ($logsCache as $log) {
+            echo "• $log<br>";
+        }
+        echo "<br>";
+    }
+
     echo "<b>Credenciais de Acesso de Teste:</b><br>";
     echo "• Líder Exemplo: <code>lenon.yuri@fiemg.com.br</code> | Senha: <code>senai123</code><br>";
     echo "• Usuário Solicitado 1: <code>bianca.borges@fiemg.com.br</code> | Senha: <code>senai123</code><br>";
