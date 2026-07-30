@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+// Acesso permitido EXCLUSIVAMENTE para o cargo 'lider'
+if (!isset($_SESSION['usuario_id']) || ($_SESSION['usuario_cargo'] ?? '') !== 'lider') {
+    header('Location: ../acesso/login.html');
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -145,15 +154,15 @@
                     <li><strong>Tendência</strong>: inclinação analítica que indica crescimento ou redução na taxa de
                         erros a longo prazo.</li>
                     <li><strong>Sazonalidade</strong>: padrões periódicos de flutuação que se repetem de maneira cíclica
-                        a cada 3 meses (ex.: picos em finais de semestres acadêmicos).</li>
+                        a cada 3 meses.</li>
                 </ul>
-                <p>O erro médio absoluto (MAE) é calculado para indicar a precisão média estimada do ajuste matemático
+                <p>O erro médio absoluto (MAE) é calculated para indicar a precisão média estimada do ajuste matemático
                     do algoritmo. Menores valores de erro representam estimativas mais assertivas.</p>
                 <div id="componentesDetalhes" style="display: none;" class="mt-2 p-3 rounded small"></div>
             </div>
         </div>
 
-        <!-- Tabela de Ocorrências Críticas (Ranking) -->
+        <!-- Tabela de Ocorrências Críticas -->
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-white">
                 <h5 class="mb-0"><i class="bi bi-sort-down me-2 text-danger"></i>Pontos Críticos / Itens Problemáticos
@@ -193,7 +202,7 @@
 
         <!-- Botão Voltar -->
         <div class="mt-4">
-            <a href="index.html" class="btn btn-outline-secondary rounded-pill">
+            <a href="index.php" class="btn btn-outline-secondary rounded-pill">
                 <i class="bi bi-arrow-left me-1"></i>Voltar para o Painel Geral
             </a>
         </div>

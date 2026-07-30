@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+// Acesso permitido EXCLUSIVAMENTE para o cargo 'lider'
+if (!isset($_SESSION['usuario_id']) || ($_SESSION['usuario_cargo'] ?? '') !== 'lider') {
+    header('Location: ../acesso/login.html');
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -46,7 +55,7 @@
 
         <!-- Botão Voltar Rodapé -->
         <div class="mt-4">
-            <a href="index.html" class="btn btn-outline-secondary rounded-pill">
+            <a href="index.php" class="btn btn-outline-secondary rounded-pill">
                 <i class="bi bi-arrow-left me-1"></i>Voltar para listagem
             </a>
         </div>
@@ -55,7 +64,7 @@
     <!-- Rodapé Dinâmico -->
     <div id="footer"></div>
 
-    <!-- Modal de Visualização de Imagem Ampliada (Zoom de Evidências) -->
+    <!-- Modal de Visualização de Imagem Ampliada -->
     <div class="modal fade" id="imageZoomModal" tabindex="-1" aria-labelledby="imageZoomModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content bg-transparent border-0">

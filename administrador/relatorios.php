@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+// Acesso permitido EXCLUSIVAMENTE para o cargo 'lider'
+if (!isset($_SESSION['usuario_id']) || ($_SESSION['usuario_cargo'] ?? '') !== 'lider') {
+    header('Location: ../acesso/login.html');
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -33,21 +42,18 @@
     </div>
 
     <main class="container">
-        <!-- Central de Filtros Responsiva (Intervalo de Período e Sala) -->
+        <!-- Central de Filtros Responsiva -->
         <div class="d-flex flex-wrap gap-3 align-items-center mb-4 bg-white p-3 rounded-4 shadow-sm border-0">
-            <!-- Filtro de Data Inicial -->
             <div class="d-flex gap-2 align-items-center">
                 <label for="filtroDataInicio" class="form-label fw-semibold mb-0">De:</label>
                 <input type="date" id="filtroDataInicio" class="form-control w-auto rounded-pill">
             </div>
 
-            <!-- Filtro de Data Final -->
             <div class="d-flex gap-2 align-items-center">
                 <label for="filtroDataFim" class="form-label fw-semibold mb-0">Até:</label>
                 <input type="date" id="filtroDataFim" class="form-control w-auto rounded-pill">
             </div>
 
-            <!-- Filtro de Sala -->
             <div class="d-flex gap-2 align-items-center">
                 <label for="filtroSala" class="form-label fw-semibold mb-0">Sala:</label>
                 <select id="filtroSala" class="form-select w-auto rounded-pill">
@@ -60,13 +66,11 @@
                 </select>
             </div>
 
-            <!-- Botão de Ação do Filtro -->
             <button id="btnFiltrar" class="btn btn-primary rounded-pill px-4 d-flex align-items-center">
                 <i class="bi bi-funnel-fill me-1"></i>Filtrar
             </button>
 
-            <!-- Link Alternativo de Retorno -->
-            <a href="index.html" class="btn btn-outline-secondary rounded-pill ms-auto">
+            <a href="index.php" class="btn btn-outline-secondary rounded-pill ms-auto">
                 <i class="bi bi-arrow-left me-1"></i>Voltar para listagem
             </a>
         </div>
@@ -83,25 +87,24 @@
 
         <!-- Link Rápido para a Central de IA -->
         <div class="mb-4 mt-4">
-            <a href="analise_ia.html"
+            <a href="analise_ia.php"
                 class="btn btn-primary rounded-pill px-4 py-2 shadow-sm d-inline-flex align-items-center">
                 <i class="bi bi-cpu-fill me-2"></i>Acessar Análise Preditiva (IA)
             </a>
         </div>
     </main>
 
-    <!-- MODAL DE VISUALIZAÇÃO DE IMAGENS (EVIDÊNCIAS DE FALHA) -->
+    <!-- MODAL DE VISUALIZAÇÃO DE IMAGENS -->
     <div class="modal fade" id="modalImagens" tabindex="-1" aria-labelledby="modalImagensLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content shadow-lg border-0">
                 <div class="modal-header">
-                    <h5 class="modal-title id=" modalImagensLabel" class="fw-bold">
+                    <h5 class="modal-title fw-bold" id="modalImagensLabel">
                         <i class="bi bi-images me-2 text-warning"></i>Galeria de Evidências Anexadas
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- As miniaturas de imagens serão renderizadas aqui via JS -->
                     <div id="modalImagensContainer" class="d-flex flex-wrap gap-3 justify-content-center py-4"></div>
                 </div>
             </div>

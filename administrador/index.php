@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+// Acesso permitido EXCLUSIVAMENTE para o cargo 'lider'
+if (!isset($_SESSION['usuario_id']) || ($_SESSION['usuario_cargo'] ?? '') !== 'lider') {
+    header('Location: ../acesso/login.html');
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -47,7 +56,7 @@
         <!-- Grade de Navegação Rápida (Módulos de Controle) -->
         <section class="row g-3 mb-4" aria-label="Módulos de governança e controle">
             <div class="col-12 col-md-6 col-lg-3">
-                <a href="relatorios.html" class="card nav-card text-decoration-none h-100 shadow-sm border-0">
+                <a href="relatorios.php" class="card nav-card text-decoration-none h-100 shadow-sm border-0">
                     <div class="card-body text-center p-4">
                         <div class="icon-circle bg-gradient-success text-white mb-3 mx-auto">
                             <i class="bi bi-clipboard-data-fill"></i>
@@ -60,7 +69,7 @@
             </div>
 
             <div class="col-12 col-md-6 col-lg-3">
-                <a href="analise_ia.html" class="card nav-card text-decoration-none h-100 shadow-sm border-0">
+                <a href="analise_ia.php" class="card nav-card text-decoration-none h-100 shadow-sm border-0">
                     <div class="card-body text-center p-4">
                         <div class="icon-circle bg-gradient-success text-white mb-3 mx-auto">
                             <i class="bi bi-cpu-fill"></i>
@@ -73,7 +82,7 @@
             </div>
 
             <div class="col-12 col-md-6 col-lg-3">
-                <a href="lider.html" class="card nav-card text-decoration-none h-100 shadow-sm border-0">
+                <a href="lider.php" class="card nav-card text-decoration-none h-100 shadow-sm border-0">
                     <div class="card-body text-center p-4">
                         <div class="icon-circle bg-gradient-warning text-white mb-3 mx-auto">
                             <i class="bi bi-people-fill text-dark"></i>
@@ -86,7 +95,7 @@
             </div>
 
             <div class="col-12 col-md-6 col-lg-3">
-                <a href="editar_usuarios.html" class="card nav-card text-decoration-none h-100 shadow-sm border-0">
+                <a href="editar_usuarios.php" class="card nav-card text-decoration-none h-100 shadow-sm border-0">
                     <div class="card-body text-center p-4">
                         <div class="icon-circle bg-gradient-secondary text-white mb-3 mx-auto">
                             <i class="bi bi-person-gear"></i>
@@ -99,7 +108,7 @@
             </div>
         </section>
 
-        <!-- Central de Filtros e Busca Rápida (Nova Funcionalidade) -->
+        <!-- Central de Filtros e Busca Rápida -->
         <section class="row g-3 mb-4 bg-white rounded-4 p-3 shadow-sm border-0 align-items-center mx-1"
             aria-label="Filtros de busca rápida">
             <div class="col-12 col-md-5">

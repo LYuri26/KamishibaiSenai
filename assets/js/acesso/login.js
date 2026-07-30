@@ -5,6 +5,7 @@ document.getElementById("formLogin").addEventListener("submit", async (e) => {
   const senha = document.getElementById("senha").value;
 
   try {
+    // Aponta para a API em PHP
     const response = await fetch("api/login.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -14,46 +15,65 @@ document.getElementById("formLogin").addEventListener("submit", async (e) => {
     const result = await response.json();
 
     if (result.sucesso) {
-      exibirMensagem(`Bem-vindo, ${result.nome}! Redirecionando...`, "success");
+      const nomeUsuario = result.nome ? `, ${result.nome}` : "";
+      exibirMensagem(`Bem-vindo${nomeUsuario}! Redirecionando...`, "success");
 
-      const redirect = sessionStorage.getItem("redirectAfterLogin");
+      let redirect = sessionStorage.getItem("redirectAfterLogin");
 
       if (redirect) {
         sessionStorage.removeItem("redirectAfterLogin");
+
+        // CORREÇÃO CRÍTICA: Substitui qualquer referência .html por .php
+        redirect = redirect.replace(/\.html$/i, ".php");
         window.location.href = redirect;
         return;
       }
 
+      // REDIRECIONAMENTO PADRÃO APONTANDO PARA .PHP
       if (result.cargo === "lider") {
-        window.location.href = "../administrador/index.html";
+        window.location.href = "../administrador/index.php";
       } else {
-        window.location.href = "../ambiente/sala104a.html";
+        window.location.href = "../index.php";
       }
     } else {
       exibirMensagem(result.erro, "danger");
     }
-  } catch {
-    exibirMensagem("Erro na comunicação com o servidor", "danger");
+  } catch (error) {
+    console.error("Erro no login:", error);
+    exibirMensagem(
+      "Erro na comunicação com o servidor. Tente novamente.",
+      "danger",
+    );
   }
 });
 
 function exibirMensagem(texto, tipo) {
-  document.getElementById("mensagem").innerHTML =
-    `<div class="alert alert-${tipo}">${texto}</div>`;
+  const msgElement = document.getElementById("mensagem");
+  if (msgElement) {
+    msgElement.innerHTML = `<div class="alert alert-${tipo}">${texto}</div>`;
+  }
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    // Chama install.php para garantir que as tabelas existam
+    // Limpa redirecionamento antigo se for .html residual
+    const redirectSalvo = sessionStorage.getItem("redirectAfterLogin");
+    if (redirectSalvo && redirectSalvo.endsWith(".html")) {
+      sessionStorage.setItem(
+        "redirectAfterLogin",
+        redirectSalvo.replace(/\.html$/i, ".php"),
+      );
+    }
+
+    // Executa verificação inicial da estrutura do banco
     const response = await fetch("../config/install.php");
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
-    // install.php retorna texto, não JSON. Apenas confirmamos que foi executado.
+
     const text = await response.text();
-    console.log("Install executado:", text);
-    exibirMensagem("Sistema configurado com sucesso!", "success");
-    // Habilita o botão de login (já está habilitado, mas caso tenha sido desabilitado)
+    console.log("Instalação/Verificação do banco executada:", text);
+
     const submitBtn = document.querySelector(
       "#formLogin button[type='submit']",
     );

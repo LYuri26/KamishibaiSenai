@@ -1,27 +1,35 @@
+<?php
+session_start();
+
+// Se não houver ID na sessão, redireciona imediatamente para o Login
+if (!isset($_SESSION['usuario_id'])) {
+    header('Location: ../acesso/login.html'); // Altere para o caminho do seu formulário de login
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inspeção - Oficina de Soldagem 102C | Kamishibai</title>
+    <title>Inspeção - Sala 104a | Kamishibai</title>
 
     <!-- Bootstrap 5 + Ícones -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
-    <!-- CSS -->
+    <!-- CSS customizados -->
     <link rel="stylesheet" href="../assets/css/geral.css">
     <link rel="stylesheet" href="../assets/css/acessorios/acessorios.css">
-    <link rel="stylesheet" href="../assets/css/ambiente/oficina102c.css">
+    <link rel="stylesheet" href="../assets/css/ambiente/sala104a.css">
 </head>
 
 <body class="bg-light">
-
-    <!-- Header -->
+    <!-- Cabeçalho genérico (será carregado via JS) -->
     <div id="header"></div>
 
-    <!-- Logout -->
+    <!-- Botão de logout específico da página -->
     <div class="container d-flex justify-content-end mt-3">
         <a href="../acesso/api/logout.php" class="btn btn-outline-danger btn-sm rounded-pill">
             <i class="bi bi-box-arrow-right me-1"></i>Sair
@@ -31,35 +39,29 @@
     <main class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-
-                <!-- STATUS -->
                 <div class="d-flex align-items-center mb-3 status-container">
-                    <span class="me-2 fw-semibold">Status da Oficina:</span>
+                    <span class="me-2 fw-semibold">Status da Sala:</span>
                     <span id="statusLuz" class="badge bg-success">Conforme</span>
                 </div>
-
-                <!-- PROGRESSO -->
+                <!-- Barra de progresso -->
                 <div class="progress mb-4" style="height: 0.75rem;">
                     <div class="progress-bar bg-primary" role="progressbar" style="width: 0%;" id="progressBar">0%</div>
                 </div>
 
-                <!-- FORM -->
+                <!-- Formulário -->
                 <form id="checklistForm" class="bg-white rounded-4 shadow-sm p-4 p-md-5">
-
-                    <!-- Instrutor -->
+                    <!-- Nome do instrutor -->
                     <div class="mb-4">
                         <label for="nome" class="form-label fw-semibold">Nome do Instrutor</label>
                         <input type="text" class="form-control form-control-lg rounded-pill" id="nome" name="nome"
                             required placeholder="Digite seu nome completo">
                     </div>
 
-                    <!-- MAPA / FOTO DA OFICINA -->
                     <div class="mapa-sala-container mb-4">
-                        <img src="../assets/images/102c.png" alt="Mapa da Oficina de Soldagem 102C"
-                            class="mapa-sala img-fluid">
+                        <img src="../assets/images/104a.jpeg" alt="Mapa da Sala 104a" class="mapa-sala img-fluid">
                     </div>
 
-                    <!-- PERGUNTAS -->
+                    <!-- Container das perguntas -->
                     <div id="questionsContainer"></div>
 
                     <!-- Bloco de perguntas extras (inicialmente oculto) -->
@@ -71,40 +73,34 @@
                         </div>
                     </div>
 
-                    <!-- NAVEGAÇÃO -->
+                    <!-- Botões de navegação -->
                     <div class="d-flex flex-column flex-sm-row justify-content-between gap-3 mt-4">
-
                         <button type="button" id="prevBtn" class="btn btn-outline-secondary rounded-pill px-4" disabled>
                             <i class="bi bi-arrow-left me-1"></i>Anterior
                         </button>
-
                         <button type="button" id="nextBtn" class="btn btn-primary rounded-pill px-4">
                             Próximo<i class="bi bi-arrow-right ms-1"></i>
                         </button>
-
                         <button type="submit" id="submitBtn" class="btn btn-success rounded-pill px-4 d-none">
                             <i class="bi bi-check-lg me-1"></i>Finalizar Inspeção
                         </button>
-
                     </div>
                 </form>
 
-                <!-- FEEDBACK -->
+                <!-- Mensagens -->
                 <div id="mensagem" class="mt-4"></div>
-
             </div>
         </div>
     </main>
 
-    <!-- Footer -->
+    <!-- Rodapé genérico -->
     <div id="footer"></div>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/acessorios/componentes.js"></script>
-    <script src="../assets/js/ambiente/oficina102c.js"></script>
+    <script src="../assets/js/ambiente/sala104a.js"></script>
     <script src="../assets/js/acesso/verificar_sessao_ambiente.js"></script>
-
 </body>
 
 </html>
