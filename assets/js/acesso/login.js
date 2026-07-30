@@ -5,7 +5,6 @@ document.getElementById("formLogin").addEventListener("submit", async (e) => {
   const senha = document.getElementById("senha").value;
 
   try {
-    // Aponta para a API em PHP
     const response = await fetch("api/login.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -23,13 +22,13 @@ document.getElementById("formLogin").addEventListener("submit", async (e) => {
       if (redirect) {
         sessionStorage.removeItem("redirectAfterLogin");
 
-        // CORREÇÃO CRÍTICA: Substitui qualquer referência .html por .php
-        redirect = redirect.replace(/\.html$/i, ".php");
+        // CONVERSÃO GLOBAL: Troca qualquer .html por .php na URL salva
+        redirect = redirect.replace(/\.html/gi, ".php");
         window.location.href = redirect;
         return;
       }
 
-      // REDIRECIONAMENTO PADRÃO APONTANDO PARA .PHP
+      // REDIRECIONAMENTO PADRÃO
       if (result.cargo === "lider") {
         window.location.href = "../administrador/index.php";
       } else {
@@ -56,12 +55,12 @@ function exibirMensagem(texto, tipo) {
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    // Limpa redirecionamento antigo se for .html residual
-    const redirectSalvo = sessionStorage.getItem("redirectAfterLogin");
-    if (redirectSalvo && redirectSalvo.endsWith(".html")) {
+    // Garante que o redirect salvo no sessionStorage não seja .html
+    let redirectSalvo = sessionStorage.getItem("redirectAfterLogin");
+    if (redirectSalvo && redirectSalvo.includes(".html")) {
       sessionStorage.setItem(
         "redirectAfterLogin",
-        redirectSalvo.replace(/\.html$/i, ".php"),
+        redirectSalvo.replace(/\.html/gi, ".php"),
       );
     }
 

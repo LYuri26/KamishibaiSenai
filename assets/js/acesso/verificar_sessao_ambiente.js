@@ -4,14 +4,16 @@ async function verificarSessao() {
     const data = await response.json();
 
     if (!data.logado) {
-      // Salva página atual antes do redirect
-      sessionStorage.setItem("redirectAfterLogin", window.location.href);
+      // Salva a página atual garantindo que a extensão seja sempre .php
+      const urlCorrigida = window.location.href.replace(/\.html/gi, ".php");
+      sessionStorage.setItem("redirectAfterLogin", urlCorrigida);
 
       window.location.href = "../acesso/login.html";
     }
   } catch (error) {
-    // Em caso de erro, assume não autenticado
-    sessionStorage.setItem("redirectAfterLogin", window.location.href);
+    // Em caso de erro, assume não autenticado e salva a URL corrigida
+    const urlCorrigida = window.location.href.replace(/\.html/gi, ".php");
+    sessionStorage.setItem("redirectAfterLogin", urlCorrigida);
 
     window.location.href = "../acesso/login.html";
   }
