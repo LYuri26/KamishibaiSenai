@@ -1,6 +1,8 @@
 <?php
 // =====================================================
-// INSERIR DADOS COMPLETOS 2022-2026 (KAMISHIBAI) - CORRIGIDO
+// INSERIR DADOS COMPLETOS 2022-2026 (KAMISHIBAI)
+// DELETA E RECRIA TODAS AS TABELAS DO BANCO DE DADOS
+// COM USUÁRIOS ESPECÍFICOS SOLICITADOS
 // =====================================================
 
 date_default_timezone_set('America/Sao_Paulo');
@@ -19,33 +21,259 @@ if (file_exists(__DIR__ . '/../../config/database.php')) {
     }
 }
 
-// Configurando limites de tempo e memória para não travar a execução
+// Configurando limites de tempo e memória
 set_time_limit(300);
 ini_set('memory_limit', '512M');
 
 header('Content-Type: text/html; charset=utf-8');
 
 // =====================================================
-// 1. LIMPAR TABELAS (RESET COMPLETO DOS DADOS)
+// 1. DELETAR E RECRIAR TABELAS (RESET COMPLETO DE ESTRUTURA E DADOS)
 // =====================================================
 
 try {
     $pdo->exec("SET FOREIGN_KEY_CHECKS = 0");
 
-    $pdo->exec("TRUNCATE TABLE responsaveis");
-    $pdo->exec("TRUNCATE TABLE usuarios");
-    $pdo->exec("TRUNCATE TABLE relatorios");
-    $pdo->exec("TRUNCATE TABLE `104a`");
-    $pdo->exec("TRUNCATE TABLE `103d`");
-    $pdo->exec("TRUNCATE TABLE `102c`");
-    $pdo->exec("TRUNCATE TABLE `102d`");
-    $pdo->exec("TRUNCATE TABLE `101d`");
+    // Deleta tabelas existentes
+    $pdo->exec("DROP TABLE IF EXISTS responsaveis");
+    $pdo->exec("DROP TABLE IF EXISTS usuarios");
+    $pdo->exec("DROP TABLE IF EXISTS relatorios");
+    $pdo->exec("DROP TABLE IF EXISTS `104a`");
+    $pdo->exec("DROP TABLE IF EXISTS `103d`");
+    $pdo->exec("DROP TABLE IF EXISTS `102c`");
+    $pdo->exec("DROP TABLE IF EXISTS `102d`");
+    $pdo->exec("DROP TABLE IF EXISTS `101d`");
+
+    // Recria a Tabela 104a
+    $pdo->exec("CREATE TABLE `104a` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `nome` VARCHAR(100) NOT NULL,
+        `data` DATETIME NOT NULL,
+        `momento` ENUM('inicio','fim') NOT NULL,
+        `observacoes` TEXT,
+        `carteiras_organizadas` ENUM('sim','nao') NOT NULL,
+        `carteiras_quantidade` ENUM('sim','nao') NOT NULL,
+        `carteiras_danificadas` ENUM('sim','nao') NOT NULL,
+        `tv_presente` ENUM('sim','nao') NOT NULL,
+        `tv_integra` ENUM('sim','nao') NOT NULL,
+        `tv_hdmi` ENUM('sim','nao') NOT NULL,
+        `tv_cabos_organizados` ENUM('sim','nao') NOT NULL,
+        `tv_conectada` ENUM('sim','nao') NOT NULL,
+        `tv_cabos_ok` ENUM('sim','nao') NOT NULL,
+        `ar_presentes` ENUM('sim','nao') NOT NULL,
+        `ar_controle` ENUM('sim','nao') NOT NULL,
+        `ar_danos` ENUM('sim','nao') NOT NULL,
+        `quadro_limpo` ENUM('sim','nao') NOT NULL,
+        `quadro_danos` ENUM('sim','nao') NOT NULL,
+        `quadro_fixo` ENUM('sim','nao') NOT NULL,
+        `porta_funciona` ENUM('sim','nao') NOT NULL,
+        `janelas_intactas` ENUM('sim','nao') NOT NULL,
+        `janelas_vidros` ENUM('sim','nao') NOT NULL,
+        `tomadas_intactas` ENUM('sim','nao') NOT NULL,
+        `tomadas_fios` ENUM('sim','nao') NOT NULL,
+        `tomadas_adaptadores` ENUM('sim','nao') NOT NULL,
+        `mesa_firme` ENUM('sim','nao') NOT NULL,
+        `mesa_gavetas` ENUM('sim','nao') NOT NULL,
+        `cadeira_integra` ENUM('sim','nao') NOT NULL,
+        `verificacao_sexta` JSON NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+    // Recria a Tabela 103d
+    $pdo->exec("CREATE TABLE `103d` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `nome` VARCHAR(100) NOT NULL,
+        `data` DATETIME NOT NULL,
+        `momento` ENUM('inicio','fim') NOT NULL,
+        `observacoes` TEXT,
+        `computadores_ligam` ENUM('sim','nao') NOT NULL,
+        `mouses_funcionam` ENUM('sim','nao') NOT NULL,
+        `teclados_funcionam` ENUM('sim','nao') NOT NULL,
+        `monitores_funcionam` ENUM('sim','nao') NOT NULL,
+        `gabinetes_estado` ENUM('sim','nao') NOT NULL,
+        `cadeiras_baias` ENUM('sim','nao') NOT NULL,
+        `ar_condicionado_funciona` ENUM('sim','nao') NOT NULL,
+        `quadro_limpo` ENUM('sim','nao') NOT NULL,
+        `mesa_instrutor` ENUM('sim','nao') NOT NULL,
+        `cadeira_instrutor` ENUM('sim','nao') NOT NULL,
+        `portao_funciona` ENUM('sim','nao') NOT NULL,
+        `janelas_intactas` ENUM('sim','nao') NOT NULL,
+        `tomadas_intactas` ENUM('sim','nao') NOT NULL,
+        `fios_expostos` ENUM('sim','nao') NOT NULL,
+        `verificacao_sexta` JSON NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+    // Recria a Tabela 102c
+    $pdo->exec("CREATE TABLE `102c` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `nome` VARCHAR(100) NOT NULL,
+        `data` DATETIME NOT NULL,
+        `momento` ENUM('inicio','fim') NOT NULL,
+        `observacoes` TEXT,
+        `portao_funciona` ENUM('sim','nao') NOT NULL,
+        `instrutor_epi` ENUM('sim','nao') NOT NULL,
+        `box1_epi_completo` ENUM('sim','nao') NOT NULL,
+        `box1_ferramentas_ok` ENUM('sim','nao') NOT NULL,
+        `box1_organizacao` ENUM('sim','nao') NOT NULL,
+        `box2_epi_completo` ENUM('sim','nao') NOT NULL,
+        `box2_ferramentas_ok` ENUM('sim','nao') NOT NULL,
+        `box2_organizacao` ENUM('sim','nao') NOT NULL,
+        `box3_epi_completo` ENUM('sim','nao') NOT NULL,
+        `box3_ferramentas_ok` ENUM('sim','nao') NOT NULL,
+        `box3_organizacao` ENUM('sim','nao') NOT NULL,
+        `box4_epi_completo` ENUM('sim','nao') NOT NULL,
+        `box4_ferramentas_ok` ENUM('sim','nao') NOT NULL,
+        `box4_organizacao` ENUM('sim','nao') NOT NULL,
+        `box5_epi_completo` ENUM('sim','nao') NOT NULL,
+        `box5_ferramentas_ok` ENUM('sim','nao') NOT NULL,
+        `box5_organizacao` ENUM('sim','nao') NOT NULL,
+        `box6_epi_completo` ENUM('sim','nao') NOT NULL,
+        `box6_ferramentas_ok` ENUM('sim','nao') NOT NULL,
+        `box7_epi_completo` ENUM('sim','nao') NOT NULL,
+        `box7_ferramentas_ok` ENUM('sim','nao') NOT NULL,
+        `box7_organizacao` ENUM('sim','nao') NOT NULL,
+        `box8_epi_completo` ENUM('sim','nao') NOT NULL,
+        `box8_ferramentas_ok` ENUM('sim','nao') NOT NULL,
+        `box8_organizacao` ENUM('sim','nao') NOT NULL,
+        `box9_epi_completo` ENUM('sim','nao') NOT NULL,
+        `box9_ferramentas_ok` ENUM('sim','nao') NOT NULL,
+        `box9_organizacao` ENUM('sim','nao') NOT NULL,
+        `box10_epi_completo` ENUM('sim','nao') NOT NULL,
+        `box10_ferramentas_ok` ENUM('sim','nao') NOT NULL,
+        `box10_organizacao` ENUM('sim','nao') NOT NULL,
+        `area_limpa` ENUM('sim','nao') NOT NULL,
+        `area_organizacao` ENUM('sim','nao') NOT NULL,
+        `equipamentos_local` ENUM('sim','nao') NOT NULL,
+        `macarico_ok` ENUM('sim','nao') NOT NULL,
+        `estufa_ok` ENUM('sim','nao') NOT NULL,
+        `verificacao_sexta` JSON NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+    // Recria a Tabela 102d (Checklist Química - 7 Seções)
+    $pdo->exec("CREATE TABLE `102d` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `nome` VARCHAR(100) NOT NULL,
+        `data` DATETIME NOT NULL,
+        `momento` ENUM('inicio','fim') NOT NULL,
+        `observacoes` TEXT,
+        `org_bancadas_limpas` ENUM('sim','nao') NOT NULL,
+        `org_bancadas_organizadas` ENUM('sim','nao') NOT NULL,
+        `org_cadeiras_organizadas` ENUM('sim','nao') NOT NULL,
+        `org_materiais_guardados` ENUM('sim','nao') NOT NULL,
+        `org_armarios_fechados` ENUM('sim','nao') NOT NULL,
+        `org_quadro_limpo` ENUM('sim','nao') NOT NULL,
+        `org_piso_limpo` ENUM('sim','nao') NOT NULL,
+        `org_corredores_desobstruidos` ENUM('sim','nao') NOT NULL,
+        `seg_extintor_acessivel` ENUM('sim','nao') NOT NULL,
+        `seg_chuveiro_emergencia_ok` ENUM('sim','nao') NOT NULL,
+        `seg_lava_olhos_ok` ENUM('sim','nao') NOT NULL,
+        `seg_kit_primeiros_socorros` ENUM('sim','nao') NOT NULL,
+        `seg_saidas_emergencia_livres` ENUM('sim','nao') NOT NULL,
+        `seg_sinalizacao_visivel` ENUM('sim','nao') NOT NULL,
+        `seg_produtos_quimicos_identificados` ENUM('sim','nao') NOT NULL,
+        `seg_fispqs_disponiveis` ENUM('sim','nao') NOT NULL,
+        `eq_balanca_limpa` ENUM('sim','nao') NOT NULL,
+        `eq_balanca_desligada` ENUM('sim','nao') NOT NULL,
+        `eq_phmetro_limpo` ENUM('sim','nao') NOT NULL,
+        `eq_condutivimetro_limpo` ENUM('sim','nao') NOT NULL,
+        `eq_espectrofotometro_limpo` ENUM('sim','nao') NOT NULL,
+        `eq_estufa_desligada` ENUM('sim','nao') NOT NULL,
+        `eq_autoclave_desligada` ENUM('sim','nao') NOT NULL,
+        `eq_equipamentos_desligados` ENUM('sim','nao') NOT NULL,
+        `eq_equipamentos_sem_avarias` ENUM('sim','nao') NOT NULL,
+        `vid_vidrarias_limpas` ENUM('sim','nao') NOT NULL,
+        `vid_vidrarias_secas` ENUM('sim','nao') NOT NULL,
+        `vid_vidrarias_guardadas` ENUM('sim','nao') NOT NULL,
+        `vid_existe_vidraria_quebrada` ENUM('sim','nao') NOT NULL,
+        `pq_frascos_identificados` ENUM('sim','nao') NOT NULL,
+        `pq_frascos_fechados` ENUM('sim','nao') NOT NULL,
+        `pq_produtos_armazenados` ENUM('sim','nao') NOT NULL,
+        `pq_residuos_descartados` ENUM('sim','nao') NOT NULL,
+        `enc_pia_limpa` ENUM('sim','nao') NOT NULL,
+        `enc_torneiras_fechadas` ENUM('sim','nao') NOT NULL,
+        `enc_gas_fechado` ENUM('sim','nao') NOT NULL,
+        `enc_agua_fechada` ENUM('sim','nao') NOT NULL,
+        `enc_equipamentos_desligados` ENUM('sim','nao') NOT NULL,
+        `enc_ar_condicionado_desligado` ENUM('sim','nao') NOT NULL,
+        `enc_luzes_apagadas` ENUM('sim','nao') NOT NULL,
+        `enc_porta_trancada` ENUM('sim','nao') NOT NULL,
+        `enc_lixeiras_esvaziadas` ENUM('sim','nao') NOT NULL,
+        `nc_encontrada` ENUM('sim','nao') NOT NULL,
+        `verificacao_sexta` JSON NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+    // Recria a Tabela 101d
+    $pdo->exec("CREATE TABLE `101d` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `nome` VARCHAR(100) NOT NULL,
+        `data` DATETIME NOT NULL,
+        `momento` ENUM('inicio','fim') NOT NULL,
+        `observacoes` TEXT,
+        `porta_janelas_ok` ENUM('sim','nao') NOT NULL,
+        `ar_condicionado_ok` ENUM('sim','nao') NOT NULL,
+        `bancadas_limpas` ENUM('sim','nao') NOT NULL,
+        `tomadas_fios_ok` ENUM('sim','nao') NOT NULL,
+        `microscopios_b1_quantidade` ENUM('sim','nao') NOT NULL,
+        `microscopios_b1_integros` ENUM('sim','nao') NOT NULL,
+        `estufa_incubadora_b2_ok` ENUM('sim','nao') NOT NULL,
+        `blocos_digestores_b2_ok` ENUM('sim','nao') NOT NULL,
+        `balancas_analiticas_b3_ok` ENUM('sim','nao') NOT NULL,
+        `centrifugas_extracao_b3_ok` ENUM('sim','nao') NOT NULL,
+        `destilador_b4_ok` ENUM('sim','nao') NOT NULL,
+        `cabine_seguranca_csb_ok` ENUM('sim','nao') NOT NULL,
+        `microscopio_camera_desktop_ok` ENUM('sim','nao') NOT NULL,
+        `rotaevaporador_gerber_vortex_ok` ENUM('sim','nao') NOT NULL,
+        `estufas_forno_mufla_ok` ENUM('sim','nao') NOT NULL,
+        `refrigerador_microondas_ok` ENUM('sim','nao') NOT NULL,
+        `armario1_medidores_agua_ok` ENUM('sim','nao') NOT NULL,
+        `armario2_3_phgametros_banhos_ok` ENUM('sim','nao') NOT NULL,
+        `armario5_6_aquecimento_agitacao_ok` ENUM('sim','nao') NOT NULL,
+        `armario7_medidores_campo_ok` ENUM('sim','nao') NOT NULL,
+        `epis_seguranca_ok` ENUM('sim','nao') NOT NULL,
+        `descarte_residuos_ok` ENUM('sim','nao') NOT NULL,
+        `verificacao_sexta` JSON NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+    // Recria a Tabela relatorios
+    $pdo->exec("CREATE TABLE `relatorios` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `inspecao_id` INT NOT NULL,
+        `sala` VARCHAR(50) NOT NULL,
+        `data` DATE NOT NULL,
+        `periodo` ENUM('manha','tarde','noite') NOT NULL,
+        `momento` ENUM('inicio','fim') NOT NULL,
+        `observacoes` TEXT,
+        `data_geracao` DATETIME NOT NULL,
+        `imagens` TEXT NULL,
+        UNIQUE KEY `unique_inspecao` (`inspecao_id`, `sala`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+    // Recria a Tabela usuarios
+    $pdo->exec("CREATE TABLE `usuarios` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `nome` VARCHAR(100) NOT NULL,
+        `sobrenome` VARCHAR(100) NOT NULL,
+        `email_hash` VARCHAR(64) UNIQUE NOT NULL,
+        `email_encrypted` TEXT NOT NULL,
+        `cargo` ENUM('instrutor','lider') NOT NULL,
+        `senha` VARCHAR(255) NOT NULL,
+        `data_criacao` DATETIME NOT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+    // Recria a Tabela responsaveis
+    $pdo->exec("CREATE TABLE `responsaveis` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `usuario_id` INT NOT NULL,
+        `ambiente` VARCHAR(50) NOT NULL,
+        `data_atribuicao` DATETIME NOT NULL,
+        UNIQUE KEY `unique_ambiente` (`ambiente`),
+        FOREIGN KEY (`usuario_id`) REFERENCES `usuarios`(`id`) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
     $pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
 
-    echo "✅ Tabelas limpas com sucesso.<br>";
+    echo "✅ Tabelas deletadas e recriadas com sucesso.<br>";
 } catch (PDOException $e) {
-    echo "❌ Erro ao limpar tabelas: " . $e->getMessage() . "<br>";
+    echo "❌ Erro ao recriar tabelas: " . $e->getMessage() . "<br>";
     exit;
 }
 
@@ -55,34 +283,38 @@ try {
 
 $usuariosSistema = [
     // Líderes
-    ['Lenon', 'Yuri', 'lider'],
-    ['José', 'Ferreira', 'lider'],
-    ['Patrícia', 'Mendes', 'lider'],
-    ['Gisele', 'Nunes', 'lider'],
-    ['Alexandre', 'Barbosa', 'lider'],
+    ['Lenon', 'Yuri', 'lider', 'lenon.yuri@fiemg.com.br'],
+    ['José', 'Ferreira', 'lider', 'jose.ferreira@fiemg.com.br'],
+    ['Patrícia', 'Mendes', 'lider', 'patricia.mendes@fiemg.com.br'],
+    ['Gisele', 'Nunes', 'lider', 'gisele.nunes@fiemg.com.br'],
+    ['Alexandre', 'Barbosa', 'lider', 'alexandre.barbosa@fiemg.com.br'],
 
-    // Instrutores
-    ['Carlos', 'Silva', 'instrutor'],
-    ['Mariana', 'Souza', 'instrutor'],
-    ['João', 'Pereira', 'instrutor'],
-    ['Ana', 'Lima', 'instrutor'],
-    ['Roberto', 'Alves', 'instrutor'],
-    ['Fernanda', 'Costa', 'instrutor'],
-    ['Lucas', 'Mendes', 'instrutor'],
-    ['Juliana', 'Rocha', 'instrutor'],
-    ['Paulo', 'Henrique', 'instrutor'],
-    ['Cristina', 'Oliveira', 'instrutor'],
-    ['Ricardo', 'Santos', 'instrutor'],
-    ['Bruno', 'Carvalho', 'instrutor'],
-    ['Tatiane', 'Martins', 'instrutor'],
-    ['Gustavo', 'Almeida', 'instrutor'],
-    ['Camila', 'Ferreira', 'instrutor']
+    // USUÁRIOS ESPECÍFICOS SOLICITADOS
+    ['Bianca', 'Borges', 'instrutor', 'bianca.borges@fiemg.com.br'],
+    ['Bruna', 'Fernanda', 'instrutor', 'bfernanda@fiemg.com.br'],
+    ['Priscila', 'Vitorino', 'instrutor', 'priscila.vitorino@fiemg.com.br'],
+
+    // Demais Instrutores do Sistema
+    ['Carlos', 'Silva', 'instrutor', 'carlos.silva@fiemg.com.br'],
+    ['Mariana', 'Souza', 'instrutor', 'mariana.souza@fiemg.com.br'],
+    ['João', 'Pereira', 'instrutor', 'joao.pereira@fiemg.com.br'],
+    ['Ana', 'Lima', 'instrutor', 'ana.lima@fiemg.com.br'],
+    ['Roberto', 'Alves', 'instrutor', 'roberto.alves@fiemg.com.br'],
+    ['Fernanda', 'Costa', 'instrutor', 'fernanda.costa@fiemg.com.br'],
+    ['Lucas', 'Mendes', 'instrutor', 'lucas.mendes@fiemg.com.br'],
+    ['Juliana', 'Rocha', 'instrutor', 'juliana.rocha@fiemg.com.br'],
+    ['Paulo', 'Henrique', 'instrutor', 'paulo.henrique@fiemg.com.br'],
+    ['Cristina', 'Oliveira', 'instrutor', 'cristina.oliveira@fiemg.com.br'],
+    ['Ricardo', 'Santos', 'instrutor', 'ricardo.santos@fiemg.com.br'],
+    ['Bruno', 'Carvalho', 'instrutor', 'bruno.carvalho@fiemg.com.br'],
+    ['Tatiane', 'Martins', 'instrutor', 'tatiane.martins@fiemg.com.br'],
+    ['Gustavo', 'Almeida', 'instrutor', 'gustavo.almeida@fiemg.com.br'],
+    ['Camila', 'Ferreira', 'instrutor', 'camila.ferreira@fiemg.com.br']
 ];
 
 $instrutores = [];
 $lideres = [];
 
-// Senha padrão válida (atende a regra de ter letras e números)
 $senhaPadraoRaw = 'senai123';
 $senhaPadraoHash = password_hash($senhaPadraoRaw, PASSWORD_DEFAULT);
 
@@ -92,13 +324,12 @@ $stmtUsuario = $pdo->prepare("
 ");
 
 foreach ($usuariosSistema as $usuario) {
-    [$nome, $sobrenome, $cargo] = $usuario;
+    $nome = $usuario[0];
+    $sobrenome = $usuario[1];
+    $cargo = $usuario[2];
+    $email = isset($usuario[3]) ? strtolower(trim($usuario[3])) : strtolower($nome . "." . $sobrenome) . "@fiemg.com.br";
 
-    // E-mail formatado conforme exigência (@fiemg.com.br)
-    $email = strtolower($nome . "." . $sobrenome) . "@fiemg.com.br";
     $emailHash = hash('sha256', $email);
-
-    // Criptografa o e-mail usando a função nativa do sistema
     $emailEncrypted = function_exists('encryptEmail') ? encryptEmail($email) : $email;
 
     $stmtUsuario->execute([
@@ -216,28 +447,49 @@ $camposPorSala = [
         'estufa_ok'
     ],
     '102d' => [
-        'porta_janelas_ok',
-        'ar_condicionado_ok',
-        'bancadas_limpas',
-        'tomadas_fios_ok',
-        'microscopios_b1_quantidade',
-        'microscopios_b1_integros',
-        'estufa_incubadora_b2_ok',
-        'blocos_digestores_b2_ok',
-        'balancas_analiticas_b3_ok',
-        'centrifugas_extracao_b3_ok',
-        'destilador_b4_ok',
-        'cabine_seguranca_csb_ok',
-        'microscopio_camera_desktop_ok',
-        'rotaevaporador_gerber_vortex_ok',
-        'estufas_forno_mufla_ok',
-        'refrigerador_microondas_ok',
-        'armario1_medidores_agua_ok',
-        'armario2_3_phgametros_banhos_ok',
-        'armario5_6_aquecimento_agitacao_ok',
-        'armario7_medidores_campo_ok',
-        'epis_seguranca_ok',
-        'descarte_residuos_ok'
+        'org_bancadas_limpas',
+        'org_bancadas_organizadas',
+        'org_cadeiras_organizadas',
+        'org_materiais_guardados',
+        'org_armarios_fechados',
+        'org_quadro_limpo',
+        'org_piso_limpo',
+        'org_corredores_desobstruidos',
+        'seg_extintor_acessivel',
+        'seg_chuveiro_emergencia_ok',
+        'seg_lava_olhos_ok',
+        'seg_kit_primeiros_socorros',
+        'seg_saidas_emergencia_livres',
+        'seg_sinalizacao_visivel',
+        'seg_produtos_quimicos_identificados',
+        'seg_fispqs_disponiveis',
+        'eq_balanca_limpa',
+        'eq_balanca_desligada',
+        'eq_phmetro_limpo',
+        'eq_condutivimetro_limpo',
+        'eq_espectrofotometro_limpo',
+        'eq_estufa_desligada',
+        'eq_autoclave_desligada',
+        'eq_equipamentos_desligados',
+        'eq_equipamentos_sem_avarias',
+        'vid_vidrarias_limpas',
+        'vid_vidrarias_secas',
+        'vid_vidrarias_guardadas',
+        'vid_existe_vidraria_quebrada',
+        'pq_frascos_identificados',
+        'pq_frascos_fechados',
+        'pq_produtos_armazenados',
+        'pq_residuos_descartados',
+        'enc_pia_limpa',
+        'enc_torneiras_fechadas',
+        'enc_gas_fechado',
+        'enc_agua_fechada',
+        'enc_equipamentos_desligados',
+        'enc_ar_condicionado_desligado',
+        'enc_luzes_apagadas',
+        'enc_porta_trancada',
+        'enc_lixeiras_esvaziadas',
+        'nc_encontrada'
     ],
     '101d' => [
         'porta_janelas_ok',
@@ -323,14 +575,32 @@ try {
                             $problemas = [];
 
                             foreach ($campos as $campo) {
+                                if ($campo === 'nc_encontrada') {
+                                    continue;
+                                }
+
                                 $var = mt_rand(-12, 12) / 100;
                                 $probCampo = max(0.01, min(0.99, $prob + $var));
-                                $resultado = (mt_rand(1, 100) <= $probCampo * 100) ? 'nao' : 'sim';
-                                $valores[$campo] = $resultado;
 
-                                if ($resultado === 'nao') {
-                                    $problemas[] = $campo;
+                                // Para vidraria quebrada: 'sim' indica não conformidade
+                                if ($campo === 'vid_existe_vidraria_quebrada') {
+                                    $resultado = (mt_rand(1, 100) <= ($probCampo * 100)) ? 'sim' : 'nao';
+                                    if ($resultado === 'sim') {
+                                        $problemas[] = $campo;
+                                    }
+                                } else {
+                                    $resultado = (mt_rand(1, 100) <= ($probCampo * 100)) ? 'nao' : 'sim';
+                                    if ($resultado === 'nao') {
+                                        $problemas[] = $campo;
+                                    }
                                 }
+
+                                $valores[$campo] = $resultado;
+                            }
+
+                            // Define 'nc_encontrada' para a tabela 102d
+                            if (in_array('nc_encontrada', $campos)) {
+                                $valores['nc_encontrada'] = (count($problemas) > 0) ? 'sim' : 'nao';
                             }
 
                             $observacao = (count($problemas) > 0)
@@ -376,10 +646,12 @@ try {
 
     $pdo->commit();
     echo "<hr><strong>🎉 Processamento concluído com sucesso!</strong><br>";
-    echo "Foram inseridos <b>$totalInsercoes</b> registros no banco.<br><br>";
+    echo "Foram inseridos <b>$totalInsercoes</b> registros no banco recriado.<br><br>";
     echo "<b>Credenciais de Acesso de Teste:</b><br>";
     echo "• Líder Exemplo: <code>lenon.yuri@fiemg.com.br</code> | Senha: <code>senai123</code><br>";
-    echo "• Instrutor Exemplo: <code>carlos.silva@fiemg.com.br</code> | Senha: <code>senai123</code>";
+    echo "• Usuário Solicitado 1: <code>bianca.borges@fiemg.com.br</code> | Senha: <code>senai123</code><br>";
+    echo "• Usuário Solicitado 2: <code>bfernanda@fiemg.com.br</code> | Senha: <code>senai123</code><br>";
+    echo "• Usuário Solicitado 3: <code>priscila.vitorino@fiemg.com.br</code> | Senha: <code>senai123</code>";
 
 } catch (Exception $e) {
     if ($pdo->inTransaction()) {
